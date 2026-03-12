@@ -106,6 +106,11 @@
                 <span class="text-sm">Salva</span>
             </button>
         </div>
+        
+        <div id="error-msg" class="mt-6 text-red-400 font-bold bg-red-900/20 px-6 py-4 rounded-xl border border-red-500/30 hidden flex items-center">
+            <i class="fa-solid fa-triangle-exclamation text-2xl mr-4"></i>
+            <span>Errore generico.</span>
+        </div>
     </div>
 
     <!-- VISTA 2: IL GOBBO / REGIA -->
@@ -154,6 +159,7 @@
         if(viewId === 'upload') {
             document.getElementById('file-input').value = "";
             document.getElementById('paste-area').value = "";
+            document.getElementById('error-msg').classList.add('hidden');
         }
     }
 
@@ -221,14 +227,19 @@
     function loadFromPaste() {
         const txt = document.getElementById('paste-area').value;
         if(txt.trim().length > 10) processContent(txt);
-        else alert("Incolla del testo valido!");
+        else showError("Incolla del testo valido!");
+    }
+
+    function showError(msg) {
+        const errorEl = document.getElementById('error-msg');
+        errorEl.querySelector('span').innerText = msg;
+        errorEl.classList.remove('hidden');
     }
 
     // Funzione che formatta le righe come HTML
-    // Se la riga inizia per trattino, crea un flexbox con l'icona del pallino
     function formatContentLine(line) {
         let clean = line.trim();
-        if (!clean) return "<div class='h-2'></div>"; // Aggiunge spazio se riga vuota
+        if (!clean) return "<div class='h-2'></div>"; 
         
         if (clean.startsWith('-')) {
             let text = clean.substring(1).trim();
@@ -238,7 +249,7 @@
         }
     }
 
-    // Parser Estremamente Tollerante
+    // Parser Estremamente Tollerante (Antiproiettile per Regex AI)
     function processContent(txt) {
         let parsedData = {
             id: 'mod_' + Date.now(),
@@ -249,41 +260,67 @@
         let lines = txt.split('\n');
         let currentSlide = null;
 
+        // Controllo validità strutturale generica prima di scansionare
+        let checkContent = txt.replace(/\*/g, '');
+        if (!/[-]+\s*SLIDE/i.test(checkContent)) {
+            showError("Errore Struttura: Il file non contiene il tag '--- SLIDE:'. Assicurati di aver incollato il testo generato dal Master Prompt.");
+            return;
+        }
+
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
             
             // Ignoriamo le righe di codice markdown dell'IA (es. ```text)
             if (line.startsWith('```')) continue;
             
-            let uLine = line.replace(/^\*+/, '').replace(/\*+$/, '').toUpperCase();
+            // Pulisce asterischi errati sui tag che l'IA aggiunge a caso
+            let cleanLine = line.replace(/^\*+/, '').replace(/\*+$/, '').trim();
+            let uLine = cleanLine.toUpperCase();
 
-            if (uLine.startsWith('# MODULO:')) {
-                parsedData.moduloTitle = line.substring(line.indexOf(':') + 1).trim();
+            // Ignora tag iniziali dell'IA
+            if (uLine.includes('[INIZIO TESTO]') || uLine.includes('[FINE TESTO]')) continue;
+
+            // Intercetta Modulo
+            if (uLine.includes('MODULO:')) {
+                parsedData.moduloTitle = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
             }
-            else if (uLine.startsWith('--- SLIDE:')) {
+            // Intercetta Slide (SUPER TOLLERANTE contro l'aggiunta di numeri o assenza dei due punti)
+            else if (uLine.match(/^[-]+\s*SLIDE/)) {
+                let colonIdx = cleanLine.indexOf(':');
+                let slideTitle = "";
+                if (colonIdx !== -1) {
+                    slideTitle = cleanLine.substring(colonIdx + 1).trim();
+                } else {
+                    slideTitle = cleanLine.replace(/^[-]+\s*SLIDE\s*[0-9]*/i, '').replace(/^[-]+/, '').trim();
+                }
+                
                 currentSlide = {
-                    title: line.substring(line.indexOf(':') + 1).trim(),
+                    title: slideTitle || "Slide " + (parsedData.slides.length + 1),
                     frase: "", regia: "", focus: "", currentSection: null
                 };
                 parsedData.slides.push(currentSlide);
             }
             else if (currentSlide) {
-                if (uLine.startsWith('🔑 FRASE CHIAVE:')) {
+                // Tollerante se l'IA aggiunge spazi, manca due punti o usa l'emoji sbagliata
+                if (uLine.includes('FRASE CHIAVE')) {
                     currentSlide.currentSection = 'frase';
-                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    let colonIdx = cleanLine.indexOf(':');
+                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*FRASE CHIAVE/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.frase += formatContentLine(content);
                 }
-                else if (uLine.startsWith('🎬 REGIA:')) {
+                else if (uLine.includes('REGIA')) {
                     currentSlide.currentSection = 'regia';
-                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    let colonIdx = cleanLine.indexOf(':');
+                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*REGIA/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.regia += formatContentLine(content);
                 }
-                else if (uLine.startsWith('🎯 FOCUS QUIZ:')) {
+                else if (uLine.includes('FOCUS QUIZ') || (uLine.includes('FOCUS') && uLine.includes('🎯'))) {
                     currentSlide.currentSection = 'focus';
-                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    let colonIdx = cleanLine.indexOf(':');
+                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*FOCUS(?: QUIZ)?/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.focus += formatContentLine(content);
                 }
-                // Continua a concatenare le righe successive alla sezione attiva
+                // Continua a concatenare le righe successive alla sezione attiva (usato specialmente per i Focus Quiz a elenco)
                 else if (currentSlide.currentSection) {
                     currentSlide[currentSlide.currentSection] += formatContentLine(line);
                 }
@@ -299,7 +336,7 @@
             }
             navTo('library');
         } else {
-            alert("Errore di lettura. Assicurati che il testo contenga i tag --- SLIDE:");
+            showError("Errore di lettura. Assicurati che il testo contenga i tag strutturali corretti.");
         }
     }
 
