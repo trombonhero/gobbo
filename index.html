@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tablet Director - Driving Leader</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            user-select: none; /* Previene la selezione del testo involontaria sul touch */
+        }
+
+        .view { display: none; height: 100%; flex-direction: column; }
+        .view.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Aree Upload per Tablet */
+        #drop-zone {
+            border: 3px dashed #3b82f6; border-radius: 1.5rem; background: #1e293b;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 60vh; margin: 2rem; cursor: pointer; transition: background 0.2s;
+        }
+        #drop-zone:active { background: #334155; }
+
+        /* Card Contenuti */
+        .card-chiave { background: linear-gradient(145deg, #1e3a8a, #1e40af); border-left: 6px solid #60a5fa; }
+        .card-regia { background: linear-gradient(145deg, #78350f, #92400e); border-left: 6px solid #fbbf24; }
+        .card-quiz { background: linear-gradient(145deg, #7f1d1d, #991b1b); border-left: 6px solid #f87171; }
+
+        .content-text { font-size: 1.4rem; line-height: 1.5; }
+        .content-text strong { color: #ffffff; font-weight: 800; background-color: rgba(255,255,255,0.1); padding: 0 4px; border-radius: 4px;}
+
+        /* Bottoni Navigazione Giganti */
+        .nav-btn {
+            flex: 1; padding: 1.5rem; font-size: 1.5rem; font-weight: 800; border: none; border-radius: 1rem;
+            color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
+        }
+        .nav-btn:active { transform: scale(0.95); }
+        .btn-prev { background-color: #334155; }
+        .btn-next { background-color: #2563eb; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); }
+
+        /* Scrollbar nascosta per pulizia visiva */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- VISTA 1: CARICAMENTO -->
+    <div id="view-upload" class="view active">
+        <div class="p-6 text-center">
+            <h1 class="text-4xl font-extrabold text-blue-400"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Pannello di Regia</h1>
+            <p class="text-slate-400 mt-2 text-lg">Carica il testo generato dall'IA</p>
+        </div>
+        
+        <input type="file" id="file-input" accept=".txt" class="hidden">
+        <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <i class="fa-solid fa-hand-pointer text-7xl text-blue-500 mb-6"></i>
+            <h3 class="text-3xl font-bold text-white mb-2">Tocca per scegliere il file</h3>
+            <p class="text-slate-400 text-xl">oppure incolla qui sotto</p>
+        </div>
+
+        <!-- Opzione Incolla Testo (Molto comoda su tablet se si usa la clipboard) -->
+        <div class="px-8 pb-8 flex gap-4 h-32">
+            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-4 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-lg" placeholder="...oppure INCOLLA direttamente il testo qui e premi Avvia"></textarea>
+            <button onclick="loadFromPaste()" class="bg-emerald-600 text-white font-bold rounded-xl px-6 text-xl shadow-lg active:scale-95 transition"><i class="fa-solid fa-play"></i></button>
+        </div>
+    </div>
+
+    <!-- VISTA 2: IL GOBBO / REGIA -->
+    <div id="view-director" class="view">
+        <!-- Header -->
+        <div class="bg-slate-900 p-4 flex justify-between items-center border-b border-slate-800 shadow-md z-20">
+            <div class="flex-1 truncate pr-4">
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-widest" id="mod-title">MODULO</p>
+                <h2 class="text-2xl font-bold text-white truncate" id="slide-title">Titolo Slide</h2>
+            </div>
+            <div class="bg-blue-600 text-white font-mono font-bold px-4 py-2 rounded-lg text-xl shadow-inner shrink-0" id="slide-counter">
+                1 / 5
+            </div>
+            <button onclick="navTo('upload')" class="ml-4 bg-slate-800 p-3 rounded-lg text-slate-400 active:bg-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <!-- Contenuto Scorrevole -->
+        <div id="slide-content" class="flex-1 overflow-y-auto p-6 space-y-6 pb-32">
+            <!-- Riempito via JS -->
+        </div>
+
+        <!-- Footer Bottoni (Fissi in basso) -->
+        <div class="absolute bottom-0 left-0 w-full p-4 bg-slate-900/90 backdrop-blur border-t border-slate-800 flex gap-4 z-20 pb-6">
+            <button onclick="prevSlide()" class="nav-btn btn-prev"><i class="fa-solid fa-chevron-left mr-3"></i> Prec</button>
+            <button onclick="nextSlide()" class="nav-btn btn-next">Avanti <i class="fa-solid fa-chevron-right ml-3"></i></button>
+        </div>
+    </div>
+
+<script>
+    let appData = {
+        moduloTitle: "",
+        slides: [],
+        currentIndex: 0
+    };
+
+    function navTo(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById('view-' + viewId).classList.add('active');
+        if(viewId === 'upload') {
+            document.getElementById('file-input').value = "";
+            document.getElementById('paste-area').value = "";
+        }
+    }
+
+    // Lettura da File
+    document.getElementById('file-input').addEventListener('change', function(e) {
+        if(e.target.files.length === 0) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) { processContent(evt.target.result); };
+        reader.readAsText(e.target.files[0]);
+    });
+
+    // Lettura da Incolla
+    function loadFromPaste() {
+        const txt = document.getElementById('paste-area').value;
+        if(txt.trim().length > 10) processContent(txt);
+        else alert("Incolla del testo valido!");
+    }
+
+    // Parser Estremamente Tollerante
+    function processContent(txt) {
+        appData.slides = [];
+        appData.currentIndex = 0;
+        
+        let lines = txt.split('\n');
+        let currentSlide = null;
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (!line) continue;
+            
+            let uLine = line.replace(/^\*+/, '').replace(/\*+$/, '').toUpperCase();
+
+            if (uLine.startsWith('# MODULO:')) {
+                appData.moduloTitle = line.substring(line.indexOf(':') + 1).trim();
+            }
+            else if (uLine.startsWith('--- SLIDE:')) {
+                currentSlide = {
+                    title: line.substring(line.indexOf(':') + 1).trim(),
+                    frase: "", regia: "", focus: "", currentSection: null
+                };
+                appData.slides.push(currentSlide);
+            }
+            else if (currentSlide) {
+                if (uLine.startsWith('🔑 FRASE CHIAVE:')) {
+                    currentSlide.currentSection = 'frase';
+                    currentSlide.frase += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                }
+                else if (uLine.startsWith('🎬 REGIA:')) {
+                    currentSlide.currentSection = 'regia';
+                    currentSlide.regia += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                }
+                else if (uLine.startsWith('🎯 FOCUS QUIZ:')) {
+                    currentSlide.currentSection = 'focus';
+                    currentSlide.focus += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                }
+                // Continua a concatenare le righe successive alla sezione attiva
+                else if (currentSlide.currentSection) {
+                    currentSlide[currentSlide.currentSection] += line + "<br>";
+                }
+            }
+        }
+
+        if(appData.slides.length > 0) {
+            renderSlide();
+            navTo('director');
+        } else {
+            alert("Errore di lettura. Assicurati che il testo contenga i tag --- SLIDE:");
+        }
+    }
+
+    // Formattatore Grassetto
+    function formatBold(text) {
+        if(!text) return "";
+        return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    }
+
+    // Rendering Slide
+    function renderSlide() {
+        const slide = appData.slides[appData.currentIndex];
+        document.getElementById('mod-title').innerText = appData.moduloTitle || "LEZIONE IN CORSO";
+        document.getElementById('slide-title').innerText = slide.title;
+        document.getElementById('slide-counter').innerText = `${appData.currentIndex + 1} / ${appData.slides.length}`;
+        
+        const contentDiv = document.getElementById('slide-content');
+        contentDiv.innerHTML = '';
+        contentDiv.scrollTop = 0;
+
+        if(slide.frase) {
+            contentDiv.innerHTML += `
+                <div class="card-chiave p-5 rounded-2xl shadow-lg">
+                    <div class="flex items-center text-blue-300 font-bold tracking-widest text-sm mb-3 uppercase">
+                        <i class="fa-solid fa-key mr-2 text-lg"></i> Il Succo (Frase Chiave)
+                    </div>
+                    <div class="content-text text-blue-50">${formatBold(slide.frase)}</div>
+                </div>
+            `;
+        }
+
+        if(slide.regia) {
+            contentDiv.innerHTML += `
+                <div class="card-regia p-5 rounded-2xl shadow-lg">
+                    <div class="flex items-center text-yellow-400 font-bold tracking-widest text-sm mb-3 uppercase">
+                        <i class="fa-solid fa-clapperboard mr-2 text-lg"></i> La Regia (Metafore ed Esempi)
+                    </div>
+                    <div class="content-text text-orange-50">${formatBold(slide.regia)}</div>
+                </div>
+            `;
+        }
+
+        if(slide.focus) {
+            contentDiv.innerHTML += `
+                <div class="card-quiz p-5 rounded-2xl shadow-lg">
+                    <div class="flex items-center text-red-300 font-bold tracking-widest text-sm mb-3 uppercase">
+                        <i class="fa-solid fa-crosshairs mr-2 text-lg"></i> Trabocchetti dei Quiz
+                    </div>
+                    <div class="content-text text-red-50">${formatBold(slide.focus)}</div>
+                </div>
+            `;
+        }
+    }
+
+    function nextSlide() {
+        if (appData.currentIndex < appData.slides.length - 1) {
+            appData.currentIndex++;
+            renderSlide();
+        }
+    }
+
+    function prevSlide() {
+        if (appData.currentIndex > 0) {
+            appData.currentIndex--;
+            renderSlide();
+        }
+    }
+
+    // --- GESTIONE SWIPE PER TABLET ---
+    let touchstartX = 0;
+    let touchendX = 0;
+    
+    document.getElementById('view-director').addEventListener('touchstart', e => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    document.getElementById('view-director').addEventListener('touchend', e => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const threshold = 70; // Sensibilità dello swipe
+        if (touchendX < touchstartX - threshold) {
+            // Swipe a sinistra = Prossima slide
+            nextSlide();
+        }
+        if (touchendX > touchstartX + threshold) {
+            // Swipe a destra = Slide precedente
+            prevSlide();
+        }
+    }
+</script>
+</body>
+</html>
