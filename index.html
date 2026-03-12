@@ -18,7 +18,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            user-select: none; /* Previene la selezione del testo involontaria sul touch */
+            user-select: none;
         }
 
         .view { display: none; height: 100%; flex-direction: column; }
@@ -29,17 +29,21 @@
         #drop-zone {
             border: 3px dashed #3b82f6; border-radius: 1.5rem; background: #1e293b;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 60vh; margin: 2rem; cursor: pointer; transition: background 0.2s;
+            height: 45vh; margin-bottom: 1.5rem; cursor: pointer; transition: background 0.2s;
         }
         #drop-zone:active { background: #334155; }
 
-        /* Card Contenuti */
+        /* Card Contenuti (Regia) */
         .card-chiave { background: linear-gradient(145deg, #1e3a8a, #1e40af); border-left: 6px solid #60a5fa; }
         .card-regia { background: linear-gradient(145deg, #78350f, #92400e); border-left: 6px solid #fbbf24; }
         .card-quiz { background: linear-gradient(145deg, #7f1d1d, #991b1b); border-left: 6px solid #f87171; }
 
-        .content-text { font-size: 1.4rem; line-height: 1.5; }
+        .content-text { font-size: 1.4rem; line-height: 1.6; }
         .content-text strong { color: #ffffff; font-weight: 800; background-color: rgba(255,255,255,0.1); padding: 0 4px; border-radius: 4px;}
+        
+        /* Stili per le liste generate dal parser */
+        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; }
+        .bullet-icon { margin-right: 0.75rem; margin-top: 0.4rem; opacity: 0.7; font-size: 0.8em; flex-shrink: 0; }
 
         /* Bottoni Navigazione Giganti */
         .nav-btn {
@@ -58,11 +62,33 @@
 </head>
 <body>
 
-    <!-- VISTA 1: CARICAMENTO -->
-    <div id="view-upload" class="view active">
-        <div class="p-6 text-center">
-            <h1 class="text-4xl font-extrabold text-blue-400"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Pannello di Regia</h1>
-            <p class="text-slate-400 mt-2 text-lg">Carica il testo generato dall'IA</p>
+    <!-- VISTA 0: LIBRERIA (HOME) -->
+    <div id="view-library" class="view active h-full p-4 md:p-8">
+        <!-- Header Libreria -->
+        <div class="flex justify-between items-center mb-8 border-b border-slate-800 pb-6">
+            <div>
+                <h1 class="text-4xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-4"></i>Pannello di Regia</h1>
+                <p class="text-slate-400 mt-2 text-lg">Il tuo archivio moduli e copioni</p>
+            </div>
+            <button onclick="navTo('upload')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 px-8 rounded-2xl shadow-xl transition text-xl flex items-center active:scale-95">
+                <i class="fa-solid fa-plus mr-3"></i> Nuovo Modulo
+            </button>
+        </div>
+        
+        <!-- Griglia dei moduli salvati -->
+        <div id="library-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto pb-20 content-start">
+            <!-- Le card verranno generate qui tramite JavaScript -->
+        </div>
+    </div>
+
+    <!-- VISTA 1: CARICAMENTO NUOVO MODULO -->
+    <div id="view-upload" class="view h-full p-4 md:p-8">
+        <div class="flex items-center mb-8 border-b border-slate-800 pb-6">
+            <button onclick="navTo('library')" class="text-slate-400 hover:text-white mr-6 text-2xl bg-slate-800 w-14 h-14 rounded-xl flex items-center justify-center transition active:scale-95"><i class="fa-solid fa-arrow-left"></i></button>
+            <div>
+                <h1 class="text-3xl font-extrabold text-white">Aggiungi al Database</h1>
+                <p class="text-slate-400 mt-1">Trascina il file .txt o incolla il testo dell'IA</p>
+            </div>
         </div>
         
         <input type="file" id="file-input" accept=".txt" class="hidden">
@@ -72,10 +98,13 @@
             <p class="text-slate-400 text-xl">oppure incolla qui sotto</p>
         </div>
 
-        <!-- Opzione Incolla Testo (Molto comoda su tablet se si usa la clipboard) -->
-        <div class="px-8 pb-8 flex gap-4 h-32">
-            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-4 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-lg" placeholder="...oppure INCOLLA direttamente il testo qui e premi Avvia"></textarea>
-            <button onclick="loadFromPaste()" class="bg-emerald-600 text-white font-bold rounded-xl px-6 text-xl shadow-lg active:scale-95 transition"><i class="fa-solid fa-play"></i></button>
+        <!-- Opzione Incolla Testo -->
+        <div class="flex gap-4 h-32">
+            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-4 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-lg" placeholder="...oppure INCOLLA direttamente il testo qui e premi Salva"></textarea>
+            <button onclick="loadFromPaste()" class="bg-emerald-600 text-white font-bold rounded-xl px-6 text-xl shadow-lg active:scale-95 transition flex flex-col items-center justify-center gap-2 min-w-[120px]">
+                <i class="fa-solid fa-save text-2xl"></i>
+                <span class="text-sm">Salva</span>
+            </button>
         </div>
     </div>
 
@@ -90,7 +119,7 @@
             <div class="bg-blue-600 text-white font-mono font-bold px-4 py-2 rounded-lg text-xl shadow-inner shrink-0" id="slide-counter">
                 1 / 5
             </div>
-            <button onclick="navTo('upload')" class="ml-4 bg-slate-800 p-3 rounded-lg text-slate-400 active:bg-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <button onclick="navTo('library')" class="ml-4 bg-slate-800 p-3 rounded-lg text-slate-400 active:bg-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
         </div>
 
         <!-- Contenuto Scorrevole -->
@@ -106,6 +135,9 @@
     </div>
 
 <script>
+    // --- GESTIONE DATABASE LOCALE ---
+    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v2')) || [];
+
     let appData = {
         moduloTitle: "",
         slides: [],
@@ -115,13 +147,70 @@
     function navTo(viewId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById('view-' + viewId).classList.add('active');
+        
+        if(viewId === 'library') {
+            renderLibrary();
+        }
         if(viewId === 'upload') {
             document.getElementById('file-input').value = "";
             document.getElementById('paste-area').value = "";
         }
     }
 
-    // Lettura da File
+    // --- RENDERING DELLA LIBRERIA ---
+    function renderLibrary() {
+        const container = document.getElementById('library-container');
+        container.innerHTML = '';
+        
+        if (savedModules.length === 0) {
+            container.innerHTML = `<div class="col-span-full text-center py-20 text-slate-500 text-xl italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block"></i>Nessun copione salvato.<br>Tocca "Nuovo Modulo" per iniziare.</div>`;
+            return;
+        }
+        
+        [...savedModules].reverse().forEach(mod => {
+            const card = document.createElement('div');
+            card.className = 'bg-slate-800/80 border border-slate-700 rounded-2xl p-6 flex flex-col shadow-lg relative';
+            card.innerHTML = `
+                <div class="flex-grow">
+                    <h3 class="text-2xl font-bold text-white mb-3 leading-tight">${mod.moduloTitle || "Modulo senza titolo"}</h3>
+                    <p class="text-slate-400 font-mono text-sm"><i class="fa-solid fa-layer-group text-blue-400 mr-2"></i>${mod.slides.length} Slide configurate</p>
+                </div>
+                <div class="flex gap-3 mt-6">
+                    <button onclick="startModule('${mod.id}')" class="flex-grow bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl transition shadow flex items-center justify-center text-lg active:scale-95">
+                        <i class="fa-solid fa-play mr-2"></i> Avvia
+                    </button>
+                    <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 hover:bg-red-600 text-red-500 hover:text-white border border-slate-700 hover:border-red-500 font-bold py-3 px-5 rounded-xl transition shadow flex items-center justify-center active:scale-95">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    // --- AZIONI SUI MODULI ---
+    function startModule(id) {
+        const mod = savedModules.find(m => m.id === id);
+        if(mod) {
+            appData.moduloTitle = mod.moduloTitle;
+            appData.slides = mod.slides;
+            appData.currentIndex = 0;
+            renderSlide();
+            navTo('director');
+        }
+    }
+
+    function deleteModule(id) {
+        if(confirm("Vuoi davvero eliminare questo modulo dall'archivio? L'operazione è irreversibile.")) {
+            savedModules = savedModules.filter(m => m.id !== id);
+            try {
+                localStorage.setItem('tablet_director_db_v2', JSON.stringify(savedModules));
+            } catch(e) {}
+            renderLibrary();
+        }
+    }
+
+    // --- LETTURA E PARSING DATI ---
     document.getElementById('file-input').addEventListener('change', function(e) {
         if(e.target.files.length === 0) return;
         const reader = new FileReader();
@@ -129,60 +218,86 @@
         reader.readAsText(e.target.files[0]);
     });
 
-    // Lettura da Incolla
     function loadFromPaste() {
         const txt = document.getElementById('paste-area').value;
         if(txt.trim().length > 10) processContent(txt);
         else alert("Incolla del testo valido!");
     }
 
+    // Funzione che formatta le righe come HTML
+    // Se la riga inizia per trattino, crea un flexbox con l'icona del pallino
+    function formatContentLine(line) {
+        let clean = line.trim();
+        if (!clean) return "<div class='h-2'></div>"; // Aggiunge spazio se riga vuota
+        
+        if (clean.startsWith('-')) {
+            let text = clean.substring(1).trim();
+            return `<div class="bullet-row"><i class="fa-solid fa-circle bullet-icon"></i><span>${text}</span></div>`;
+        } else {
+            return `<div class="mb-2">${clean}</div>`;
+        }
+    }
+
     // Parser Estremamente Tollerante
     function processContent(txt) {
-        appData.slides = [];
-        appData.currentIndex = 0;
+        let parsedData = {
+            id: 'mod_' + Date.now(),
+            moduloTitle: "Nuova Lezione " + new Date().toLocaleDateString(),
+            slides: []
+        };
         
         let lines = txt.split('\n');
         let currentSlide = null;
 
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
-            if (!line) continue;
+            
+            // Ignoriamo le righe di codice markdown dell'IA (es. ```text)
+            if (line.startsWith('```')) continue;
             
             let uLine = line.replace(/^\*+/, '').replace(/\*+$/, '').toUpperCase();
 
             if (uLine.startsWith('# MODULO:')) {
-                appData.moduloTitle = line.substring(line.indexOf(':') + 1).trim();
+                parsedData.moduloTitle = line.substring(line.indexOf(':') + 1).trim();
             }
             else if (uLine.startsWith('--- SLIDE:')) {
                 currentSlide = {
                     title: line.substring(line.indexOf(':') + 1).trim(),
                     frase: "", regia: "", focus: "", currentSection: null
                 };
-                appData.slides.push(currentSlide);
+                parsedData.slides.push(currentSlide);
             }
             else if (currentSlide) {
                 if (uLine.startsWith('🔑 FRASE CHIAVE:')) {
                     currentSlide.currentSection = 'frase';
-                    currentSlide.frase += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    if(content) currentSlide.frase += formatContentLine(content);
                 }
                 else if (uLine.startsWith('🎬 REGIA:')) {
                     currentSlide.currentSection = 'regia';
-                    currentSlide.regia += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    if(content) currentSlide.regia += formatContentLine(content);
                 }
                 else if (uLine.startsWith('🎯 FOCUS QUIZ:')) {
                     currentSlide.currentSection = 'focus';
-                    currentSlide.focus += line.substring(line.indexOf(':') + 1).trim() + "<br>";
+                    let content = line.substring(line.indexOf(':') + 1).trim();
+                    if(content) currentSlide.focus += formatContentLine(content);
                 }
                 // Continua a concatenare le righe successive alla sezione attiva
                 else if (currentSlide.currentSection) {
-                    currentSlide[currentSlide.currentSection] += line + "<br>";
+                    currentSlide[currentSlide.currentSection] += formatContentLine(line);
                 }
             }
         }
 
-        if(appData.slides.length > 0) {
-            renderSlide();
-            navTo('director');
+        if(parsedData.slides.length > 0) {
+            savedModules.push(parsedData);
+            try {
+                localStorage.setItem('tablet_director_db_v2', JSON.stringify(savedModules));
+            } catch(e) {
+                alert("Attenzione: Memoria piena.");
+            }
+            navTo('library');
         } else {
             alert("Errore di lettura. Assicurati che il testo contenga i tag --- SLIDE:");
         }
@@ -194,7 +309,7 @@
         return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     }
 
-    // Rendering Slide
+    // --- REGIA (SLIDE RENDERER) ---
     function renderSlide() {
         const slide = appData.slides[appData.currentIndex];
         document.getElementById('mod-title').innerText = appData.moduloTitle || "LEZIONE IN CORSO";
@@ -267,16 +382,17 @@
     });
 
     function handleSwipe() {
-        const threshold = 70; // Sensibilità dello swipe
+        const threshold = 70;
         if (touchendX < touchstartX - threshold) {
-            // Swipe a sinistra = Prossima slide
             nextSlide();
         }
         if (touchendX > touchstartX + threshold) {
-            // Swipe a destra = Slide precedente
             prevSlide();
         }
     }
+
+    // Inizializza mostrando la libreria
+    navTo('library');
 </script>
 </body>
 </html>
