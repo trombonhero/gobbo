@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tablet Director - Driving Leader</title>
-    <!-- LINK RIPRISTINATI E PULITI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        @import url('[https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap](https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap)');
         
         body {
             font-family: 'Outfit', sans-serif;
@@ -57,7 +56,7 @@
         .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.4rem; }
         .bullet-icon { margin-right: 0.75rem; margin-top: 0.35rem; opacity: 0.8; font-size: 0.6em; flex-shrink: 0; }
 
-        /* Bottoni Navigazione (Rimpiccioliti per salvare spazio) */
+        /* Bottoni Navigazione */
         .nav-btn {
             flex: 1; padding: 0.6rem; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 0.5rem;
             color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; height: 50px;
@@ -88,17 +87,29 @@
         <div class="flex flex-col gap-4 mb-4 border-b border-slate-800 pb-4 shrink-0">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Director V7</h1>
+                    <h1 class="text-3xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Director V8</h1>
                 </div>
-                <button onclick="navTo('upload')" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition text-sm flex items-center active:scale-95">
-                    <i class="fa-solid fa-plus mr-2"></i> Nuovo Modulo
-                </button>
+                
+                <!-- Azioni Database e Aggiunta -->
+                <div class="flex items-center gap-2">
+                    <button onclick="exportDB()" class="bg-slate-800 text-blue-400 hover:bg-slate-700 font-bold w-10 h-10 rounded-xl shadow-lg transition flex items-center justify-center active:scale-95 border border-slate-700" title="Esporta Database su File">
+                        <i class="fa-solid fa-cloud-arrow-down text-lg"></i>
+                    </button>
+                    <button onclick="document.getElementById('import-file').click()" class="bg-slate-800 text-emerald-400 hover:bg-slate-700 font-bold w-10 h-10 rounded-xl shadow-lg transition flex items-center justify-center active:scale-95 border border-slate-700" title="Importa Database da File">
+                        <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                    </button>
+                    <input type="file" id="import-file" accept=".json" class="hidden" onchange="importDB(event)">
+                    
+                    <button onclick="navTo('upload')" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition text-sm flex items-center active:scale-95 ml-2">
+                        <i class="fa-solid fa-plus mr-2"></i> Importa Appunti
+                    </button>
+                </div>
             </div>
             
             <!-- Barra di Ricerca Globale -->
             <div class="relative w-full">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-bar" placeholder="Cerca aula, obiettivo o parola chiave..." 
+                <input type="text" id="search-bar" placeholder="Cerca aula, capitolo o parola chiave..." 
                        class="w-full bg-slate-800 border border-slate-600 text-white text-lg rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500"
                        onkeyup="filterLibrary()">
             </div>
@@ -114,13 +125,13 @@
     <div id="view-upload" class="view h-full p-4">
         <div class="flex items-center mb-6 border-b border-slate-800 pb-4">
             <button onclick="navTo('library')" class="text-slate-400 hover:text-white mr-4 text-xl bg-slate-800 w-10 h-10 rounded-lg flex items-center justify-center transition active:scale-95"><i class="fa-solid fa-arrow-left"></i></button>
-            <h1 class="text-2xl font-extrabold text-white">Importa Appunti</h1>
+            <h1 class="text-2xl font-extrabold text-white">Importa Appunti IA</h1>
         </div>
         
         <input type="file" id="file-input" accept=".txt" class="hidden">
         <div id="drop-zone" onclick="document.getElementById('file-input').click()">
             <i class="fa-solid fa-file-import text-5xl text-blue-500 mb-4"></i>
-            <h3 class="text-xl font-bold text-white mb-1">Tocca per caricare .txt</h3>
+            <h3 class="text-xl font-bold text-white mb-1">Tocca per caricare il file .txt</h3>
         </div>
 
         <div class="flex gap-3 h-32">
@@ -171,11 +182,12 @@
 
 <script>
     // --- GESTIONE DATABASE LOCALE ---
-    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v7')) || [];
+    // Struttura: array di oggetti { id, aula, capitolo, argomento, slides: [...] }
+    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v8')) || [];
 
     let appData = {
         aulaTitle: "",
-        obTitle: "",
+        capTitle: "",
         argTitle: "",
         slides: [],
         currentIndex: 0
@@ -200,7 +212,56 @@
         }
     }
 
-    // --- RICERCA E RENDERING LIBRERIA (GERARCHIA A 3 LIVELLI) ---
+    // --- ESPORTA E IMPORTA DATABASE (Cross-Device Syncing Manuale) ---
+    function exportDB() {
+        if(savedModules.length === 0) {
+            alert("Il database è vuoto. Niente da esportare!");
+            return;
+        }
+        const dataStr = JSON.stringify(savedModules, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileDefaultName = `Director_DB_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        
+        let linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    function importDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm("L'importazione unirà i nuovi dati al tuo database esistente. Procedere?")) {
+                        // Unisce i vecchi ai nuovi evitando duplicati esatti per ID (se presenti)
+                        let merged = [...savedModules];
+                        importedData.forEach(newMod => {
+                            if(!merged.find(m => m.id === newMod.id)) {
+                                merged.push(newMod);
+                            }
+                        });
+                        savedModules = merged;
+                        localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules));
+                        renderLibrary();
+                        alert("Database importato con successo!");
+                    }
+                } else {
+                    alert("Formato file non valido. Seleziona un file JSON di backup valido.");
+                }
+            } catch(err) {
+                alert("Errore durante la lettura del file: " + err.message);
+            }
+            document.getElementById('import-file').value = ""; // reset
+        };
+        reader.readAsText(file);
+    }
+
+    // --- RICERCA E RENDERING LIBRERIA (GERARCHIA A 4 LIVELLI) ---
     function filterLibrary() {
         renderLibrary(document.getElementById('search-bar').value.toLowerCase());
     }
@@ -210,13 +271,14 @@
         container.innerHTML = '';
         
         if (savedModules.length === 0) {
-            container.innerHTML = `<div class="text-center py-20 text-slate-500 text-lg italic"><i class="fa-solid fa-folder-open text-3xl mb-4 block"></i>Nessun modulo salvato.<br>Carica il primo.</div>`;
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 text-lg italic"><i class="fa-solid fa-folder-open text-3xl mb-4 block"></i>Nessun modulo salvato.<br>Importa un testo o il backup.</div>`;
             return;
         }
 
+        // Filtra i moduli
         let filtered = savedModules.filter(m => {
             if(!query) return true;
-            let textToSearch = (m.aula + " " + m.obiettivo + " " + m.argomento + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
+            let textToSearch = (m.aula + " " + m.capitolo + " " + m.argomento + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
             return textToSearch.includes(query);
         });
 
@@ -225,20 +287,21 @@
             return;
         }
 
-        // Raggruppa i dati: Aula -> Obiettivo -> Array di Moduli (Argomenti)
+        // Raggruppa i dati: Aula -> Capitolo -> Array di Argomenti
         let grouped = {};
         filtered.forEach(mod => {
-            let aula = mod.aula || "Varie";
-            let ob = mod.obiettivo || "Generico";
+            let aula = mod.aula || "Generale";
+            // Compatibilità con versioni vecchie in cui "capitolo" si chiamava "obiettivo"
+            let cap = mod.capitolo || mod.obiettivo || "Non Specificato"; 
             
             if(!grouped[aula]) grouped[aula] = {};
-            if(!grouped[aula][ob]) grouped[aula][ob] = [];
-            grouped[aula][ob].push(mod);
+            if(!grouped[aula][cap]) grouped[aula][cap] = [];
+            grouped[aula][cap].push(mod);
         });
 
         let aulaIndex = 0;
         
-        // Ordina e Stampa le Aule
+        // Stampa AULE
         Object.keys(grouped).sort((a,b) => a.localeCompare(b)).forEach(aulaName => {
             let isExpanded = query !== '' ? '' : 'hidden';
             let iconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
@@ -257,46 +320,45 @@
                     <div id="aula-content-${aulaIndex}" class="space-y-3 p-3 pt-0 border-t border-slate-700/50 ${isExpanded}">
             `;
             
-            let obIndex = 0;
-            // Ordina e Stampa gli Obiettivi dentro l'Aula
-            Object.keys(grouped[aulaName]).sort((a,b) => a.localeCompare(b)).forEach(obName => {
-                let obExpanded = query !== '' ? '' : 'hidden';
-                let obIconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
+            let capIndex = 0;
+            // Stampa CAPITOLI (es. Obiettivo 16)
+            Object.keys(grouped[aulaName]).sort((a,b) => a.localeCompare(b)).forEach(capName => {
+                let capExpanded = query !== '' ? '' : 'hidden';
+                let capIconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
 
                 aulaHtml += `
                     <div class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/40 shadow-inner">
                         <div class="p-3 bg-slate-800/40 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
-                             onclick="document.getElementById('ob-content-${aulaIndex}-${obIndex}').classList.toggle('hidden'); 
-                                      document.getElementById('ob-icon-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-up'); 
-                                      document.getElementById('ob-icon-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-down');">
-                            <h3 class="text-base font-bold text-blue-300 flex items-center"><i class="fa-solid fa-bullseye mr-2 text-sm"></i> ${obName}</h3>
-                            <i id="ob-icon-${aulaIndex}-${obIndex}" class="fa-solid ${obIconClass} text-slate-500 transition-transform"></i>
+                             onclick="document.getElementById('cap-content-${aulaIndex}-${capIndex}').classList.toggle('hidden'); 
+                                      document.getElementById('cap-icon-${aulaIndex}-${capIndex}').classList.toggle('fa-chevron-up'); 
+                                      document.getElementById('cap-icon-${aulaIndex}-${capIndex}').classList.toggle('fa-chevron-down');">
+                            <h3 class="text-base font-bold text-blue-300 flex items-center"><i class="fa-solid fa-folder-open mr-2 text-sm text-blue-500"></i> ${capName}</h3>
+                            <i id="cap-icon-${aulaIndex}-${capIndex}" class="fa-solid ${capIconClass} text-slate-500 transition-transform"></i>
                         </div>
-                        <div id="ob-content-${aulaIndex}-${obIndex}" class="grid grid-cols-1 gap-2 p-2 ${obExpanded}">
+                        <div id="cap-content-${aulaIndex}-${capIndex}" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 ${capExpanded}">
                 `;
                 
-                // Stampa gli Argomenti (I file caricati)
-                grouped[aulaName][obName].forEach(mod => {
-                    // Calcola il tempo totale dell'argomento
+                // Stampa ARGOMENTI (I file caricati)
+                grouped[aulaName][capName].forEach(mod => {
                     let totalMins = mod.slides.reduce((acc, curr) => acc + (curr.time || 5), 0);
                     
                     aulaHtml += `
                         <div class="bg-slate-800 border border-slate-600 rounded-xl p-3 flex justify-between items-center shadow-md hover:border-blue-500 transition-colors group">
                             <div class="truncate pr-2 cursor-pointer flex-grow" onclick="startModule('${mod.id}')">
-                                <h4 class="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors">${mod.argomento || "Lezione"}</h4>
+                                <h4 class="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors">${mod.argomento || "Argomento"}</h4>
                                 <div class="flex gap-3 mt-1">
                                     <p class="text-slate-400 text-xs"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> ${mod.slides.length} slide</p>
                                     <p class="text-yellow-500 text-xs font-mono"><i class="fa-regular fa-clock mr-1"></i> ~${totalMins} min tot.</p>
                                 </div>
                             </div>
-                            <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 p-3 rounded-lg text-red-500 hover:bg-red-600 hover:text-white border border-slate-700 hover:border-red-500 transition shrink-0 active:scale-95">
+                            <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 p-2 rounded-lg text-red-500 hover:bg-red-600 hover:text-white border border-slate-700 hover:border-red-500 transition shrink-0 active:scale-95">
                                 <i class="fa-solid fa-trash text-sm"></i>
                             </button>
                         </div>
                     `;
                 });
                 aulaHtml += `</div></div>`;
-                obIndex++;
+                capIndex++;
             });
             aulaHtml += `</div></div>`;
             container.innerHTML += aulaHtml;
@@ -309,7 +371,7 @@
         const mod = savedModules.find(m => m.id === id);
         if(mod) {
             appData.aulaTitle = mod.aula;
-            appData.obTitle = mod.obiettivo;
+            appData.capTitle = mod.capitolo || mod.obiettivo;
             appData.argTitle = mod.argomento;
             appData.slides = mod.slides;
             appData.currentIndex = 0;
@@ -321,7 +383,7 @@
     function deleteModule(id) {
         if(confirm("Vuoi davvero eliminare questo argomento?")) {
             savedModules = savedModules.filter(m => m.id !== id);
-            try { localStorage.setItem('tablet_director_db_v7', JSON.stringify(savedModules)); } catch(e) {}
+            try { localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules)); } catch(e) {}
             filterLibrary();
         }
     }
@@ -365,12 +427,12 @@
         return `<div class="bullet-row"><i class="fa-solid ${iconType} bullet-icon ${iconColor}"></i><span>${clean}</span></div>`;
     }
 
-    // PARSER V7 ANTIPROIETTILE E CLEANER TITOLI
+    // PARSER V8 ANTIPROIETTILE (Legge AULA, CAPITOLO, ARGOMENTO)
     function processContent(txt) {
         let parsedData = {
             id: 'mod_' + Date.now(),
             aula: "Aula Non Definita",
-            obiettivo: "Obiettivo Non Definito",
+            capitolo: "Capitolo Non Definito",
             argomento: "Argomento Non Definito",
             slides: []
         };
@@ -380,7 +442,7 @@
 
         let checkContent = txt.replace(/\*/g, '');
         if (!/SLIDE/i.test(checkContent)) {
-            showError("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dall'IA.");
+            showError("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dal Master Prompt.");
             return;
         }
 
@@ -396,8 +458,11 @@
             if (tagCheckLineIncludes(uLine, 'AULA:')) {
                 parsedData.aula = extractValue(line, 'AULA:');
             }
-            else if (tagCheckLineIncludes(uLine, 'OBIETTIVO:')) {
-                parsedData.obiettivo = extractValue(line, 'OBIETTIVO:');
+            else if (tagCheckLineIncludes(uLine, 'CAPITOLO:')) {
+                parsedData.capitolo = extractValue(line, 'CAPITOLO:');
+            }
+            else if (tagCheckLineIncludes(uLine, 'OBIETTIVO:')) { // Retrocompatibilità
+                parsedData.capitolo = extractValue(line, 'OBIETTIVO:');
             }
             else if (tagCheckLineIncludes(uLine, 'ARGOMENTO:')) {
                 parsedData.argomento = extractValue(line, 'ARGOMENTO:');
@@ -453,7 +518,7 @@
 
         if(parsedData.slides.length > 0) {
             savedModules.push(parsedData);
-            try { localStorage.setItem('tablet_director_db_v7', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria del browser piena."); }
+            try { localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria del browser piena."); }
             navTo('library');
         } else {
             showError("Non sono riuscito a estrapolare le slide dal testo fornito.");
@@ -538,7 +603,7 @@
     // --- REGIA (SLIDE RENDERER) ---
     function renderSlide() {
         const slide = appData.slides[appData.currentIndex];
-        document.getElementById('mod-title').innerText = `${appData.obTitle} - ${appData.argTitle}`;
+        document.getElementById('mod-title').innerText = `${appData.capTitle} / ${appData.argTitle}`;
         document.getElementById('slide-title').innerText = slide.title;
         document.getElementById('slide-counter').innerText = `${appData.currentIndex + 1}/${appData.slides.length}`;
         
