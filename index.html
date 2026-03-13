@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tablet Director - Driving Leader</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        @import url('[https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap](https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap)');
         
         body {
             font-family: 'Outfit', sans-serif;
@@ -29,7 +29,7 @@
         #drop-zone {
             border: 3px dashed #3b82f6; border-radius: 1rem; background: #1e293b;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 35vh; margin-bottom: 1rem; cursor: pointer; transition: background 0.2s;
+            height: 30vh; margin-bottom: 1rem; cursor: pointer; transition: background 0.2s;
         }
         #drop-zone:active { background: #334155; }
 
@@ -39,10 +39,10 @@
         .card-quiz { background: linear-gradient(145deg, #7f1d1d, #991b1b); border-left: 6px solid #f87171; }
 
         .card-box { padding: 1rem 1.25rem; border-radius: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card-header { display: flex; align-items: center; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        .card-header { display: flex; align-items: center; font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         
-        /* Testi molto grandi e ravvicinati */
-        .content-text { font-size: 1.5rem; line-height: 1.4; font-weight: 400; }
+        /* Testi molto grandi e ravvicinati per lettura veloce */
+        .content-text { font-size: 1.5rem; line-height: 1.35; font-weight: 400; }
         .content-text strong { 
             color: #ffffff; 
             font-weight: 800; 
@@ -53,13 +53,13 @@
         }
         
         /* Auto-formattazione Liste */
-        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.6rem; }
-        .bullet-icon { margin-right: 0.75rem; margin-top: 0.35rem; font-size: 0.7em; flex-shrink: 0; }
+        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.4rem; }
+        .bullet-icon { margin-right: 0.75rem; margin-top: 0.35rem; opacity: 0.8; font-size: 0.6em; flex-shrink: 0; }
 
-        /* Bottoni Navigazione */
+        /* Bottoni Navigazione (Rimpiccioliti per salvare spazio) */
         .nav-btn {
-            flex: 1; padding: 0.75rem; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 0.75rem;
-            color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
+            flex: 1; padding: 0.6rem; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 0.5rem;
+            color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; height: 50px;
         }
         .nav-btn:active { transform: scale(0.95); }
         .btn-prev { background-color: #334155; }
@@ -81,29 +81,32 @@
 </head>
 <body>
 
-    <!-- VISTA 0: LIBRERIA (HOME) -->
+    <!-- VISTA 0: LIBRERIA (HOME CON ACCORDION) -->
     <div id="view-library" class="view active h-full p-4">
-        <div class="flex flex-col gap-4 mb-6 border-b border-slate-800 pb-4">
+        <!-- Header & Ricerca -->
+        <div class="flex flex-col gap-4 mb-4 border-b border-slate-800 pb-4 shrink-0">
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Regia</h1>
+                    <h1 class="text-3xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Director V7</h1>
                 </div>
                 <button onclick="navTo('upload')" class="bg-emerald-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition text-sm flex items-center active:scale-95">
-                    <i class="fa-solid fa-plus mr-2"></i> Nuovo
+                    <i class="fa-solid fa-plus mr-2"></i> Nuovo Modulo
                 </button>
             </div>
             
             <!-- Barra di Ricerca Globale -->
             <div class="relative w-full">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-bar" placeholder="Cerca argomento o parola chiave..." 
+                <input type="text" id="search-bar" placeholder="Cerca aula, obiettivo o parola chiave..." 
                        class="w-full bg-slate-800 border border-slate-600 text-white text-lg rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500"
                        onkeyup="filterLibrary()">
             </div>
         </div>
         
         <!-- Elenco Aule e Obiettivi -->
-        <div id="library-container" class="overflow-y-auto pb-10 space-y-6"></div>
+        <div id="library-container" class="overflow-y-auto pb-10 space-y-4">
+            <!-- Popolato da JS -->
+        </div>
     </div>
 
     <!-- VISTA 1: CARICAMENTO NUOVO MODULO -->
@@ -120,17 +123,22 @@
         </div>
 
         <div class="flex gap-3 h-32">
-            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-3 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-base" placeholder="...oppure INCOLLA il testo dell'IA qui"></textarea>
+            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-3 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-base" placeholder="...oppure INCOLLA il testo dell'IA qui e premi Salva"></textarea>
             <button onclick="loadFromPaste()" class="bg-emerald-600 text-white font-bold rounded-xl px-4 text-lg shadow-lg active:scale-95 transition flex flex-col items-center justify-center min-w-[90px]">
                 <i class="fa-solid fa-save text-xl mb-1"></i> Salva
             </button>
+        </div>
+        
+        <div id="error-msg" class="mt-4 text-red-400 font-bold bg-red-900/20 px-4 py-3 rounded-xl border border-red-500/30 hidden flex items-center text-sm">
+            <i class="fa-solid fa-triangle-exclamation text-xl mr-3"></i>
+            <span>Errore generico.</span>
         </div>
     </div>
 
     <!-- VISTA 2: IL GOBBO / REGIA -->
     <div id="view-director" class="view">
         <!-- Header Compatto -->
-        <div class="bg-slate-900 p-2 md:p-3 flex justify-between items-center border-b border-slate-800 shadow-md z-20 gap-2">
+        <div class="bg-slate-900 p-2 md:p-3 flex justify-between items-center border-b border-slate-800 shadow-md z-20 gap-2 shrink-0">
             <div class="flex-1 truncate pr-2">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate" id="mod-title">AULA / OBIETTIVO</p>
                 <h2 class="text-lg md:text-xl font-bold text-white truncate" id="slide-title">Titolo Slide</h2>
@@ -148,13 +156,13 @@
             <button onclick="exitDirector()" class="bg-slate-800 p-2 rounded-lg text-slate-400 active:bg-slate-700 shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
         </div>
 
-        <!-- Contenuto Scorrevole -->
-        <div id="slide-content" class="flex-1 overflow-y-auto p-3 space-y-3 pb-24">
+        <!-- Contenuto Scorrevole con meno padding -->
+        <div id="slide-content" class="flex-1 overflow-y-auto p-2 space-y-2 pb-20">
             <!-- Riempito via JS -->
         </div>
 
-        <!-- Footer Bottoni -->
-        <div class="absolute bottom-0 left-0 w-full p-3 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex gap-3 z-20 pb-4">
+        <!-- Footer Bottoni (Piccoli e fissi in basso) -->
+        <div class="absolute bottom-0 left-0 w-full p-2 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex gap-2 z-20">
             <button onclick="prevSlide()" class="nav-btn btn-prev"><i class="fa-solid fa-chevron-left mr-2"></i> Prec</button>
             <button onclick="nextSlide()" class="nav-btn btn-next">Avanti <i class="fa-solid fa-chevron-right ml-2"></i></button>
         </div>
@@ -162,20 +170,39 @@
 
 <script>
     // --- GESTIONE DATABASE LOCALE ---
-    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v4')) || [];
+    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v7')) || [];
 
-    let appData = { aulaTitle: "", obTitle: "", slides: [], currentIndex: 0 };
-    let timerInterval = null; let timeRemaining = 0; let timerRunning = false;
+    let appData = {
+        aulaTitle: "",
+        obTitle: "",
+        argTitle: "",
+        slides: [],
+        currentIndex: 0
+    };
+
+    let timerInterval = null;
+    let timeRemaining = 0;
+    let timerRunning = false;
 
     function navTo(viewId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById('view-' + viewId).classList.add('active');
-        if(viewId === 'library') { document.getElementById('search-bar').value = ''; renderLibrary(); }
-        if(viewId === 'upload') { document.getElementById('file-input').value = ""; document.getElementById('paste-area').value = ""; }
+        
+        if(viewId === 'library') {
+            document.getElementById('search-bar').value = '';
+            renderLibrary();
+        }
+        if(viewId === 'upload') {
+            document.getElementById('file-input').value = "";
+            document.getElementById('paste-area').value = "";
+            document.getElementById('error-msg').classList.add('hidden');
+        }
     }
 
-    // --- RICERCA E RENDERING LIBRERIA ---
-    function filterLibrary() { renderLibrary(document.getElementById('search-bar').value.toLowerCase()); }
+    // --- RICERCA E RENDERING LIBRERIA (GERARCHIA A 3 LIVELLI) ---
+    function filterLibrary() {
+        renderLibrary(document.getElementById('search-bar').value.toLowerCase());
+    }
 
     function renderLibrary(query = '') {
         const container = document.getElementById('library-container');
@@ -188,55 +215,101 @@
 
         let filtered = savedModules.filter(m => {
             if(!query) return true;
-            let textToSearch = (m.aula + " " + m.obiettivo + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
+            let textToSearch = (m.aula + " " + m.obiettivo + " " + m.argomento + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
             return textToSearch.includes(query);
         });
 
         if (filtered.length === 0) {
-            container.innerHTML = `<div class="text-center py-10 text-slate-500 italic">Nessun risultato trovato.</div>`;
+            container.innerHTML = `<div class="text-center py-10 text-slate-500 italic">Nessun risultato trovato per la ricerca.</div>`;
             return;
         }
 
+        // Raggruppa i dati: Aula -> Obiettivo -> Array di Moduli (Argomenti)
         let grouped = {};
         filtered.forEach(mod => {
             let aula = mod.aula || "Varie";
             let ob = mod.obiettivo || "Generico";
+            
             if(!grouped[aula]) grouped[aula] = {};
             if(!grouped[aula][ob]) grouped[aula][ob] = [];
             grouped[aula][ob].push(mod);
         });
 
+        let aulaIndex = 0;
+        
+        // Ordina e Stampa le Aule
         Object.keys(grouped).sort((a,b) => a.localeCompare(b)).forEach(aulaName => {
-            let aulaHtml = `<div class="mb-6"><h2 class="text-xl font-black text-white bg-slate-800 p-3 rounded-xl border border-slate-700 mb-3 uppercase tracking-wider"><i class="fa-solid fa-school text-blue-500 mr-2"></i> ${aulaName}</h2><div class="space-y-4 pl-2">`;
+            let isExpanded = query !== '' ? '' : 'hidden';
+            let iconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
+
+            let aulaHtml = `
+                <div class="glass-panel overflow-hidden transition-all border border-slate-700">
+                    <div class="p-4 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
+                         onclick="document.getElementById('aula-content-${aulaIndex}').classList.toggle('hidden'); 
+                                  document.getElementById('aula-icon-${aulaIndex}').classList.toggle('fa-chevron-up'); 
+                                  document.getElementById('aula-icon-${aulaIndex}').classList.toggle('fa-chevron-down');">
+                        <h2 class="text-xl font-black text-white uppercase tracking-wider flex items-center">
+                            <i class="fa-solid fa-school text-blue-500 mr-3"></i> ${aulaName}
+                        </h2>
+                        <i id="aula-icon-${aulaIndex}" class="fa-solid ${iconClass} text-slate-400 text-xl transition-transform"></i>
+                    </div>
+                    <div id="aula-content-${aulaIndex}" class="space-y-3 p-3 pt-0 border-t border-slate-700/50 ${isExpanded}">
+            `;
+            
+            let obIndex = 0;
+            // Ordina e Stampa gli Obiettivi dentro l'Aula
             Object.keys(grouped[aulaName]).sort((a,b) => a.localeCompare(b)).forEach(obName => {
-                aulaHtml += `<div class="border-l-2 border-slate-600 pl-4 mb-4">
-                                <h3 class="text-lg font-bold text-blue-400 mb-2">${obName}</h3>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">`;
+                let obExpanded = query !== '' ? '' : 'hidden';
+                let obIconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
+
+                aulaHtml += `
+                    <div class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/40 shadow-inner">
+                        <div class="p-3 bg-slate-800/40 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
+                             onclick="document.getElementById('ob-content-${aulaIndex}-${obIndex}').classList.toggle('hidden'); 
+                                      document.getElementById('ob-icon-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-up'); 
+                                      document.getElementById('ob-icon-${aulaIndex}-${obIndex}').classList.toggle('fa-chevron-down');">
+                            <h3 class="text-base font-bold text-blue-300 flex items-center"><i class="fa-solid fa-bullseye mr-2 text-sm"></i> ${obName}</h3>
+                            <i id="ob-icon-${aulaIndex}-${obIndex}" class="fa-solid ${obIconClass} text-slate-500 transition-transform"></i>
+                        </div>
+                        <div id="ob-content-${aulaIndex}-${obIndex}" class="grid grid-cols-1 gap-2 p-2 ${obExpanded}">
+                `;
+                
+                // Stampa gli Argomenti (I file caricati)
                 grouped[aulaName][obName].forEach(mod => {
+                    // Calcola il tempo totale dell'argomento
+                    let totalMins = mod.slides.reduce((acc, curr) => acc + (curr.time || 5), 0);
+                    
                     aulaHtml += `
-                        <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 flex justify-between items-center shadow-md">
+                        <div class="bg-slate-800 border border-slate-600 rounded-xl p-3 flex justify-between items-center shadow-md hover:border-blue-500 transition-colors group">
                             <div class="truncate pr-2 cursor-pointer flex-grow" onclick="startModule('${mod.id}')">
-                                <h4 class="font-bold text-white text-base truncate">${mod.slides[0]?.title || "Lezione"}</h4>
-                                <p class="text-slate-400 text-xs mt-1"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> ${mod.slides.length} slide</p>
+                                <h4 class="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors">${mod.argomento || "Lezione"}</h4>
+                                <div class="flex gap-3 mt-1">
+                                    <p class="text-slate-400 text-xs"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> ${mod.slides.length} slide</p>
+                                    <p class="text-yellow-500 text-xs font-mono"><i class="fa-regular fa-clock mr-1"></i> ~${totalMins} min tot.</p>
+                                </div>
                             </div>
-                            <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 p-2 rounded-lg text-red-500 hover:bg-red-600 hover:text-white transition shrink-0">
-                                <i class="fa-solid fa-trash"></i>
+                            <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 p-3 rounded-lg text-red-500 hover:bg-red-600 hover:text-white border border-slate-700 hover:border-red-500 transition shrink-0 active:scale-95">
+                                <i class="fa-solid fa-trash text-sm"></i>
                             </button>
                         </div>
                     `;
                 });
                 aulaHtml += `</div></div>`;
+                obIndex++;
             });
             aulaHtml += `</div></div>`;
             container.innerHTML += aulaHtml;
+            aulaIndex++;
         });
     }
 
+    // --- AZIONI SUI MODULI ---
     function startModule(id) {
         const mod = savedModules.find(m => m.id === id);
         if(mod) {
             appData.aulaTitle = mod.aula;
             appData.obTitle = mod.obiettivo;
+            appData.argTitle = mod.argomento;
             appData.slides = mod.slides;
             appData.currentIndex = 0;
             renderSlide();
@@ -245,14 +318,17 @@
     }
 
     function deleteModule(id) {
-        if(confirm("Vuoi davvero eliminare questo modulo?")) {
+        if(confirm("Vuoi davvero eliminare questo argomento?")) {
             savedModules = savedModules.filter(m => m.id !== id);
-            try { localStorage.setItem('tablet_director_db_v4', JSON.stringify(savedModules)); } catch(e) {}
+            try { localStorage.setItem('tablet_director_db_v7', JSON.stringify(savedModules)); } catch(e) {}
             filterLibrary();
         }
     }
 
-    function exitDirector() { stopTimer(); navTo('library'); }
+    function exitDirector() {
+        stopTimer();
+        navTo('library');
+    }
 
     // --- LETTURA E PARSING DATI ---
     document.getElementById('file-input').addEventListener('change', function(e) {
@@ -265,91 +341,102 @@
     function loadFromPaste() {
         const txt = document.getElementById('paste-area').value;
         if(txt.trim().length > 10) processContent(txt);
-        else alert("Incolla del testo valido!");
+        else showError("Incolla del testo valido!");
+    }
+    
+    function showError(msg) {
+        const errorEl = document.getElementById('error-msg');
+        errorEl.querySelector('span').innerText = msg;
+        errorEl.classList.remove('hidden');
     }
 
-    // Funzione intelligente per formattare a elenco puntato
     function formatContentLine(line, section) {
         let clean = line.trim();
         if (!clean) return ""; 
-        
-        // Rimuove eventuali trattini o pallini preesistenti per uniformare
         clean = clean.replace(/^[\-\•\*\>]\s*/, '');
         
         let iconColor = "text-blue-300";
-        let iconType = "fa-check"; // Default spunta
+        let iconType = "fa-check"; 
         
-        if (section === 'regia') {
-            iconColor = "text-yellow-500";
-            iconType = "fa-arrow-right";
-        } else if (section === 'focus') {
-            iconColor = "text-red-400";
-            iconType = "fa-triangle-exclamation";
-        }
+        if (section === 'regia') { iconColor = "text-yellow-500"; iconType = "fa-arrow-right"; } 
+        else if (section === 'focus') { iconColor = "text-red-400"; iconType = "fa-triangle-exclamation"; }
 
         return `<div class="bullet-row"><i class="fa-solid ${iconType} bullet-icon ${iconColor}"></i><span>${clean}</span></div>`;
     }
 
-    // PARSER ANTIPROIETTILE (Ignora formattazioni sfalsate dell'IA)
+    // PARSER V7 ANTIPROIETTILE E CLEANER TITOLI
     function processContent(txt) {
         let parsedData = {
             id: 'mod_' + Date.now(),
             aula: "Aula Non Definita",
             obiettivo: "Obiettivo Non Definito",
+            argomento: "Argomento Non Definito",
             slides: []
         };
         
         let lines = txt.split('\n');
         let currentSlide = null;
 
-        // Controllo base super flessibile: basta che ci sia la parola SLIDE
-        if (!/SLIDE/i.test(txt)) {
-            alert("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dall'IA.");
+        let checkContent = txt.replace(/\*/g, '');
+        if (!/SLIDE/i.test(checkContent)) {
+            showError("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dall'IA.");
             return;
         }
 
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
-            if (!line || line.startsWith('```')) continue; // Ignora righe vuote e markdown
+            if (!line || line.startsWith('```')) continue;
             
-            // Pulisce TUTTI i caratteri speciali all'inizio e alla fine (asterischi, cancelletti, trattini)
-            let tagCheckLine = line.replace(/^[\*\#\-\s]+/, '').replace(/[\*\s]+$/, '').toUpperCase();
+            let cleanLine = line.replace(/^\*+/, '').replace(/\*+$/, '').trim();
+            let uLine = cleanLine.toUpperCase();
 
-            if (tagCheckLine.includes('[INIZIO') || tagCheckLine.includes('[FINE')) continue;
+            if (uLine.includes('[INIZIO') || uLine.includes('[FINE')) continue;
 
-            if (tagCheckLine.startsWith('AULA:')) {
-                parsedData.aula = line.substring(line.toUpperCase().indexOf('AULA:') + 5).replace(/[\*\#]/g, '').trim();
+            if (tagCheckLineIncludes(uLine, 'AULA:')) {
+                parsedData.aula = extractValue(line, 'AULA:');
             }
-            else if (tagCheckLine.startsWith('OBIETTIVO:')) {
-                parsedData.obiettivo = line.substring(line.toUpperCase().indexOf('OBIETTIVO:') + 10).replace(/[\*\#]/g, '').trim();
+            else if (tagCheckLineIncludes(uLine, 'OBIETTIVO:')) {
+                parsedData.obiettivo = extractValue(line, 'OBIETTIVO:');
             }
-            else if (tagCheckLine.startsWith('SLIDE:')) {
-                let slideTitle = line.substring(line.toUpperCase().indexOf('SLIDE:') + 6).replace(/[\*\#\-]/g, '').trim();
+            else if (tagCheckLineIncludes(uLine, 'ARGOMENTO:')) {
+                parsedData.argomento = extractValue(line, 'ARGOMENTO:');
+            }
+            else if (uLine.match(/^[-]*\s*SLIDE/)) {
+                let slideTitle = extractValue(line, 'SLIDE:');
+                if(!slideTitle) slideTitle = line.replace(/^[-]*\s*SLIDE\s*[0-9]*/i, '').replace(/^[-]+/, '').trim();
+                
+                // PULIZIA DEL TITOLO DA "PAGINA X" o "PAG. X"
+                slideTitle = slideTitle.replace(/PAG(INA|\.)?\s*\d+\s*(DI\s*\d+)?/gi, '').replace(/^[-:\s]+/, '').trim();
+
                 currentSlide = {
-                    title: slideTitle || "Slide " + (parsedData.slides.length + 1),
+                    title: slideTitle || ("Slide " + (parsedData.slides.length + 1)),
                     time: 5,
                     frase: "", regia: "", focus: "", currentSection: null
                 };
                 parsedData.slides.push(currentSlide);
             }
             else if (currentSlide) {
-                if (tagCheckLine.startsWith('TEMPO:')) {
-                    let tStr = line.substring(line.toUpperCase().indexOf('TEMPO:') + 6).trim();
+                if (tagCheckLineIncludes(uLine, 'TEMPO:')) {
+                    let tStr = extractValue(line, 'TEMPO:');
                     currentSlide.time = parseInt(tStr.replace(/[^0-9]/g, '')) || 5;
                 }
-                else if (tagCheckLine.startsWith('FRASE CHIAVE:')) {
+                else if (tagCheckLineIncludes(uLine, 'FRASE CHIAVE')) {
                     currentSlide.currentSection = 'frase';
-                    let content = line.substring(line.toUpperCase().indexOf('CHIAVE:') + 7).trim();
+                    let content = extractValue(line, 'CHIAVE:');
+                    if(!content) content = line.replace(/.*FRASE CHIAVE/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.frase += formatContentLine(content, 'frase');
                 }
-                else if (tagCheckLine.startsWith('REGIA:')) {
+                else if (tagCheckLineIncludes(uLine, 'REGIA')) {
                     currentSlide.currentSection = 'regia';
-                    let content = line.substring(line.toUpperCase().indexOf('REGIA:') + 6).trim();
+                    let content = extractValue(line, 'REGIA:');
+                    if(!content) content = line.replace(/.*REGIA/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.regia += formatContentLine(content, 'regia');
                 }
-                else if (tagCheckLine.startsWith('FOCUS QUIZ:') || tagCheckLine.startsWith('FOCUS:')) {
+                else if (tagCheckLineIncludes(uLine, 'FOCUS QUIZ') || tagCheckLineIncludes(uLine, 'FOCUS:')) {
                     currentSlide.currentSection = 'focus';
-                    let content = line.substring(line.toUpperCase().indexOf('FOCUS') + 11).replace('QUIZ:', '').replace(':', '').trim();
+                    let content = extractValue(line, 'FOCUS QUIZ:');
+                    if(!content) content = extractValue(line, 'FOCUS:');
+                    if(!content) content = line.replace(/.*FOCUS(?: QUIZ)?/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
                     if(content) currentSlide.focus += formatContentLine(content, 'focus');
                 }
                 else if (currentSlide.currentSection) {
@@ -358,16 +445,31 @@
             }
         }
 
+        // Fix fall-back argomento se assente
+        if (!parsedData.argomento || parsedData.argomento === "Argomento Non Definito") {
+            parsedData.argomento = parsedData.slides[0]?.title || "Lezione Generale";
+        }
+
         if(parsedData.slides.length > 0) {
             savedModules.push(parsedData);
-            try { localStorage.setItem('tablet_director_db_v4', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria piena."); }
+            try { localStorage.setItem('tablet_director_db_v7', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria del browser piena."); }
             navTo('library');
         } else {
-            alert("Errore di lettura. Formattazione non riconosciuta.");
+            showError("Non sono riuscito a estrapolare le slide dal testo fornito.");
         }
     }
 
-    // Formattatore Grassetto
+    function tagCheckLineIncludes(uLine, tag) { return uLine.replace(/[\*\#\-]/g, '').includes(tag.replace(/[\*\#\-]/g, '')); }
+    
+    function extractValue(line, tag) {
+        let uLine = line.toUpperCase();
+        let idx = uLine.indexOf(tag);
+        if (idx !== -1) {
+            return line.substring(idx + tag.length).replace(/^[\*\#\-:\s]+/, '').trim();
+        }
+        return "";
+    }
+
     function formatBold(text) {
         if(!text) return "";
         return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -421,7 +523,7 @@
 
     function resetTimer(minutes) {
         stopTimer();
-        timeRemaining = minutes * 60;
+        timeRemaining = (minutes || 5) * 60;
         document.getElementById('slide-timer').classList.remove('timer-ended');
         updateTimerDisplay();
     }
@@ -435,11 +537,11 @@
     // --- REGIA (SLIDE RENDERER) ---
     function renderSlide() {
         const slide = appData.slides[appData.currentIndex];
-        document.getElementById('mod-title').innerText = `${appData.aulaTitle} / ${appData.obTitle}`;
+        document.getElementById('mod-title').innerText = `${appData.obTitle} - ${appData.argTitle}`;
         document.getElementById('slide-title').innerText = slide.title;
         document.getElementById('slide-counter').innerText = `${appData.currentIndex + 1}/${appData.slides.length}`;
         
-        resetTimer(slide.time || 5);
+        resetTimer(slide.time);
 
         const contentDiv = document.getElementById('slide-content');
         contentDiv.innerHTML = '';
