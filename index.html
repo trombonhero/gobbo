@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tablet Director - Driving Leader</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        @import url('[https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap](https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap)');
         
         body {
             font-family: 'Outfit', sans-serif;
-            background-color: #09090b; /* Nero più profondo per far risaltare i testi */
+            background-color: #09090b; 
             color: #f8fafc;
             margin: 0;
             height: 100vh;
@@ -33,29 +33,30 @@
         }
         #drop-zone:active { background: #334155; }
 
-        /* Card Contenuti (Regia) - Ottimizzate per spazio e leggibilità */
+        /* Card Contenuti (Regia) */
         .card-chiave { background: linear-gradient(145deg, #1e3a8a, #1e40af); border-left: 6px solid #60a5fa; }
         .card-regia { background: linear-gradient(145deg, #78350f, #92400e); border-left: 6px solid #fbbf24; }
         .card-quiz { background: linear-gradient(145deg, #7f1d1d, #991b1b); border-left: 6px solid #f87171; }
 
-        .card-box { padding: 0.75rem 1rem; border-radius: 0.75rem; margin-bottom: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card-header { display: flex; align-items: center; font-weight: 800; font-size: 1rem; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 1px;}
+        .card-box { padding: 1rem 1.25rem; border-radius: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .card-header { display: flex; align-items: center; font-weight: 800; font-size: 1.1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         
         /* Testi molto grandi e ravvicinati */
-        .content-text { font-size: 1.6rem; line-height: 1.35; font-weight: 400; }
+        .content-text { font-size: 1.5rem; line-height: 1.4; font-weight: 400; }
         .content-text strong { 
             color: #ffffff; 
             font-weight: 800; 
-            background-color: rgba(0, 0, 0, 0.25); /* Evidenziazione netta */
+            background-color: rgba(0, 0, 0, 0.25);
             padding: 0 4px; 
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         
-        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.4rem; }
-        .bullet-icon { margin-right: 0.5rem; margin-top: 0.4rem; opacity: 0.8; font-size: 0.6em; flex-shrink: 0; }
+        /* Auto-formattazione Liste */
+        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.6rem; }
+        .bullet-icon { margin-right: 0.75rem; margin-top: 0.35rem; font-size: 0.7em; flex-shrink: 0; }
 
-        /* Bottoni Navigazione (Più piccoli) */
+        /* Bottoni Navigazione */
         .nav-btn {
             flex: 1; padding: 0.75rem; font-size: 1.2rem; font-weight: 800; border: none; border-radius: 0.75rem;
             color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center;
@@ -70,7 +71,6 @@
         .timer-running { color: #34d399 !important; border-color: #34d399 !important; }
         .timer-warning { color: #facc15 !important; border-color: #facc15 !important; }
         .timer-ended { color: #ef4444 !important; border-color: #ef4444 !important; animation: blink 1s infinite; }
-        
         @keyframes blink { 50% { opacity: 0.5; } }
 
         /* Scrollbar */
@@ -83,7 +83,6 @@
 
     <!-- VISTA 0: LIBRERIA (HOME) -->
     <div id="view-library" class="view active h-full p-4">
-        <!-- Header & Ricerca -->
         <div class="flex flex-col gap-4 mb-6 border-b border-slate-800 pb-4">
             <div class="flex justify-between items-center">
                 <div>
@@ -97,16 +96,14 @@
             <!-- Barra di Ricerca Globale -->
             <div class="relative w-full">
                 <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-bar" placeholder="Cerca argomento, parola chiave o quiz..." 
+                <input type="text" id="search-bar" placeholder="Cerca argomento o parola chiave..." 
                        class="w-full bg-slate-800 border border-slate-600 text-white text-lg rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500"
                        onkeyup="filterLibrary()">
             </div>
         </div>
         
         <!-- Elenco Aule e Obiettivi -->
-        <div id="library-container" class="overflow-y-auto pb-10 space-y-6">
-            <!-- Popolato da JS -->
-        </div>
+        <div id="library-container" class="overflow-y-auto pb-10 space-y-6"></div>
     </div>
 
     <!-- VISTA 1: CARICAMENTO NUOVO MODULO -->
@@ -156,7 +153,7 @@
             <!-- Riempito via JS -->
         </div>
 
-        <!-- Footer Bottoni (Piccoli e fissi in basso) -->
+        <!-- Footer Bottoni -->
         <div class="absolute bottom-0 left-0 w-full p-3 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex gap-3 z-20 pb-4">
             <button onclick="prevSlide()" class="nav-btn btn-prev"><i class="fa-solid fa-chevron-left mr-2"></i> Prec</button>
             <button onclick="nextSlide()" class="nav-btn btn-next">Avanti <i class="fa-solid fa-chevron-right ml-2"></i></button>
@@ -165,38 +162,20 @@
 
 <script>
     // --- GESTIONE DATABASE LOCALE ---
-    // Struttura: array di oggetti { id, aula, obiettivo, slides: [...] }
-    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v3')) || [];
+    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v4')) || [];
 
-    let appData = {
-        aulaTitle: "",
-        obTitle: "",
-        slides: [],
-        currentIndex: 0
-    };
-
-    let timerInterval = null;
-    let timeRemaining = 0;
-    let timerRunning = false;
+    let appData = { aulaTitle: "", obTitle: "", slides: [], currentIndex: 0 };
+    let timerInterval = null; let timeRemaining = 0; let timerRunning = false;
 
     function navTo(viewId) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById('view-' + viewId).classList.add('active');
-        
-        if(viewId === 'library') {
-            document.getElementById('search-bar').value = '';
-            renderLibrary();
-        }
-        if(viewId === 'upload') {
-            document.getElementById('file-input').value = "";
-            document.getElementById('paste-area').value = "";
-        }
+        if(viewId === 'library') { document.getElementById('search-bar').value = ''; renderLibrary(); }
+        if(viewId === 'upload') { document.getElementById('file-input').value = ""; document.getElementById('paste-area').value = ""; }
     }
 
-    // --- RICERCA E RENDERING LIBRERIA (RAGGRUPPATA) ---
-    function filterLibrary() {
-        renderLibrary(document.getElementById('search-bar').value.toLowerCase());
-    }
+    // --- RICERCA E RENDERING LIBRERIA ---
+    function filterLibrary() { renderLibrary(document.getElementById('search-bar').value.toLowerCase()); }
 
     function renderLibrary(query = '') {
         const container = document.getElementById('library-container');
@@ -207,7 +186,6 @@
             return;
         }
 
-        // Filtra i moduli
         let filtered = savedModules.filter(m => {
             if(!query) return true;
             let textToSearch = (m.aula + " " + m.obiettivo + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
@@ -219,28 +197,21 @@
             return;
         }
 
-        // Raggruppa per Aula -> Obiettivo
         let grouped = {};
         filtered.forEach(mod => {
             let aula = mod.aula || "Varie";
             let ob = mod.obiettivo || "Generico";
-            
             if(!grouped[aula]) grouped[aula] = {};
             if(!grouped[aula][ob]) grouped[aula][ob] = [];
             grouped[aula][ob].push(mod);
         });
 
-        // Ordina Aule
         Object.keys(grouped).sort((a,b) => a.localeCompare(b)).forEach(aulaName => {
             let aulaHtml = `<div class="mb-6"><h2 class="text-xl font-black text-white bg-slate-800 p-3 rounded-xl border border-slate-700 mb-3 uppercase tracking-wider"><i class="fa-solid fa-school text-blue-500 mr-2"></i> ${aulaName}</h2><div class="space-y-4 pl-2">`;
-            
-            // Ordina Obiettivi
             Object.keys(grouped[aulaName]).sort((a,b) => a.localeCompare(b)).forEach(obName => {
                 aulaHtml += `<div class="border-l-2 border-slate-600 pl-4 mb-4">
                                 <h3 class="text-lg font-bold text-blue-400 mb-2">${obName}</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">`;
-                
-                // Genera Card Moduli
                 grouped[aulaName][obName].forEach(mod => {
                     aulaHtml += `
                         <div class="bg-slate-800/80 border border-slate-700 rounded-xl p-4 flex justify-between items-center shadow-md">
@@ -261,7 +232,6 @@
         });
     }
 
-    // --- AZIONI SUI MODULI ---
     function startModule(id) {
         const mod = savedModules.find(m => m.id === id);
         if(mod) {
@@ -277,15 +247,12 @@
     function deleteModule(id) {
         if(confirm("Vuoi davvero eliminare questo modulo?")) {
             savedModules = savedModules.filter(m => m.id !== id);
-            try { localStorage.setItem('tablet_director_db_v3', JSON.stringify(savedModules)); } catch(e) {}
+            try { localStorage.setItem('tablet_director_db_v4', JSON.stringify(savedModules)); } catch(e) {}
             filterLibrary();
         }
     }
 
-    function exitDirector() {
-        stopTimer();
-        navTo('library');
-    }
+    function exitDirector() { stopTimer(); navTo('library'); }
 
     // --- LETTURA E PARSING DATI ---
     document.getElementById('file-input').addEventListener('change', function(e) {
@@ -301,16 +268,29 @@
         else alert("Incolla del testo valido!");
     }
 
-    function formatContentLine(line) {
+    // Funzione intelligente per formattare a elenco puntato
+    function formatContentLine(line, section) {
         let clean = line.trim();
         if (!clean) return ""; 
-        if (clean.startsWith('-')) {
-            let text = clean.substring(1).trim();
-            return `<div class="bullet-row"><i class="fa-solid fa-circle bullet-icon text-blue-500"></i><span>${text}</span></div>`;
+        
+        // Rimuove eventuali trattini o pallini preesistenti per uniformare
+        clean = clean.replace(/^[\-\•\*\>]\s*/, '');
+        
+        let iconColor = "text-blue-300";
+        let iconType = "fa-check"; // Default spunta
+        
+        if (section === 'regia') {
+            iconColor = "text-yellow-500";
+            iconType = "fa-arrow-right";
+        } else if (section === 'focus') {
+            iconColor = "text-red-400";
+            iconType = "fa-triangle-exclamation";
         }
-        return `<div class="mb-1">${clean}</div>`;
+
+        return `<div class="bullet-row"><i class="fa-solid ${iconType} bullet-icon ${iconColor}"></i><span>${clean}</span></div>`;
     }
 
+    // PARSER ANTIPROIETTILE (Ignora formattazioni sfalsate dell'IA)
     function processContent(txt) {
         let parsedData = {
             id: 'mod_' + Date.now(),
@@ -322,70 +302,72 @@
         let lines = txt.split('\n');
         let currentSlide = null;
 
+        // Controllo base super flessibile: basta che ci sia la parola SLIDE
+        if (!/SLIDE/i.test(txt)) {
+            alert("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dall'IA.");
+            return;
+        }
+
         for (let i = 0; i < lines.length; i++) {
             let line = lines[i].trim();
-            if (line.startsWith('```')) continue;
+            if (!line || line.startsWith('```')) continue; // Ignora righe vuote e markdown
             
-            let cleanLine = line.replace(/^\*+/, '').replace(/\*+$/, '').trim();
-            let uLine = cleanLine.toUpperCase();
+            // Pulisce TUTTI i caratteri speciali all'inizio e alla fine (asterischi, cancelletti, trattini)
+            let tagCheckLine = line.replace(/^[\*\#\-\s]+/, '').replace(/[\*\s]+$/, '').toUpperCase();
 
-            // Estrazione Gerarchia
-            if (uLine.startsWith('# AULA:')) {
-                parsedData.aula = cleanLine.substring(7).trim();
+            if (tagCheckLine.includes('[INIZIO') || tagCheckLine.includes('[FINE')) continue;
+
+            if (tagCheckLine.startsWith('AULA:')) {
+                parsedData.aula = line.substring(line.toUpperCase().indexOf('AULA:') + 5).replace(/[\*\#]/g, '').trim();
             }
-            else if (uLine.startsWith('## OBIETTIVO:')) {
-                parsedData.obiettivo = cleanLine.substring(13).trim();
+            else if (tagCheckLine.startsWith('OBIETTIVO:')) {
+                parsedData.obiettivo = line.substring(line.toUpperCase().indexOf('OBIETTIVO:') + 10).replace(/[\*\#]/g, '').trim();
             }
-            // Estrazione Slide
-            else if (uLine.match(/^[-]+\s*SLIDE/)) {
-                let colonIdx = cleanLine.indexOf(':');
-                let slideTitle = colonIdx !== -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/^[-]+\s*SLIDE\s*[0-9]*/i, '').replace(/^[-]+/, '').trim();
-                
+            else if (tagCheckLine.startsWith('SLIDE:')) {
+                let slideTitle = line.substring(line.toUpperCase().indexOf('SLIDE:') + 6).replace(/[\*\#\-]/g, '').trim();
                 currentSlide = {
                     title: slideTitle || "Slide " + (parsedData.slides.length + 1),
-                    time: 5, // Default 5 min
+                    time: 5,
                     frase: "", regia: "", focus: "", currentSection: null
                 };
                 parsedData.slides.push(currentSlide);
             }
             else if (currentSlide) {
-                if (uLine.includes('⏳ TEMPO:')) {
-                    let tStr = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+                if (tagCheckLine.startsWith('TEMPO:')) {
+                    let tStr = line.substring(line.toUpperCase().indexOf('TEMPO:') + 6).trim();
                     currentSlide.time = parseInt(tStr.replace(/[^0-9]/g, '')) || 5;
                 }
-                else if (uLine.includes('FRASE CHIAVE')) {
+                else if (tagCheckLine.startsWith('FRASE CHIAVE:')) {
                     currentSlide.currentSection = 'frase';
-                    let colonIdx = cleanLine.indexOf(':');
-                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*FRASE CHIAVE/i, '').trim();
-                    if(content) currentSlide.frase += formatContentLine(content);
+                    let content = line.substring(line.toUpperCase().indexOf('CHIAVE:') + 7).trim();
+                    if(content) currentSlide.frase += formatContentLine(content, 'frase');
                 }
-                else if (uLine.includes('REGIA')) {
+                else if (tagCheckLine.startsWith('REGIA:')) {
                     currentSlide.currentSection = 'regia';
-                    let colonIdx = cleanLine.indexOf(':');
-                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*REGIA/i, '').trim();
-                    if(content) currentSlide.regia += formatContentLine(content);
+                    let content = line.substring(line.toUpperCase().indexOf('REGIA:') + 6).trim();
+                    if(content) currentSlide.regia += formatContentLine(content, 'regia');
                 }
-                else if (uLine.includes('FOCUS QUIZ') || (uLine.includes('FOCUS') && uLine.includes('🎯'))) {
+                else if (tagCheckLine.startsWith('FOCUS QUIZ:') || tagCheckLine.startsWith('FOCUS:')) {
                     currentSlide.currentSection = 'focus';
-                    let colonIdx = cleanLine.indexOf(':');
-                    let content = colonIdx > -1 ? cleanLine.substring(colonIdx + 1).trim() : cleanLine.replace(/.*FOCUS(?: QUIZ)?/i, '').trim();
-                    if(content) currentSlide.focus += formatContentLine(content);
+                    let content = line.substring(line.toUpperCase().indexOf('FOCUS') + 11).replace('QUIZ:', '').replace(':', '').trim();
+                    if(content) currentSlide.focus += formatContentLine(content, 'focus');
                 }
                 else if (currentSlide.currentSection) {
-                    currentSlide[currentSlide.currentSection] += formatContentLine(line);
+                    currentSlide[currentSlide.currentSection] += formatContentLine(line, currentSlide.currentSection);
                 }
             }
         }
 
         if(parsedData.slides.length > 0) {
             savedModules.push(parsedData);
-            try { localStorage.setItem('tablet_director_db_v3', JSON.stringify(savedModules)); } catch(e) { alert("Memoria piena."); }
+            try { localStorage.setItem('tablet_director_db_v4', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria piena."); }
             navTo('library');
         } else {
-            alert("Errore di lettura: Nessuna slide trovata. Assicurati di usare il Master Prompt aggiornato con i tag '# AULA', '## OBIETTIVO' e '--- SLIDE'.");
+            alert("Errore di lettura. Formattazione non riconosciuta.");
         }
     }
 
+    // Formattatore Grassetto
     function formatBold(text) {
         if(!text) return "";
         return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -393,11 +375,8 @@
 
     // --- GESTIONE TIMER ---
     function toggleTimer() {
-        if (timerRunning) {
-            stopTimer();
-        } else {
-            startTimer();
-        }
+        if (timerRunning) stopTimer();
+        else startTimer();
     }
 
     function startTimer() {
@@ -460,7 +439,6 @@
         document.getElementById('slide-title').innerText = slide.title;
         document.getElementById('slide-counter').innerText = `${appData.currentIndex + 1}/${appData.slides.length}`;
         
-        // Imposta e resetta Timer
         resetTimer(slide.time || 5);
 
         const contentDiv = document.getElementById('slide-content');
