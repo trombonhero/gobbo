@@ -43,32 +43,35 @@
         .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3);}
         .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
         .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-        .btn-dispensa { background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; }
-        .btn-dispensa:hover { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245,158,11,0.4); transform: translateY(-2px);}
+        .btn-dispensa { background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: bold; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3); }
+        .btn-dispensa:hover { background: linear-gradient(135deg, #f59e0b, #d97706); transform: translateY(-2px); }
 
         /* Stampa e PDF */
         #print-area { display: none; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* STILI DI STAMPA GLOBALI */
+        /* STILI STAMPA PDF (COMPATTI ED ELEGANTI COME RICHIESTO) */
         @media print {
             body { background-color: white !important; color: black !important; font-size: 10.5pt !important; height: auto !important; overflow: visible !important;}
             #app-ui, #maximize-backdrop { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
+            
             @page { margin: 1cm; }
+            
             .ui-header-box { display: none !important; }
             
-            /* Stampa Mappa/Matrice */
+            /* Intestazione Documento */
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; }
             .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
             .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
             .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
 
+            /* Mappa Tecnica */
             .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 10pt !important; line-height: 1.3 !important;}
             .incipit-globale strong { color: #b45309 !important; font-size: 11pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase;}
-            
             .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
             .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 10pt !important; line-height: 1.2 !important; page-break-after: avoid; }
             .pagina-row { display: flex; align-items: flex-start; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 6px;}
@@ -76,26 +79,27 @@
             .pagina-text { color: black !important; flex-grow: 1; }
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             
+            /* Matrici */
             .matrice-title { color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
             .matrice-row { display: flex; align-items: flex-start; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; font-style: normal !important; }
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .matrice-exp { display: block; font-size: 9pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
 
-            /* Stampa DISPENSA ALLIEVI (Riallineata al formato Mappa) */
-            .d-title { font-size: 16pt; font-weight: 900; color: #1e3a8a; margin-top: 5pt; margin-bottom: 15pt; text-transform: uppercase; }
-            .d-section { margin-bottom: 15pt; padding: 10px 15px; border-radius: 6px; page-break-inside: avoid; }
-            .d-section-title { font-size: 13pt; font-weight: 900; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 4px; margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; }
-            
+            /* Dispensa Allievi */
+            .dispensa-page { font-family: 'Georgia', serif; }
+            .d-header { text-align: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 25px; }
+            .d-meta { font-size: 10pt; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold;}
+            .d-title { font-size: 22pt; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase; line-height: 1.2;}
+            .d-section { margin-bottom: 20px; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
+            .d-section-title { font-size: 14pt; font-weight: 900; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; }
             .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
             .d-sacro ul { margin: 0; padding-left: 20px; }
-            .d-sacro li { margin-bottom: 6px; font-size: 10.5pt; line-height: 1.3; color: #000; }
-            
-            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 10.5pt; line-height: 1.4; color: #064e3b; }
-            
+            .d-sacro li { margin-bottom: 8px; font-size: 11pt; line-height: 1.4; color: #1e293b; }
+            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11.5pt; line-height: 1.5; color: #064e3b; font-style: italic; }
             .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
-            .d-quiz-item { margin-bottom: 8px; font-size: 10.5pt; line-height: 1.3; display: flex; align-items: flex-start;}
-            .d-quiz-item i { margin-top: 3px; margin-right: 8px; color: #f87171; font-size: 9pt;}
+            .d-quiz-item { margin-bottom: 10px; font-size: 11pt; line-height: 1.4; display: flex; align-items: flex-start;}
+            .d-quiz-item i { margin-top: 4px; margin-right: 8px; color: #f87171;}
             .d-quiz-item strong { color: #991b1b; }
         }
     </style>
@@ -248,7 +252,6 @@
 
                 <!-- CONTENITORE VISTA LETTURA (GRID) -->
                 <div id="read-view-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
-                    <!-- COLONNA MAPPA TECNICA (READER) -->
                     <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
@@ -264,7 +267,6 @@
                         <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                     </div>
 
-                    <!-- COLONNA MATRICE QUIZ (READER) -->
                     <div id="read-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
@@ -375,7 +377,7 @@
     ========================================================================== */
     function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
-            alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
+            alert("Attenzione: Il testo non contiene i delimitatori minimi necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
             return false;
         }
 
@@ -432,6 +434,8 @@
     function parseDispensa(text) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
+        // Intestazione neutra e professionale invece del finto logo
+        html += '<div class="d-header"><div class="d-meta">Scheda Tecnica Riepilogativa</div>';
         
         let inSacro = false;
         let inPratica = false;
@@ -442,38 +446,45 @@
             if(!l) return;
             let uL = l.toUpperCase();
 
-            // Rileva il TITOLO (Articolo di Legge o Sottotitolo della dispensa)
             if (uL.startsWith('TITOLO:')) {
                 let titleText = l.substring(7).trim();
-                html += `<h3 class="d-title">${titleText}</h3>`;
+                let mainTitle = titleText; let subTitle = "";
+                if(titleText.includes('-')) {
+                    mainTitle = titleText.split('-')[0].trim();
+                    subTitle = titleText.split('-')[1].trim();
+                }
+                html += `<h1 class="d-title">${mainTitle}</h1>`;
+                if(subTitle) html += `<p class="d-subtitle">${subTitle}</p>`;
+                html += '</div>'; // Chiude header
             }
             else if (uL.includes('IL TESTO SACRO:')) {
                 inSacro = true; inPratica = false; inQuiz = false;
                 html += `<div class="d-section d-sacro">
-                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma</div><ul>`;
+                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
             }
             else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
                 html += `<div class="d-section d-pratica">
-                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
+                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div><p>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
                 if(inSacro) html += `</ul></div>`;
-                if(inPratica) html += `</div>`;
+                if(inPratica) html += `</p></div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
                 html += `<div class="d-section d-quiz">
                             <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
-                // Formatting
+                // Rende grassetto le parti con ** **
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Toglie qualsiasi trattino o asterisco iniziale di formattazione
                 let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
                 if (inSacro && cleanLine) {
                     html += `<li>${cleanLine}</li>`;
-                } else if (inPratica && cleanLine) {
-                    html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
+                } else if (inPratica) {
+                    html += `${cleanLine}<br>`;
                 } else if (inQuiz && cleanLine) {
                     let qLine = cleanLine;
                     qLine = qLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>');
@@ -484,18 +495,17 @@
         });
 
         if(inSacro) html += `</ul></div>`;
-        if(inPratica) html += `</div>`;
+        if(inPratica) html += `</p></div>`;
         if(inQuiz) html += `</div>`;
         
-        html += '</div>'; 
+        html += '</div>'; // Chiude dispensa-page
         return html;
     }
 
-    // --- RENDER MAPPA TECNICA (IL TUO PARSER, CON UPDATE CAPITOLO E PARAGRAFO) ---
+    // --- RENDER MAPPA TECNICA (IL TUO PARSER) ---
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        // Inizializza i meta (mantenendo le chiavi "obiettivo" e "argomento" per non rompere la retrocompatibilità del DB locale)
         currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         lines.forEach(line => {
@@ -526,6 +536,7 @@
                 let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
+            // MANTIENE L'EMOJI ⚠️ O LA PAROLA TRAPPOLA
             else if (l.toUpperCase().includes('PAGINA') && l.includes('➔')) {
                 l = l.replace(/^\*\s*/, ''); 
                 
@@ -534,12 +545,20 @@
                 
                 let remaining = pageMatch ? l.substring(l.indexOf(':') + 1).trim() : l.trim();
                 
-                let trapSplit = remaining.split('⚠️');
-                let mainText = trapSplit[0].trim();
+                let upperRemaining = remaining.toUpperCase();
+                let trapIndex = upperRemaining.indexOf('TRAPPOLA');
                 
+                let mainText = remaining;
                 let trapText = "";
-                if(trapSplit[1]) {
-                    trapText = "⚠️ " + trapSplit[1].trim();
+
+                if(trapIndex !== -1) {
+                    mainText = remaining.substring(0, trapIndex).trim();
+                    let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
+                    trapText = "TRAPPOLA: " + afterTrap;
+                } else if(remaining.includes('⚠️')) {
+                    let trapSplit = remaining.split('⚠️');
+                    mainText = trapSplit[0].trim();
+                    if(trapSplit[1]) trapText = "⚠️ " + trapSplit[1].trim();
                 }
 
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -972,7 +991,6 @@
 
         if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
         
-        // Genera la stessa intestazione degli altri documenti PDF
         let printHeader = `
             <div class="print-header-container">
                 <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
