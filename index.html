@@ -84,13 +84,12 @@
 
             /* Stampa DISPENSA ALLIEVI (Speciale) */
             .dispensa-page { font-family: 'Georgia', serif; }
-            .d-header { text-align: center; border-bottom: 4px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 20px; }
-            .d-logo-placeholder { font-size: 10pt; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
-            .d-title { font-size: 24pt; font-weight: 900; color: #000; margin: 0; text-transform: uppercase; }
-            .d-subtitle { font-size: 12pt; color: #444; margin-top: 5px; font-style: italic; }
+            .d-header { text-align: center; border-bottom: 3px solid #1e3a8a; padding-bottom: 12px; margin-bottom: 25px; }
+            .d-meta { font-size: 10pt; color: #64748b; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; font-weight: bold;}
+            .d-title { font-size: 22pt; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase; line-height: 1.2;}
             
             .d-section { margin-bottom: 20px; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
-            .d-section-title { font-size: 14pt; font-weight: 900; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; }
+            .d-section-title { font-size: 14pt; font-weight: 900; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; display: flex; align-items: center; }
             
             .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
             .d-sacro ul { margin: 0; padding-left: 20px; }
@@ -99,7 +98,8 @@
             .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11.5pt; line-height: 1.5; color: #064e3b; font-style: italic; }
             
             .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
-            .d-quiz-item { margin-bottom: 8px; font-size: 11pt; line-height: 1.4; }
+            .d-quiz-item { margin-bottom: 10px; font-size: 11pt; line-height: 1.4; display: flex; align-items: flex-start;}
+            .d-quiz-item i { margin-top: 4px; margin-right: 8px; color: #f87171;}
             .d-quiz-item strong { color: #991b1b; }
         }
     </style>
@@ -309,7 +309,7 @@
     // Oggetti temporanei per il rendering corrente
     let currentDocMeta = { gen: {}, read: {} };
     let currentCsvData = { gen: [], read: [] };
-    let currentDispensaHtml = { gen: "", read: "" }; // Nuovo: salva l'HTML della dispensa per la stampa
+    let currentDispensaHtml = { gen: "", read: "" }; 
     
     let rawInputBuffer = "";
     let currentReaderDocId = null;
@@ -371,7 +371,6 @@
             return false;
         }
 
-        // Estrazione sicura delle tre sezioni
         let mappaRaw = "";
         let matriceRaw = "";
         let dispensaRaw = "";
@@ -405,7 +404,7 @@
             `;
         } else {
             currentDispensaHtml[prefix] = "";
-            btnContainer.innerHTML = ""; // Nasconde il bottone se non c'è la dispensa
+            btnContainer.innerHTML = ""; 
         }
 
         return true;
@@ -425,7 +424,8 @@
     function parseDispensa(text) {
         const lines = text.split('\n');
         let html = '<div class="dispensa-page">';
-        html += '<div class="d-header"><div class="d-logo-placeholder">[ LOGO AUTOSCUOLA ]</div>';
+        // Intestazione neutra e professionale invece del finto logo
+        html += '<div class="d-header"><div class="d-meta">Scheda Tecnica Riepilogativa</div>';
         
         let inSacro = false;
         let inPratica = false;
@@ -456,35 +456,36 @@
                 if(inSacro) html += `</ul></div>`;
                 inSacro = false; inPratica = true; inQuiz = false;
                 html += `<div class="d-section d-pratica">
-                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div><p>`;
+                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div>`;
             }
             else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
                 if(inSacro) html += `</ul></div>`;
-                if(inPratica) html += `</p></div>`;
+                if(inPratica) html += `</div>`;
                 inSacro = false; inPratica = false; inQuiz = true;
                 html += `<div class="d-section d-quiz">
                             <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
             }
             else {
-                // Contenuti
+                // Rende grassetto le parti con ** **
                 let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // Toglie qualsiasi trattino o asterisco iniziale di formattazione
+                let cleanLine = formattedLine.replace(/^[\-\*\•]\s*/, '').trim();
                 
-                if (inSacro && l.startsWith('-')) {
-                    html += `<li>${formattedLine.substring(1).trim()}</li>`;
-                } else if (inPratica) {
-                    html += `${formattedLine}<br>`;
-                } else if (inQuiz && l.startsWith('-')) {
-                    // Evidenzia visivamente VERO e FALSO nei quiz
-                    let qLine = formattedLine.substring(1).trim();
+                if (inSacro && cleanLine) {
+                    html += `<li>${cleanLine}</li>`;
+                } else if (inPratica && cleanLine) {
+                    html += `<p style="margin-bottom: 8px;">${cleanLine}</p>`;
+                } else if (inQuiz && cleanLine) {
+                    let qLine = cleanLine;
                     qLine = qLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>');
                     qLine = qLine.replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
-                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right" style="color:#f87171; margin-right:5px;"></i> ${qLine}</div>`;
+                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right"></i><div>${qLine}</div></div>`;
                 }
             }
         });
 
         if(inSacro) html += `</ul></div>`;
-        if(inPratica) html += `</p></div>`;
+        if(inPratica) html += `</div>`;
         if(inQuiz) html += `</div>`;
         
         html += '</div>'; // Chiude dispensa-page
@@ -823,7 +824,7 @@
                 editContent.classList.remove('hidden');
                 editContent.classList.add('flex');
                 btnToggle.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Torna alla Vista';
-                document.getElementById('read-dispensa-btn-container').style.display = 'none'; // Nasconde stampa
+                document.getElementById('read-dispensa-btn-container').style.display = 'none';
             }
         } else {
             viewContent.classList.remove('hidden');
