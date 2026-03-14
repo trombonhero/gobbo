@@ -17,6 +17,7 @@
             padding: 0;
         }
 
+        /* Stili per l'interfaccia Web (Dark Mode) */
         .app-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
         
@@ -31,7 +32,8 @@
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
+        /* Restyling pulito per le Matrici */
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: transparent;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
@@ -143,7 +145,7 @@
         document.getElementById('results-area').classList.remove('hidden');
     }
 
-    // --- RENDER MAPPA TECNICA (Aggiornato Parser TRAPPOLA) ---
+    // --- RENDER MAPPA TECNICA ---
     function renderMappa(text) {
         const lines = text.split('\n');
         let html = '';
@@ -175,7 +177,6 @@
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
             else if (l.toUpperCase().includes('PAGINA') && l.includes('➔')) {
-                // Pulizia iniziale riga
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:/i);
@@ -183,7 +184,6 @@
                 
                 let remaining = pageMatch ? l.substring(l.indexOf(':') + 1).trim() : l.trim();
                 
-                // Ricerca della parola TRAPPOLA (case insensitive) per dividere la riga
                 let upperRemaining = remaining.toUpperCase();
                 let trapIndex = upperRemaining.indexOf('TRAPPOLA');
                 
@@ -192,16 +192,13 @@
 
                 if(trapIndex !== -1) {
                     mainText = remaining.substring(0, trapIndex).trim();
-                    // Prende tutto dopo la parola TRAPPOLA (rimuovendo eventuali due punti e spazi)
                     let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
                     trapText = "TRAPPOLA: " + afterTrap;
                 }
 
-                // Applica il grassetto HTML
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Render HTML
                 html += `
                     <div class="pagina-row">
                         <div class="pagina-badge">${badgeText}</div>
@@ -225,7 +222,7 @@
         document.getElementById('mappa-render').innerHTML = headerHtml + html;
     }
 
-    // --- RENDER MATRICE ---
+    // --- RENDER MATRICE (Con Parser Robusto per CSV) ---
     function renderMatrice(text) {
         const lines = text.split('\n');
         let html = '';
@@ -239,7 +236,15 @@
             let l = line.trim();
             if(!l) return;
 
-            let isContinuation = l.match(/^[\-\*\•\>]/) || l.match(/^\.\.\./);
+            let upperL = l.toUpperCase();
+            
+            // Algoritmo tollerante per capire se la riga è un quiz o il titolo della radice
+            let isContinuation = false;
+            if (l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./)) {
+                isContinuation = true; // Inizia col trattino o puntini
+            } else if (l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ')) {
+                isContinuation = true; // Contiene la barra verticale della spiegazione o l'esito
+            }
 
             if (!isContinuation) {
                 currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
@@ -254,7 +259,8 @@
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
                 
-                let testoVisual = rawQuizText.replace(/^[\-\*\•\>]\s*/, '')
+                // Rimuove qualsiasi simbolo iniziale sgradito
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '')
                                    .replace(/\(V\)/i, '')
                                    .replace(/\(F\)/i, '')
                                    .replace(/VERO/i, '')
@@ -300,7 +306,7 @@
     // --- ESPORTAZIONE CSV ---
     function exportCSV() {
         if(csvDataArray.length <= 1) {
-            alert("Nessun dato matrice disponibile per l'esportazione.");
+            alert("Nessun dato matrice disponibile per l'esportazione. Assicurati di aver generato le matrici correttamente.");
             return;
         }
 
@@ -317,7 +323,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Matrici_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `Matrici_Quiz_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
