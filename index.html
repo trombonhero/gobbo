@@ -45,12 +45,18 @@
         #maximize-backdrop {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
             backdrop-filter: blur(4px);
             z-index: 90;
         }
         #maximize-backdrop.active { display: block; animation: fadeIn 0.2s; }
+
+        /* Risolve il blocco dell'interfaccia portando il contesto z-index in primo piano */
+        body.panel-maximized .view-section.active {
+            z-index: 9999 !important;
+            position: relative;
+        }
 
         /* Stili Mappa Tecnica */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
@@ -359,10 +365,20 @@
             panel.classList.remove('maximized-panel');
             backdrop.classList.remove('active');
             if(icon) { icon.classList.remove('fa-compress'); icon.classList.add('fa-expand'); }
+            
+            document.body.classList.remove('panel-maximized');
+            // Ripristina il backdrop alla root
+            document.body.appendChild(backdrop);
         } else {
+            // Sposta il backdrop ESATTAMENTE prima del pannello per condividere lo stacking context
+            // e sbloccare l'interfaccia oscurata!
+            panel.parentElement.insertBefore(backdrop, panel);
+            
             panel.classList.add('maximized-panel');
             backdrop.classList.add('active');
             if(icon) { icon.classList.remove('fa-expand'); icon.classList.add('fa-compress'); }
+            
+            document.body.classList.add('panel-maximized');
         }
     }
 
