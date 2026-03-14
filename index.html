@@ -27,10 +27,11 @@
         .pagina-text { color: #e2e8f0; }
         .pagina-trap { color: #f87171; font-weight: 600; }
 
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
-        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.25rem; padding-left: 1rem; font-size: 1rem; color: #cbd5e1;}
-        .v-badge { color: #10b981; font-weight: bold; margin-left: 0.5rem; }
-        .f-badge { color: #ef4444; font-weight: bold; margin-left: 0.5rem; }
+        /* Restyling per le Matrici a Radice Lunga */
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px;}
+        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.35rem; padding-left: 1rem; font-size: 1.05rem; color: #cbd5e1; font-style: italic;}
+        .v-badge { color: #10b981; font-weight: bold; margin-left: 0.5rem; font-style: normal; }
+        .f-badge { color: #ef4444; font-weight: bold; margin-left: 0.5rem; font-style: normal; }
 
         /* --- STILI SPECIFICI PER ESPORTAZIONE PDF (Stampa) --- */
         @media print {
@@ -60,7 +61,7 @@
             </div>
             <div>
                 <h1 class="text-3xl font-extrabold text-white m-0 tracking-tight">Driving Leader Studio</h1>
-                <p class="text-slate-400 font-medium">Generatore Mappe e Matrici CSV</p>
+                <p class="text-slate-400 font-medium">Generatore Mappe e Matrici CSV (Radici Profonde)</p>
             </div>
         </div>
 
@@ -92,7 +93,7 @@
             <!-- COLONNA MATRICE QUIZ -->
             <div id="matrice-container" class="glass-panel flex flex-col h-[600px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
-                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-table-cells mr-2"></i> Matrici Quiz</h2>
+                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz</h2>
                     <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow">
                         <i class="fa-solid fa-file-csv mr-2 text-white"></i> Scarica CSV
                     </button>
@@ -142,10 +143,8 @@
             } 
             // Rileva le Pagine
             else if (l.includes('PAGINA')) {
-                // Rimuove l'asterisco iniziale
                 l = l.replace(/^\*\s*/, '');
                 
-                // Cerca di dividere il numero pagina, il testo e la trappola
                 let pageMatch = l.match(/PAGINA\s*\d+:/i);
                 let badgeText = pageMatch ? pageMatch[0].replace(':', '') : "PAGINA";
                 
@@ -154,7 +153,6 @@
                 let mainText = trapSplit[0].trim();
                 let trapText = trapSplit[1] ? "⚠️ " + trapSplit[1].trim() : "";
 
-                // Formatta il grassetto
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
@@ -170,35 +168,50 @@
         document.getElementById('mappa-render').innerHTML = html;
     }
 
-    // --- RENDER MATRICE E PREPARAZIONE CSV ---
+    // --- RENDER MATRICE (RADICI PROFONDE) E PREPARAZIONE CSV ---
     function renderMatrice(text) {
         const lines = text.split('\n');
         let html = '';
         csvDataArray = []; // Resetta i dati CSV
-        csvDataArray.push(["Matrice Base", "Continuazione", "Esito (V/F)"]); // Intestazioni CSV
+        csvDataArray.push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)"]); // Intestazioni CSV aggiornate
 
-        let currentMatrice = "";
+        let currentMatriceVisual = ""; // Per l'HTML
+        let currentMatriceClean = "";  // Per il CSV (senza i puntini)
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
 
-            // Se la riga NON inizia con un trattino, è considerata una Matrice Base
+            // Se la riga NON inizia con un trattino, è la Radice (Matrice Base)
             if (!l.startsWith('-')) {
-                currentMatrice = l.replace(/[\[\]\*\#]/g, '').trim();
-                html += `<div class="matrice-title"><i class="fa-solid fa-puzzle-piece mr-2"></i>${currentMatrice}</div>`;
+                // Mantiene i puntini visivamente per l'HTML
+                currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
+                
+                // Rimuove i puntini finali per il foglio Excel CSV
+                currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
+                
+                html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } 
-            // Se inizia con un trattino, è una continuazione
+            // Se inizia con un trattino, è la Diramazione (Continuazione)
             else {
                 let isVero = l.toUpperCase().includes('(V)');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
-                let testo = l.replace(/^-/, '').replace(/\([VF]\)/i, '').trim();
                 
-                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-right-long text-slate-600 mr-2 mt-1 text-sm"></i> ${testo} ${badgeHtml}</div>`;
+                // Mantiene i puntini iniziali se presenti per l'estetica a schermo
+                let testoVisual = l.replace(/^-/, '').replace(/\([VF]\)/i, '').trim();
                 
-                // Aggiungi all'array per il CSV (pulito dalle formattazioni)
+                // Rimuove i puntini e gli spazi extra per il CSV
+                let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
+                
+                // Genera la frase completa pulita unendo Radice e Diramazione
+                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
+                
+                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-2 mt-1 text-sm"></i> ${testoVisual} ${badgeHtml}</div>`;
+                
                 let esitoClean = isVero ? "V" : "F";
-                csvDataArray.push([currentMatrice, testo, esitoClean]);
+                
+                // Aggiunge al CSV: Radice, Diramazione, FRASE INTERA, Esito
+                csvDataArray.push([currentMatriceClean, testoClean, fraseCompleta, esitoClean]);
             }
         });
 
@@ -212,23 +225,20 @@
             return;
         }
 
-        // Costruisci stringa CSV gestendo le virgole interne nei testi
         let csvContent = "";
         csvDataArray.forEach(row => {
             let rowStr = row.map(item => {
-                // Se il testo contiene virgole o virgolette, deve essere racchiuso in virgolette
                 let str = String(item).replace(/"/g, '""');
                 return `"${str}"`;
             }).join(",");
             csvContent += rowStr + "\r\n";
         });
 
-        // Crea il file scaricabile
-        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' }); // \ufeff per supporto UTF-8 in Excel
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Matrici_Quiz_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `Analisi_Matrici_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
