@@ -521,8 +521,8 @@
                 let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-            // PARSER MODIFICATO: Cerca TRAPPOLA: e rimuove eventuali emoji residue
-            else if (l.toUpperCase().includes('PAGINA') && l.includes('➔')) {
+            // PARSER MODIFICATO: Non cerca più la freccia, accetta qualsiasi riga che inizi con PAGINA
+            else if (l.replace(/^\*\s*/, '').toUpperCase().startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:/i);
@@ -540,6 +540,11 @@
                     mainText = remaining.substring(0, trapIndex).trim();
                     let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
                     trapText = "TRAPPOLA: " + afterTrap;
+                } else if (remaining.includes('➔') || remaining.includes('->')) {
+                    // Fallback se usa un separatore ma non la parola TRAPPOLA
+                    let trapSplit = remaining.split(/➔|->/);
+                    mainText = trapSplit[0].trim();
+                    if(trapSplit[1]) trapText = "TRAPPOLA: " + trapSplit[1].trim();
                 }
 
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -972,14 +977,14 @@
 
         if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
         
-        // Dispensa usa ESATTAMENTE l'intestazione standard di Mappa/Matrice
+        // Intestazione super-compattata per salvare ulteriore spazio nel foglio A4
         let printHeader = `
-            <div class="print-header-container">
-                <p class="print-header-aula" style="color: #d97706;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
-                <p class="print-header-aula">${meta.aula || 'Dispensa Allievi'}</p>
-                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+            <div class="print-header-container" style="margin-bottom: 10px; padding-bottom: 4px;">
+                <p class="print-header-aula" style="color: #d97706; font-size: 8pt; margin-bottom: 1px;">DRIVING LEADER | CONTI AUTOSCUOLE</p>
+                <p class="print-header-aula" style="font-size: 8pt; margin-bottom: 1px;">${meta.aula || 'Dispensa Allievi'}</p>
+                <h1 class="print-header-ob" style="font-size: 14pt; margin-bottom: 2px; line-height: 1.1;">${meta.obiettivo || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
-                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    <h2 class="print-header-arg" style="font-size: 10pt; margin: 0;">${meta.argomento || ''}</h2>
                 </div>
             </div>
         `;
