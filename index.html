@@ -17,16 +17,13 @@
             padding: 0;
         }
 
-        /* Stili per l'interfaccia Web (Dark Mode) */
         .app-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
         
-        /* Stili per gli Incipit (Nuovi) */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
         .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
         
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
-        
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
         
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
@@ -34,21 +31,20 @@
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
-        /* Restyling per le Matrici a Radice Lunga e Spiegazioni */
         .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
 
-        /* Area Stampa nascosta su schermo */
         #print-area { display: none; }
 
-        /* --- STILI SPECIFICI PER ESPORTAZIONE PDF (Stampa) --- */
         @media print {
             body { background-color: white !important; color: black !important; }
             #app-ui { display: none !important; }
             #print-area { display: block !important; padding: 1cm; font-family: 'Segoe UI', sans-serif; }
+            
+            .ui-header-box { display: none !important; } /* Nasconde l'header dell'UI nella stampa, usiamo quello ottimizzato */
             
             .incipit-globale { background: #fef9c3 !important; border-left: 5px solid #d97706 !important; padding: 15px !important; margin-bottom: 20px !important; border-radius: 5px; font-style: italic; color: #000 !important; }
             .incipit-globale strong { color: #b45309 !important; font-size: 14pt !important; margin-bottom: 8px !important; display: block; font-style: normal; }
@@ -67,7 +63,6 @@
 </head>
 <body>
 
-    <!-- Container visibile a schermo -->
     <div id="app-ui" class="app-container">
         <div class="flex items-center gap-4 mb-8 border-b border-slate-800 pb-6">
             <div class="bg-blue-600 p-4 rounded-xl shadow-lg">
@@ -79,7 +74,6 @@
             </div>
         </div>
 
-        <!-- AREA INPUT -->
         <div class="glass-panel mb-8 shadow-xl">
             <h2 class="text-xl font-bold mb-3 flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla l'output dell'IA</h2>
             <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-40 mb-4" placeholder="Incolla qui tutto il testo. Assicurati che contenga === MAPPA TECNICA === e === MATRICE QUIZ ==="></textarea>
@@ -88,14 +82,13 @@
             </button>
         </div>
 
-        <!-- AREA RISULTATI (Nascosta all'avvio) -->
         <div id="results-area" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             <!-- COLONNA MAPPA TECNICA -->
             <div id="mappa-container" class="glass-panel flex flex-col h-[700px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                     <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica e Incipit</h2>
-                    <button onclick="printMap()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600">
+                    <button onclick="printMap()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
                         <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
                     </button>
                 </div>
@@ -108,7 +101,7 @@
             <div id="matrice-container" class="glass-panel flex flex-col h-[700px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                     <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz e Motivazioni</h2>
-                    <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow">
+                    <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
                         <i class="fa-solid fa-file-csv mr-2 text-white"></i> Scarica CSV
                     </button>
                 </div>
@@ -126,7 +119,8 @@
     </div>
 
 <script>
-    let csvDataArray = []; // Conterrà i dati pronti per il CSV
+    let csvDataArray = []; 
+    let docMeta = { aula: "", obiettivo: "", argomento: "" }; // Salva i metadati del documento
 
     function processData() {
         const rawText = document.getElementById('raw-input').value;
@@ -135,7 +129,6 @@
             return;
         }
 
-        // Dividi le sezioni
         const parts = rawText.split('=== MATRICE QUIZ ===');
         const mappaRaw = parts[0].replace('=== MAPPA TECNICA ===', '').trim();
         const matriceRaw = parts[1].trim();
@@ -146,32 +139,43 @@
         document.getElementById('results-area').classList.remove('hidden');
     }
 
-    // --- RENDER MAPPA TECNICA (Con Incipit) ---
+    // --- RENDER MAPPA TECNICA ---
     function renderMappa(text) {
         const lines = text.split('\n');
         let html = '';
+        docMeta = { aula: "", obiettivo: "", argomento: "" }; // Reset meta
         
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
 
+            // Rileva Metadati Intestazione
+            if (l.toUpperCase().startsWith('AULA:')) {
+                docMeta.aula = l.substring(5).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().startsWith('OBIETTIVO:')) {
+                docMeta.obiettivo = l.substring(10).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().startsWith('ARGOMENTO:')) {
+                docMeta.argomento = l.substring(10).replace(/[\*\_]/g, '').trim();
+            }
             // Rileva l'Incipit Globale
-            if (l.includes('IL SENSO PRATICO:')) {
+            else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
                 html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
             }
             // Rileva le Fasi
-            else if (l.includes('FASE')) {
+            else if (l.toUpperCase().includes('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
             } 
             // Rileva l'Incipit della singola Fase
-            else if (l.includes('OBIETTIVO PRATICO:')) {
+            else if (l.toUpperCase().includes('OBIETTIVO PRATICO:')) {
                 let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
             // Rileva le Pagine/Slide
-            else if (l.includes('PAGINA') && l.includes('➔')) {
+            else if (l.toUpperCase().includes('PAGINA') && l.includes('➔')) {
                 l = l.replace(/^\*\s*/, '');
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:/i);
@@ -181,7 +185,6 @@
                 let trapSplit = remaining.split('⚠️');
                 let mainText = trapSplit[0].trim();
                 
-                // Formatta in modo che VERO o FALSO risaltino nettamente
                 let trapText = "";
                 if(trapSplit[1]) {
                     trapText = "⚠️ " + trapSplit[1].trim();
@@ -199,10 +202,22 @@
             }
         });
 
-        document.getElementById('mappa-render').innerHTML = html;
+        // Aggiunge l'header UI se sono presenti i metadati
+        let headerHtml = '';
+        if(docMeta.aula || docMeta.obiettivo || docMeta.argomento) {
+            headerHtml = `
+                <div class="ui-header-box mb-6 p-5 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${docMeta.aula || 'Mappa di Regia'}</p>
+                    <h2 class="text-2xl font-black text-white mb-1 leading-tight">${docMeta.obiettivo || ''}</h2>
+                    <h3 class="text-lg text-blue-400 font-medium italic">${docMeta.argomento || ''}</h3>
+                </div>
+            `;
+        }
+
+        document.getElementById('mappa-render').innerHTML = headerHtml + html;
     }
 
-    // --- RENDER MATRICE (Con Motivazioni) ---
+    // --- RENDER MATRICE ---
     function renderMatrice(text) {
         const lines = text.split('\n');
         let html = '';
@@ -224,15 +239,13 @@
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } 
             else {
-                // Separa la frase del quiz dalla motivazione usando la barra verticale "|"
                 let parts = l.split('|');
                 let rawQuizText = parts[0].trim();
-                let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione";
+                let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione fornita.";
 
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
                 
-                // Pulisce il testo da simboli e badge
                 let testoVisual = rawQuizText.replace(/^[\-\*\•\>]\s*/, '')
                                    .replace(/\(V\)/i, '')
                                    .replace(/\(F\)/i, '')
@@ -243,7 +256,6 @@
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                // HTML: Mostra la frase, il V/F, e sotto la spiegazione in grigio/corsivo
                 html += `<div class="matrice-row">
                             <i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> 
                             <div>
@@ -253,8 +265,6 @@
                          </div>`;
                 
                 let esitoClean = isVero ? "V" : "F";
-                
-                // Aggiorna CSV con la colonna in più
                 csvDataArray.push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
             }
         });
@@ -262,16 +272,20 @@
         document.getElementById('matrice-render').innerHTML = html;
     }
 
-    // --- STAMPA PDF MAPPA ---
+    // --- STAMPA PDF MAPPA CON TITOLI DINAMICI ---
     function printMap() {
         const printArea = document.getElementById('print-area');
         const mappaContent = document.getElementById('mappa-render').innerHTML;
         
-        printArea.innerHTML = `
-            <h1 style="font-size: 26pt; border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 20px; font-weight: 900;">Mappa di Regia Didattica</h1>
-            ${mappaContent}
+        let printHeader = `
+            <div style="border-bottom: 3px solid #000; padding-bottom: 12px; margin-bottom: 20px;">
+                <p style="font-size: 11pt; color: #555; margin: 0 0 4px 0; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;">${docMeta.aula || 'Mappa di Regia Didattica'}</p>
+                <h1 style="font-size: 22pt; margin: 0 0 6px 0; font-weight: 900; line-height: 1.1; color: #000;">${docMeta.obiettivo || 'Documento senza titolo'}</h1>
+                <h2 style="font-size: 16pt; color: #444; margin: 0; font-style: italic; font-weight: normal;">${docMeta.argomento || ''}</h2>
+            </div>
         `;
         
+        printArea.innerHTML = printHeader + mappaContent;
         window.print();
     }
 
@@ -295,7 +309,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Matrici_e_Spiegazioni_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `Matrici_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
