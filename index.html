@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driving Leader Studio - Export PDF & CSV</title>
+    <title>Driving Leader Studio - Generatore & Archivio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -15,16 +15,26 @@
             color: #f8fafc;
             margin: 0;
             padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
 
         /* Stili per l'interfaccia Web (Dark Mode) */
-        .app-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .app-container { max-width: 1300px; margin: 0 auto; padding: 2rem; width: 100%; }
         .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
         
+        .view-section { display: none; flex-grow: 1; overflow-y: auto; flex-direction: column; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Stili per gli Incipit */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
         .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
         
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
         
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
@@ -32,18 +42,32 @@
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
-        /* Restyling pulito per le Matrici */
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: transparent;}
+        /* Restyling per le Matrici a Radice Lunga e Spiegazioni */
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
 
+        /* Bottoni Custom */
+        .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
+        .btn-nav:hover { background: #334155; color: white; }
+        .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; }
+        
+        .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
+        .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+
+        /* Area Stampa nascosta su schermo */
         #print-area { display: none; }
 
-        /* --- STILI SPECIFICI PER STAMPA/PDF (OTTIMIZZAZIONE SPAZIO A4) --- */
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+        /* --- STILI SPECIFICI PER ESPORTAZIONE PDF (Stampa) --- */
         @media print {
-            body { background-color: white !important; color: black !important; font-size: 10pt !important; }
+            body { background-color: white !important; color: black !important; font-size: 10pt !important; height: auto !important; overflow: visible !important;}
             #app-ui { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
             
@@ -77,97 +101,244 @@
 </head>
 <body>
 
-    <div id="app-ui" class="app-container">
-        <div class="flex items-center gap-4 mb-8 border-b border-slate-800 pb-6">
-            <div class="bg-blue-600 p-4 rounded-xl shadow-lg">
-                <i class="fa-solid fa-microchip text-2xl text-white"></i>
+    <!-- Container visibile a schermo -->
+    <div id="app-ui" class="h-full flex flex-col">
+        
+        <!-- NAVBAR -->
+        <div class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex justify-between items-center shrink-0 shadow-lg z-20">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-microchip text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-white m-0 tracking-tight">Studio Regia</h1>
+                    <p class="text-blue-400 font-medium text-xs tracking-widest uppercase">Generatore & Archivio</p>
+                </div>
             </div>
-            <div>
-                <h1 class="text-3xl font-extrabold text-white m-0 tracking-tight">Driving Leader Studio</h1>
-                <p class="text-slate-400 font-medium">Generatore Mappe Didattiche & Matrici CSV</p>
+            <div class="flex gap-3">
+                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore</button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-folder-open mr-2"></i> Archivio Didattico</button>
             </div>
         </div>
 
-        <div class="glass-panel mb-8 shadow-xl">
-            <h2 class="text-xl font-bold mb-3 flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla l'output dell'IA</h2>
-            <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-40 mb-4" placeholder="Incolla qui tutto il testo. Assicurati che contenga === MAPPA TECNICA === e === MATRICE QUIZ ==="></textarea>
-            <button onclick="processData()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
-                <i class="fa-solid fa-gears mr-2"></i> Elabora Mappa e Matrici
-            </button>
-        </div>
-
-        <div id="results-area" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- COLONNA MAPPA TECNICA -->
-            <div id="mappa-container" class="glass-panel flex flex-col h-[700px]">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
-                    <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica e Incipit</h2>
-                    <button onclick="printMap()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
-                        <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
+        <!-- ==========================================
+             VISTA 1: GENERATORE 
+             ========================================== -->
+        <div id="view-generator" class="view-section active p-6 md:p-8">
+            <div class="max-w-screen-2xl mx-auto w-full">
+                <!-- AREA INPUT -->
+                <div class="glass-panel mb-8 shadow-xl">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA</h2>
+                        <button onclick="document.getElementById('raw-input').value = ''" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-eraser mr-1"></i>Pulisci</button>
+                    </div>
+                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo (assicurati che contenga i tag AULA, OBIETTIVO, ARGOMENTO e i delimitatori === MAPPA TECNICA === e === MATRICE QUIZ ===)"></textarea>
+                    <button onclick="processDataFromInput()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
+                        <i class="fa-solid fa-gears mr-2"></i> Genera Anteprima
                     </button>
                 </div>
-                <div id="mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
-            </div>
 
-            <!-- COLONNA MATRICE QUIZ -->
-            <div id="matrice-container" class="glass-panel flex flex-col h-[700px]">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
-                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz e Motivazioni</h2>
-                    <div class="flex gap-2">
-                        <button onclick="printMatrice()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
-                            <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
-                        </button>
-                        <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
-                            <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                <!-- AREA RISULTATI GENERATORE -->
+                <div id="gen-results-area" class="hidden flex-col gap-6">
+                    <div class="flex justify-end mb-2">
+                        <button onclick="saveToArchive()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3 px-8 rounded-xl transition shadow-lg shadow-amber-500/20 text-lg flex items-center transform hover:scale-105">
+                            <i class="fa-solid fa-download mr-2"></i> SALVA NELL'ARCHIVIO
                         </button>
                     </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[600px]">
+                        <!-- COLONNA MAPPA TECNICA -->
+                        <div class="glass-panel flex flex-col h-full border-t-4 border-t-blue-500">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                                <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                                <button onclick="printDocument('mappa', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                    <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                </button>
+                            </div>
+                            <div id="gen-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
+                        </div>
+
+                        <!-- COLONNA MATRICE QUIZ -->
+                        <div class="glass-panel flex flex-col h-full border-t-4 border-t-emerald-500">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                                <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
+                                <div class="flex gap-2">
+                                    <button onclick="printDocument('matrice', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                        <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                    </button>
+                                    <button onclick="exportCSV('gen')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
+                                        <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="gen-matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
+                        </div>
+                    </div>
                 </div>
-                <div id="matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
             </div>
         </div>
+
+        <!-- ==========================================
+             VISTA 2: ARCHIVIO LISTA
+             ========================================== -->
+        <div id="view-archive" class="view-section p-6 md:p-8">
+            <div class="max-w-5xl mx-auto w-full">
+                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700">
+                    <div>
+                        <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Lezioni</h2>
+                        <p class="text-slate-400 text-sm">Le tue mappe e matrici salvate e pronte per la consultazione.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
+                            <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
+                        </button>
+                        <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
+                        </button>
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importArchiveDB(event)">
+                    </div>
+                </div>
+
+                <div id="archive-container" class="space-y-6">
+                    <!-- Popolato da JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             VISTA 3: LETTORE ARCHIVIO (Reader)
+             ========================================== -->
+        <div id="view-reader" class="view-section p-6 md:p-8 relative">
+            <div class="max-w-screen-2xl mx-auto w-full h-full flex flex-col">
+                <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700">
+                    <button onclick="navTo('archive')" class="text-slate-300 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Torna all'Archivio</button>
+                    <div class="text-center">
+                        <p class="text-xs text-blue-400 font-bold uppercase tracking-widest" id="reader-aula-title">AULA</p>
+                        <h3 class="text-xl font-bold text-white" id="reader-item-title">Titolo Argomento</h3>
+                    </div>
+                    <div class="w-32"></div> <!-- Spacer per centrare -->
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-grow overflow-hidden h-[700px]">
+                    <!-- COLONNA MAPPA TECNICA (READER) -->
+                    <div class="glass-panel flex flex-col h-full border-t-4 border-t-blue-500">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                            <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                            <button onclick="printDocument('mappa', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                            </button>
+                        </div>
+                        <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
+                    </div>
+
+                    <!-- COLONNA MATRICE QUIZ (READER) -->
+                    <div class="glass-panel flex flex-col h-full border-t-4 border-t-emerald-500">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                            <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
+                            <div class="flex gap-2">
+                                <button onclick="printDocument('matrice', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                    <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                </button>
+                                <button onclick="exportCSV('read')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
+                                    <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div id="read-matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- Fine #app-ui -->
+
+    <!-- AREA STAMPA (Nascosta su schermo, visibile in print) -->
+    <div id="print-area">
+        <!-- Riempito via JS durante la stampa -->
     </div>
 
-    <!-- Container visibile SOLO in stampa -->
-    <div id="print-area"></div>
-
 <script>
-    let csvDataArray = []; 
-    let docMeta = { aula: "", obiettivo: "", argomento: "" };
+    /* ==========================================================================
+       STATO E VARIABILI GLOBALI
+    ========================================================================== */
+    // Database locale
+    let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+    
+    // Oggetti temporanei per il rendering corrente
+    let currentDocMeta = { gen: {}, read: {} };
+    let currentCsvData = { gen: [], read: [] };
+    
+    // Dati per il salvataggio rapido
+    let rawInputBuffer = "";
 
-    function processData() {
-        const rawText = document.getElementById('raw-input').value;
+    /* ==========================================================================
+       NAVIGAZIONE VISTE
+    ========================================================================== */
+    function navTo(viewId) {
+        // Aggiorna Bottoni Navbar
+        document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+        if(viewId === 'generator') document.getElementById('nav-btn-generator').classList.add('active');
+        if(viewId === 'archive' || viewId === 'reader') document.getElementById('nav-btn-archive').classList.add('active');
+
+        // Aggiorna Viste
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${viewId}`).classList.add('active');
+
+        // Se vado in archivio, re-renderizzo per sicurezza
+        if(viewId === 'archive') {
+            renderArchiveList();
+        }
+    }
+
+    /* ==========================================================================
+       LOGICA DI ELABORAZIONE (Parser Core)
+    ========================================================================== */
+    // Questa funzione elabora il testo e lo inserisce nel container desiderato (gen o read)
+    function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
-            alert("Attenzione: Il testo incollato non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
-            return;
+            alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
+            return false;
         }
 
         const parts = rawText.split('=== MATRICE QUIZ ===');
         const mappaRaw = parts[0].replace('=== MAPPA TECNICA ===', '').trim();
         const matriceRaw = parts[1].trim();
 
-        renderMappa(mappaRaw);
-        renderMatrice(matriceRaw);
-
-        document.getElementById('results-area').classList.remove('hidden');
+        renderMappa(mappaRaw, prefix);
+        renderMatrice(matriceRaw, prefix);
+        return true;
     }
 
-    // --- RENDER MAPPA TECNICA ---
-    function renderMappa(text) {
+    // Triggerato dal pulsante nel Generatore
+    function processDataFromInput() {
+        const rawText = document.getElementById('raw-input').value;
+        rawInputBuffer = rawText; // Salva per l'archiviazione
+        const success = processAndRender(rawText, 'gen');
+        if (success) {
+            document.getElementById('gen-results-area').classList.remove('hidden');
+            document.getElementById('gen-results-area').classList.add('flex');
+        }
+    }
+
+    /* ==========================================================================
+       RENDERIZZATORI (Mappa e Matrice)
+    ========================================================================== */
+    function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        docMeta = { aula: "", obiettivo: "", argomento: "" }; 
+        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "" }; 
         
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
 
             if (l.toUpperCase().startsWith('AULA:')) {
-                docMeta.aula = l.substring(5).replace(/[\*\_]/g, '').trim();
+                currentDocMeta[prefix].aula = l.substring(5).replace(/[\*\_]/g, '').trim();
             }
             else if (l.toUpperCase().startsWith('OBIETTIVO:')) {
-                docMeta.obiettivo = l.substring(10).replace(/[\*\_]/g, '').trim();
+                currentDocMeta[prefix].obiettivo = l.substring(10).replace(/[\*\_]/g, '').trim();
             }
             else if (l.toUpperCase().startsWith('ARGOMENTO:')) {
-                docMeta.argomento = l.substring(10).replace(/[\*\_]/g, '').trim();
+                currentDocMeta[prefix].argomento = l.substring(10).replace(/[\*\_]/g, '').trim();
             }
             else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
@@ -214,25 +385,24 @@
         });
 
         let headerHtml = '';
-        if(docMeta.aula || docMeta.obiettivo || docMeta.argomento) {
+        if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
             headerHtml = `
                 <div class="ui-header-box mb-6 p-5 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${docMeta.aula || 'Mappa di Regia'}</p>
-                    <h2 class="text-2xl font-black text-white mb-1 leading-tight">${docMeta.obiettivo || ''}</h2>
-                    <h3 class="text-lg text-blue-400 font-medium italic">${docMeta.argomento || ''}</h3>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
+                    <h2 class="text-2xl font-black text-white mb-1 leading-tight">${currentDocMeta[prefix].obiettivo || ''}</h2>
+                    <h3 class="text-lg text-blue-400 font-medium italic">${currentDocMeta[prefix].argomento || ''}</h3>
                 </div>
             `;
         }
 
-        document.getElementById('mappa-render').innerHTML = headerHtml + html;
+        document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
-    // --- RENDER MATRICE (Con Parser Robusto per CSV) ---
-    function renderMatrice(text) {
+    function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        csvDataArray = []; 
-        csvDataArray.push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
+        currentCsvData[prefix] = []; 
+        currentCsvData[prefix].push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
 
         let currentMatriceVisual = ""; 
         let currentMatriceClean = "";  
@@ -243,12 +413,11 @@
 
             let upperL = l.toUpperCase();
             
-            // Algoritmo tollerante per capire se la riga è un quiz o il titolo della radice
             let isContinuation = false;
             if (l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./)) {
-                isContinuation = true; // Inizia col trattino o puntini
+                isContinuation = true; 
             } else if (l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ')) {
-                isContinuation = true; // Contiene la barra verticale della spiegazione o l'esito
+                isContinuation = true; 
             }
 
             if (!isContinuation) {
@@ -264,7 +433,6 @@
                 let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
                 
-                // Rimuove qualsiasi simbolo iniziale sgradito
                 let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '')
                                    .replace(/\(V\)/i, '')
                                    .replace(/\(F\)/i, '')
@@ -284,56 +452,202 @@
                          </div>`;
                 
                 let esitoClean = isVero ? "V" : "F";
-                csvDataArray.push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
+                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
             }
         });
 
-        document.getElementById('matrice-render').innerHTML = html;
+        document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
-    // --- STAMPA PDF OTTIMIZZATO ---
-    function printMap() {
-        const printArea = document.getElementById('print-area');
-        const mappaContent = document.getElementById('mappa-render').innerHTML;
+    /* ==========================================================================
+       LOGICA ARCHIVIO (Salvataggio, Lettura, Gestione)
+    ========================================================================== */
+    function saveToArchive() {
+        const meta = currentDocMeta['gen'];
+        if(!meta.aula && !meta.obiettivo && !meta.argomento) {
+            alert("Impossibile salvare: Manca l'intestazione con i metadati (AULA, OBIETTIVO, ARGOMENTO) nel testo.");
+            return;
+        }
+
+        const newItem = {
+            id: 'doc_' + Date.now(),
+            aula: meta.aula || "Varie",
+            obiettivo: meta.obiettivo || "Generico",
+            argomento: meta.argomento || "Senza Argomento",
+            rawText: rawInputBuffer,
+            date: new Date().toLocaleDateString('it-IT')
+        };
+
+        // Evita duplicati esatti per argomento (opzionale, chiedi conferma)
+        const exists = archiveDB.find(doc => doc.argomento === newItem.argomento && doc.obiettivo === newItem.obiettivo);
+        if(exists) {
+            if(!confirm("Esiste già un documento con questo Argomento in questo Obiettivo. Vuoi sovrascriverlo?")) return;
+            archiveDB = archiveDB.filter(doc => doc.id !== exists.id); // Rimuove il vecchio
+        }
+
+        archiveDB.push(newItem);
+        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
         
+        alert("Documento salvato con successo nell'Archivio Didattico!");
+        navTo('archive');
+    }
+
+    function renderArchiveList() {
+        const container = document.getElementById('archive-container');
+        container.innerHTML = '';
+
+        if(archiveDB.length === 0) {
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato nell'archivio.</div>`;
+            return;
+        }
+
+        // Raggruppa per Aula -> Obiettivo
+        let grouped = {};
+        archiveDB.forEach(doc => {
+            let aula = doc.aula || "Varie";
+            let ob = doc.obiettivo || "Generico";
+            
+            if(!grouped[aula]) grouped[aula] = {};
+            if(!grouped[aula][ob]) grouped[aula][ob] = [];
+            grouped[aula][ob].push(doc);
+        });
+
+        // Stampa Aule
+        Object.keys(grouped).sort().forEach(aulaName => {
+            let aulaHtml = `<div class="mb-8"><h3 class="text-xl font-black text-emerald-400 uppercase tracking-widest mb-4 border-b border-slate-700 pb-2"><i class="fa-solid fa-school mr-2"></i> ${aulaName}</h3><div class="space-y-4">`;
+            
+            // Stampa Obiettivi
+            Object.keys(grouped[aulaName]).sort().forEach(obName => {
+                aulaHtml += `
+                    <div class="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden">
+                        <div class="bg-slate-800/80 px-4 py-3 border-b border-slate-700 font-bold text-blue-400 flex items-center">
+                            <i class="fa-solid fa-folder mr-2"></i> ${obName}
+                        </div>
+                        <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                `;
+                
+                // Stampa Argomenti (Documenti singoli)
+                grouped[aulaName][obName].forEach(doc => {
+                    aulaHtml += `
+                        <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex justify-between items-center shadow hover:border-blue-500 transition group">
+                            <div class="cursor-pointer flex-grow pr-4" onclick="openArchivedDocument('${doc.id}')">
+                                <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug">${doc.argomento}</h4>
+                                <p class="text-xs text-slate-500 mt-1"><i class="fa-regular fa-calendar mr-1"></i> Salvato il: ${doc.date || '--'}</p>
+                            </div>
+                            <button onclick="deleteArchivedDocument('${doc.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-10 h-10 rounded-lg transition flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                });
+                aulaHtml += `</div></div>`;
+            });
+            aulaHtml += `</div></div>`;
+            container.innerHTML += aulaHtml;
+        });
+    }
+
+    function openArchivedDocument(docId) {
+        const doc = archiveDB.find(d => d.id === docId);
+        if(!doc) return;
+
+        document.getElementById('reader-aula-title').innerText = doc.aula;
+        document.getElementById('reader-item-title').innerText = doc.argomento;
+
+        processAndRender(doc.rawText, 'read');
+        navTo('reader');
+    }
+
+    function deleteArchivedDocument(docId) {
+        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+            archiveDB = archiveDB.filter(d => d.id !== docId);
+            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            renderArchiveList();
+        }
+    }
+
+    /* ==========================================================================
+       ESPORTA / IMPORTA DATABASE (JSON)
+    ========================================================================== */
+    function exportArchiveDB() {
+        if(archiveDB.length === 0) {
+            alert("Il database è vuoto. Niente da esportare!");
+            return;
+        }
+        const dataStr = JSON.stringify(archiveDB, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileDefaultName = `Studio_Regia_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        
+        let linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    function importArchiveDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm(`Trovati ${importedData.length} documenti. Vuoi unirli al tuo database esistente?`)) {
+                        let merged = [...archiveDB];
+                        importedData.forEach(newDoc => {
+                            // Evita duplicati per ID
+                            if(!merged.find(d => d.id === newDoc.id)) {
+                                merged.push(newDoc);
+                            }
+                        });
+                        archiveDB = merged;
+                        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                        renderArchiveList();
+                        alert("Database importato con successo!");
+                    }
+                } else {
+                    alert("Formato file non valido.");
+                }
+            } catch(err) {
+                alert("Errore durante la lettura del file: " + err.message);
+            }
+            document.getElementById('import-file').value = ""; 
+        };
+        reader.readAsText(file);
+    }
+
+    /* ==========================================================================
+       STAMPA PDF ED ESPORTAZIONE CSV (Dinamici in base alla vista attiva)
+    ========================================================================== */
+    function printDocument(type, prefix) {
+        const printArea = document.getElementById('print-area');
+        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
+        const meta = currentDocMeta[prefix];
+        
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
+
         let printHeader = `
             <div class="print-header-container">
-                <p class="print-header-aula">${docMeta.aula || 'Mappa di Regia Didattica'}</p>
-                <h1 class="print-header-ob">${docMeta.obiettivo || 'Documento senza titolo'}</h1>
-                <h2 class="print-header-arg">${docMeta.argomento || ''}</h2>
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
+                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <h2 class="print-header-arg">${meta.argomento || ''}</h2>
             </div>
         `;
         
-        printArea.innerHTML = printHeader + mappaContent;
+        printArea.innerHTML = printHeader + contentHtml;
         window.print();
     }
 
-    // --- STAMPA PDF MATRICE ---
-    function printMatrice() {
-        const printArea = document.getElementById('print-area');
-        const matriceContent = document.getElementById('matrice-render').innerHTML;
-        
-        let printHeader = `
-            <div class="print-header-container">
-                <p class="print-header-aula">${docMeta.aula || 'Analisi Matriciale Quiz'}</p>
-                <h1 class="print-header-ob">${docMeta.obiettivo || 'Documento senza titolo'}</h1>
-                <h2 class="print-header-arg">${docMeta.argomento || ''}</h2>
-            </div>
-        `;
-        
-        printArea.innerHTML = printHeader + matriceContent;
-        window.print();
-    }
-
-    // --- ESPORTAZIONE CSV ---
-    function exportCSV() {
-        if(csvDataArray.length <= 1) {
-            alert("Nessun dato matrice disponibile per l'esportazione. Assicurati di aver generato le matrici correttamente.");
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) {
+            alert("Nessun dato matrice disponibile per l'esportazione.");
             return;
         }
 
         let csvContent = "";
-        csvDataArray.forEach(row => {
+        csvArray.forEach(row => {
             let rowStr = row.map(item => {
                 let str = String(item).replace(/"/g, '""');
                 return `"${str}"`;
@@ -341,15 +655,22 @@
             csvContent += rowStr + "\r\n";
         });
 
+        const meta = currentDocMeta[prefix];
+        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
         const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Matrici_Quiz_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `Export_${safeName}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
     }
+
+    // Inizializza l'applicazione mostrando il generatore di default
+    navTo('generator');
+
 </script>
 </body>
 </html>
