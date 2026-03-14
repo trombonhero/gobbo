@@ -3,491 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DRIVING LEADER PLAYER - Smart E-Learning</title>
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css)" rel="stylesheet">
+    <title>Driving Leader Studio - Generatore & Archivio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Space+Grotesk:wght@700&display=swap)');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         
-        :root {
-            --bg-dark: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.7);
-            --accent: #3b82f6;
-            --text-main: #f8fafc;
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background-color: #0f172a; 
+            color: #f8fafc;
             margin: 0;
+            padding: 0;
             height: 100vh;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            overflow: hidden;
         }
 
-        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
-
-        .view { display: none; height: 100%; width: 100%; flex-direction: column; overflow-y: auto; position: relative; z-index: 10; padding: 2rem;}
-        .view.active { display: flex; animation: fadeIn 0.4s ease-out forwards; }
+        /* Container e Viste */
+        .app-container { max-width: 1400px; margin: 0 auto; padding: 2rem; width: 100%; display: flex; flex-direction: column; height: 100%;}
+        .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
+        
+        .view-section { display: none; flex-grow: 1; overflow-y: auto; flex-direction: column; padding-bottom: 4rem;}
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Components */
-        .glass-panel { background: var(--panel-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), #1d4ed8); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; cursor: pointer; border: none; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4); }
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
-
-        /* Drag & Drop Area */
-        #drop-zone { border: 4px dashed rgba(59, 130, 246, 0.5); border-radius: 2rem; transition: all 0.3s; background: rgba(15, 23, 42, 0.6); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; cursor: pointer; }
-        #drop-zone.dragover { border-color: #10b981; background: rgba(16, 185, 129, 0.1); transform: scale(1.02); }
-
-        /* Interattività e Formattazione */
-        .interact-word { display: inline; padding: 0px 2px; border-radius: 4px; cursor: pointer; transition: all 0.2s; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
-        .interact-word:hover { background: rgba(59, 130, 246, 0.4); color: white; }
-        .interact-word[data-state="1"] { background: #10b981 !important; color: white !important; font-weight: 900 !important; box-shadow: 0 2px 10px rgba(16,185,129,0.5); text-shadow: none !important;}
-        .interact-word[data-state="2"] { background: #ef4444 !important; color: white !important; font-weight: 900 !important; box-shadow: 0 2px 10px rgba(239,68,68,0.5); text-shadow: none !important;}
-        .interact-word[data-state="3"] { text-decoration: line-through; opacity: 0.3; background: transparent !important; color: inherit; }
+        /* Stili Mappa Tecnica */
+        .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
+        .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
         
-        .lesson-point { margin-bottom: 1.5rem; font-size: 1.8rem; line-height: 1.8; font-weight: 400; }
-        .focus-word { color: #facc15; font-weight: 900; } 
+        .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
         
-        /* Stile specifico per le spiegazioni dei quiz (NON cliccabili) */
-        .static-explanation .focus-word { color: #fcd34d; font-weight: 800; }
+        .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
+        .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
+        .pagina-text { color: #e2e8f0; flex-grow: 1; }
+        .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
-        /* Brainstorming Focus Mode */
-        #brainstorm-focus { display: none; flex-direction: column; align-items: center; justify-content: center; width: 100%; height: 100%; padding-top: 2rem; }
-        .focused-main-word { font-size: 4rem; font-weight: 900; color: white; text-transform: uppercase; text-shadow: 0 0 30px rgba(251, 191, 36, 0.6); margin-bottom: 1rem; animation: pulse-glow 2.5s infinite alternate; text-align: center;}
+        /* Stili Matrice Quiz */
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
+        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
+        .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
+        .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
+        .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
+
+        /* Bottoni Custom */
+        .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
+        .btn-nav:hover { background: #334155; color: white; }
+        .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3);}
         
-        .related-words-container { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 15px; max-width: 1000px; width: 100%; margin-top: 2rem;}
-        .related-card { 
-            background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 1rem; 
-            padding: 1.2rem 1.5rem; cursor: pointer; transition: all 0.3s; opacity: 0; transform: translateY(20px); 
-            animation: slide-up 0.5s forwards; text-align: left;
-            flex: 1 1 calc(33.333% - 15px); min-width: 250px; max-width: calc(50% - 15px);
-        }
-        .related-card:hover, .related-card.expanded { background: rgba(16, 185, 129, 0.4); border-color: #34d399; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .related-card .term { font-size: 1.3rem; font-weight: 700; color: #a7f3d0; }
-        .related-card .desc { font-size: 0.95rem; color: #ecfdf5; margin-top: 0.5rem; border-top: 1px solid rgba(16, 185, 129, 0.3); padding-top: 0.5rem; display: none; line-height: 1.5;}
-        .related-card.expanded .desc { display: block; animation: fade-in 0.3s; }
-        
-        @keyframes pulse-glow { 0% { text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); transform: scale(1); } 100% { text-shadow: 0 0 40px rgba(251, 191, 36, 0.9); transform: scale(1.03); } }
-        @keyframes slide-up { to { opacity: 1; transform: translateY(0); } }
+        .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
+        .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
 
-        /* Overlay Lavagna LIM (Canvas) */
-        #lim-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 50; }
-        #lim-overlay.active { pointer-events: auto; cursor: crosshair; }
-
-        /* Toolbar LIM (Basso a Sinistra) */
-        #lim-toolbar {
-            position: fixed; bottom: 30px; left: 30px; 
-            background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); padding: 10px; border-radius: 100px;
-            display: flex; gap: 10px; z-index: 60; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        .tool-btn {
-            width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.1); color: white; font-size: 1.1rem; cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
-        }
-        .tool-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
-        .tool-btn.active { background: #3b82f6; border-color: #93c5fd; box-shadow: 0 0 15px rgba(59,130,246,0.5); }
+        /* Area Stampa nascosta su schermo */
+        #print-area { display: none; }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
-        
-        /* IMMAGINI QUIZ E LIGHTBOX */
-        .quiz-img-thumb { width: 90px; height: 90px; object-fit: contain; border-radius: 0.5rem; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); transition: all 0.2s; background: white; }
-        .quiz-img-thumb:hover { transform: scale(1.15); border-color: var(--accent); box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .analyzer-large-img { max-height: 250px; max-width: 100%; object-fit: contain; border-radius: 1rem; margin-bottom: 2rem; border: 4px solid rgba(255,255,255,0.1); background: white; cursor: pointer; transition: transform 0.2s; }
-        .analyzer-large-img:hover { transform: scale(1.05); border-color: var(--accent); }
-        
-        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 9999; justify-content: center; align-items: center; flex-direction: column; animation: fadeIn 0.2s; cursor: zoom-out; }
-        #lightbox.active { display: flex; }
-        #lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 1rem; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8); background: white; cursor: default; }
-        .lightbox-close { position: absolute; top: 30px; right: 40px; color: white; font-size: 3rem; cursor: pointer; transition: transform 0.2s; }
-        .lightbox-close:hover { transform: scale(1.2); color: #ef4444; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* --- STILI STAMPA PDF (Ottimizzati) --- */
+        @media print {
+            body { background-color: white !important; color: black !important; font-size: 10pt !important; height: auto !important; overflow: visible !important;}
+            #app-ui { display: none !important; }
+            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
+            
+            @page { margin: 0.8cm; }
+            
+            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
+            .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+            .print-header-ob { font-size: 16pt; margin: 0 0 2px 0; font-weight: 900; line-height: 1.1; color: #000; }
+            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+
+            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 8px 12px !important; margin-bottom: 12px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 9.5pt !important; line-height: 1.3 !important;}
+            .incipit-globale strong { color: #b45309 !important; font-size: 10.5pt !important; margin-bottom: 2px !important; display: block; font-style: normal; }
+            
+            .fase-title { color: black !important; border-bottom: 1.5px solid black !important; font-size: 13pt !important; margin-top: 14pt !important; padding-bottom: 2pt !important; margin-bottom: 4pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
+            .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 8pt !important; padding-left: 8px !important; border-left: 2px solid #888 !important; font-size: 9pt !important; line-height: 1.2 !important; page-break-after: avoid; }
+            
+            .pagina-row { display: flex; align-items: flex-start; margin-bottom: 6pt !important; font-size: 9.5pt !important; line-height: 1.25 !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+            .pagina-badge { border: 1px solid black !important; padding: 1px 4px; font-weight: bold; margin-right: 8px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 8pt !important; margin-top: 1px; }
+            .pagina-text { color: black !important; flex-grow: 1; }
+            .pagina-trap { display: block; margin-top: 2px; font-weight: bold !important; color: #b91c1c !important; padding-left: 6px; border-left: 2px solid #b91c1c; font-size: 9pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
+            
+            .matrice-title { color: black !important; font-weight: 800 !important; font-size: 10pt !important; margin-top: 10pt !important; margin-bottom: 3pt !important; line-height: 1.2 !important; border-left: 2px solid black !important; padding-left: 6px; background: transparent !important; page-break-after: avoid; }
+            .matrice-row { display: flex; align-items: flex-start; margin-bottom: 3pt !important; padding-left: 8px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; font-style: normal !important; }
+            .v-badge { color: #10b981 !important; font-weight: bold; margin-left: 4px; font-style: normal; font-size: 8pt !important;}
+            .f-badge { color: #ef4444 !important; font-weight: bold; margin-left: 4px; font-style: normal; font-size: 8pt !important;}
+            .matrice-exp { display: block; font-size: 8pt !important; color: #555 !important; margin-top: 1px; font-style: italic; line-height: 1.1 !important;}
+        }
     </style>
-    <!-- NAVBAR -->
-    <nav class="bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center relative z-20">
-        <div class="flex items-center gap-4 cursor-pointer" onclick="navTo('upload')">
-            <div class="bg-blue-600 p-3 rounded-lg shadow-lg shadow-blue-500/50 flex items-center justify-center">
-                <i class="fa-solid fa-folder-open text-2xl text-white" id="nav-icon"></i>
-            </div>
-            <div>
-                <h1 class="text-2xl font-bold tracking-tight text-white m-0 leading-none">DRIVING LEADER PLAYER</h1>
-                <p class="text-blue-400 text-xs font-bold uppercase tracking-widest mt-1" id="nav-subtitle">Smart E-Learning System V6</p>
-            </div>
-        </div>
-        <div class="flex gap-4 items-center">
-            <button onclick="navTo('home')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-sm font-semibold transition text-white border border-slate-700 shadow">
-                <i class="fa-solid fa-server mr-2"></i>Archivio Aule
-            </button>
-            <div class="w-px h-6 bg-slate-700 my-auto hidden" id="nav-divider"></div>
-            <button onclick="unloadLesson()" class="px-4 py-2 bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white rounded-lg text-sm font-bold transition border border-red-500/30 hidden" id="btn-chiudi-lez">
-                <i class="fa-solid fa-power-off mr-2"></i>Chiudi File
-            </button>
-        </div>
-    </nav>
+</head>
+<body>
 
-    <!-- VIEW: UPLOAD (Drag & Drop) -->
-    <!-- VIEW: HOME (Aule a tendina Accordion) -->
-    <div id="view-home" class="view">
-        <div class="max-w-7xl mx-auto w-full pb-12">
-            <h2 class="text-3xl mb-6 text-center font-bold text-white">Database <span class="text-blue-400">Struttura Aule</span></h2>
-            
-            <!-- BARRA DI RICERCA E CONTROLLI ACCORDION -->
-            <div class="flex flex-col md:flex-row gap-4 mb-8">
-                <div class="relative flex-grow">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xl"></i>
-                    <input type="text" id="search-db" onkeyup="renderAulas(this.value)" placeholder="Cerca ovunque (titoli, testi, quiz, spiegazioni, parole chiave)..." class="w-full bg-slate-800/80 border border-slate-600 text-white placeholder-slate-400 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition text-lg shadow-inner">
-                </div>
-                <button onclick="toggleAllAulas()" id="btn-toggle-aulas" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-4 rounded-xl border border-slate-600 transition shadow flex items-center justify-center font-bold shrink-0">
-                    <i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>
-                </button>
-            </div>
-
-            <div id="aulas-container" class="space-y-4"></div>
-        </div>
-    </div>
-
-    <!-- VIEW: ARGOMENTI DELLA LEZIONE CARICATA -->
-    <div id="view-topics" class="view">
-        <div class="max-w-6xl mx-auto w-full pb-12">
-            
-            <div class="flex justify-between items-start mb-6 mt-4">
-                <div>
-                    <h2 id="lesson-title" class="text-5xl text-white font-black mb-4 tracking-tight drop-shadow">Titolo Lezione</h2>
-                    <h3 id="lesson-stats" class="text-sm font-bold text-blue-400 uppercase tracking-widest bg-blue-900/30 inline-block px-4 py-2 rounded-full border border-blue-500/30">...</h3>
-                </div>
-            </div>
-
-            <!-- Box Descrizione Immersiva e Immagine Obiettivo -->
-            <div id="lesson-header-box" class="bg-slate-800/50 border-2 border-slate-700 p-8 rounded-2xl mb-10 flex justify-between items-center shadow-xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
-                <div class="mr-8">
-                    <p class="text-xs font-black text-blue-400 uppercase tracking-widest mb-3 flex items-center"><i class="fa-solid fa-bullseye text-lg mr-2"></i> Contesto Operativo e Pericoli</p>
-                    <p id="lesson-description" class="text-slate-200 text-xl leading-relaxed italic"></p>
-                </div>
-                <div id="lesson-img-container" class="shrink-0"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="topics-container"></div>
-        </div>
-    </div>
-
-    <!-- VIEW: LEZIONE DINAMICA (Layout Side-by-Side: Focus Docente Schemato + Slide) -->
-    <div id="view-lezione" class="view" style="padding: 0;">
-        <div class="flex h-full w-full">
-            
-            <!-- Sidebar Sinistra: GUIDA DOCENTE (Focus Schemato) -->
-            <div class="w-1/4 bg-slate-900 border-r border-slate-800 p-6 flex flex-col h-full overflow-y-auto">
-                <button onclick="navTo('topics')" class="text-slate-400 hover:text-white mb-8 text-left w-fit bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Indice Argomenti</button>
-                <div id="dyn-topic-img-container" class="mb-6"></div>
-                <div id="dyn-sidebar-content"></div>
-            </div>
-            
-            <!-- Area Principale Destra: SLIDE LEZIONE -->
-            <div id="dyn-scroll-area" class="w-3/4 p-10 flex flex-col h-full overflow-y-auto relative bg-[#0f172a] scroll-smooth">
-                <div id="dyn-main-content" class="flex-grow max-w-5xl mx-auto w-full"></div>
-                <div id="dyn-footer" class="mt-8 flex justify-end items-center border-t border-slate-800 pt-6 max-w-5xl mx-auto w-full pb-20"></div>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- VIEW: BRAINSTORMING (Lista in ordine script, grande) -->
-    <div id="view-brainstorm" class="view">
-        <div class="flex justify-between items-center mb-6 px-8 max-w-6xl mx-auto w-full">
-            <button onclick="navTo('topics')" class="text-slate-400 hover:text-white bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Indietro</button>
-            <h2 id="bs-title" class="text-3xl font-bold text-yellow-400">Mappa Mentale</h2>
-            <button id="btn-brainstorm-quiz" onclick="launchAnalyzerFromBrainstorm()" class="btn-primary"><i class="fa-solid fa-microscope mr-2"></i>Quiz Collegati</button>
-        </div>
+    <!-- Container App Principale -->
+    <div id="app-ui" class="flex flex-col h-full">
         
-        <div class="max-w-6xl mx-auto w-full flex-grow flex flex-col relative mb-8 overflow-hidden">
-            <!-- VISTA 1: Elenco in ordine, testi grandi -->
-            <div id="brainstorm-canvas" class="flex flex-col gap-4 w-full h-full overflow-y-auto pr-4 pb-20">
-                <!-- Generato da JS -->
-            </div>
-            
-            <!-- VISTA 2: Focus sul singolo concetto -->
-            <div id="brainstorm-focus" class="glass-panel w-full">
-                <button onclick="resetBrainstormFocus()" class="absolute top-6 left-6 text-slate-400 hover:text-white bg-slate-800 p-3 rounded-full flex items-center justify-center w-12 h-12 transition-all hover:bg-slate-700 hover:scale-110 shadow-lg border border-slate-600"><i class="fa-solid fa-arrow-left text-xl"></i></button>
-                <div id="focus-main-word" class="focused-main-word mt-8 text-yellow-400"></div>
-                <div id="focus-main-desc" class="text-slate-300 text-3xl mb-8 text-center max-w-4xl italic bg-slate-900/50 p-6 rounded-xl border border-slate-700"></div>
-                <div class="w-full h-px bg-slate-700/50 max-w-4xl my-4"></div>
-                <div id="focus-related-container" class="related-words-container mb-8"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- VIEW: LAVAGNA ANALIZZATORE QUIZ -->
-    <div id="view-analyzer" class="view relative">
-        <div class="flex justify-between items-center mb-6 max-w-6xl mx-auto w-full z-10">
-            <button onclick="navTo('topics')" class="text-slate-400 hover:text-white bg-slate-800 px-4 py-2 rounded-full border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Indietro</button>
-            <h2 class="text-2xl font-bold text-green-400"><i class="fa-solid fa-chalkboard mr-2"></i>Lavagna Interattiva</h2>
-            <div class="flex gap-3">
-                <button onclick="prevAnalyzerQuiz()" class="btn-secondary py-3 px-6"><i class="fa-solid fa-backward-step mr-2"></i> Prec</button>
-                <button onclick="nextAnalyzerQuiz()" class="btn-primary py-3 px-6">Prossimo <i class="fa-solid fa-forward-step ml-2"></i></button>
-            </div>
-        </div>
-
-        <div class="max-w-6xl mx-auto w-full glass-panel p-12 flex flex-col items-center justify-center flex-grow mb-8 z-10 relative">
-            <div class="w-full flex justify-between items-center mb-12 text-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-700 pb-4">
-                <span><span id="az-topic" class="text-blue-400">--</span></span>
-                <div class="flex items-center">
-                    <span class="mr-4">Esito Ministeriale:</span>
-                    <button id="az-esito-btn" onclick="revealResultAndExplanation()" class="px-6 py-2 text-xl rounded shadow-lg bg-slate-700 text-white font-black hover:bg-slate-600 transition border-b-4 border-slate-900 active:border-b-0 active:translate-y-1">MOSTRA</button>
+        <!-- NAVBAR -->
+        <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
+            <div class="flex items-center gap-5">
+                <div class="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-layer-group text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
+                    <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio</p>
                 </div>
             </div>
-            
-            <div id="analyzer-text" class="text-5xl lg:text-6xl text-center leading-[1.8] font-medium mb-12 select-none w-full flex flex-col items-center"></div>
-            
-            <button id="btn-reveal-hint" onclick="revealHint()" class="mt-auto btn-secondary text-xl py-3 px-8 flex items-center justify-center border border-yellow-500/50 hover:bg-yellow-500/10 hover:border-yellow-400 text-yellow-400 mx-auto transition-all w-fit"><i class="fa-solid fa-lightbulb mr-3"></i> Aiuto / Spiegazione Logica</button>
-            
-            <div id="az-explanation" class="mt-4 p-8 bg-blue-900/20 border border-blue-500/30 rounded-xl text-2xl text-blue-200 hidden w-full text-left shadow-inner flex items-start static-explanation"></div>
+            <div class="flex gap-4">
+                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
+            </div>
         </div>
-    </div>
 
-    <!-- LIGHTBOX PER IMMAGINI SCHERMO INTERO -->
-    <div id="lightbox" onclick="closeLightbox()">
-        <i class="fa-solid fa-xmark lightbox-close"></i>
-        <img id="lightbox-img" src="" alt="Zoom Immagine" onclick="event.stopPropagation()">
-    </div>
+        <!-- ==========================================
+             VISTA 1: GENERATORE 
+             ========================================== -->
+        <div id="view-generator" class="view-section active p-4 md:p-8">
+            <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
+                <!-- AREA INPUT -->
+                <div class="glass-panel mb-6 shadow-xl shrink-0">
+                    <div class="flex justify-between items-center mb-3">
+                        <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA</h2>
+                        <button onclick="document.getElementById('raw-input').value = ''" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-eraser mr-1"></i>Pulisci</button>
+                    </div>
+                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo (assicurati che contenga i tag AULA, OBIETTIVO, ARGOMENTO e i delimitatori === MAPPA TECNICA === e === MATRICE QUIZ ===)"></textarea>
+                    <button onclick="processDataFromInput()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
+                        <i class="fa-solid fa-gears mr-2"></i> Genera Anteprima
+                    </button>
+                </div>
 
-    <!-- OVERLAY LIM CANVAS -->
-    <canvas id="lim-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
+                <!-- AREA RISULTATI GENERATORE -->
+                <div id="gen-results-area" class="hidden flex-col gap-4 flex-grow min-h-0">
+                    <div class="flex justify-end shrink-0">
+                        <button onclick="saveToArchive()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3 px-8 rounded-xl transition shadow-lg shadow-amber-500/20 text-lg flex items-center transform hover:scale-105">
+                            <i class="fa-solid fa-download mr-2"></i> SALVA NELL'ARCHIVIO
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0 overflow-hidden pb-4">
+                        <!-- COLONNA MAPPA TECNICA -->
+                        <div class="glass-panel flex flex-col h-full border-t-4 border-t-blue-500 overflow-hidden">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                                <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                                <button onclick="printDocument('mappa', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                    <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                </button>
+                            </div>
+                            <div id="gen-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
+                        </div>
 
-    <!-- TOOLBAR LIM -->
-    <div id="lim-toolbar">
-        <button class="tool-btn active" id="tool-mouse" onclick="setTool('mouse')" title="Puntatore (Interagisci col Testo)"><i class="fa-solid fa-arrow-pointer"></i></button>
-        <div class="w-px h-6 bg-slate-600 my-auto"></div>
-        <button class="tool-btn" id="tool-pen" onclick="setTool('pen')" title="Pennarello Libero"><i class="fa-solid fa-pen"></i></button>
-        <button class="tool-btn hover:bg-red-500" onclick="clearCanvas()" title="Cancella Disegni Lavagna"><i class="fa-solid fa-eraser"></i></button>
+                        <!-- COLONNA MATRICE QUIZ -->
+                        <div class="glass-panel flex flex-col h-full border-t-4 border-t-emerald-500 overflow-hidden">
+                            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                                <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
+                                <div class="flex gap-2">
+                                    <button onclick="printDocument('matrice', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                        <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                    </button>
+                                    <button onclick="exportCSV('gen')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
+                                        <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="gen-matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             VISTA 2: ARCHIVIO (DATABASE)
+             ========================================== -->
+        <div id="view-archive" class="view-section p-4 md:p-8">
+            <div class="max-w-5xl mx-auto w-full">
+                <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
+                    <div>
+                        <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
+                        <p class="text-slate-400 text-sm">Le tue mappe e matrici salvate e pronte per la consultazione o esportazione.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
+                            <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
+                        </button>
+                        <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
+                        </button>
+                        <input type="file" id="import-file" accept=".json" class="hidden" onchange="importArchiveDB(event)">
+                    </div>
+                </div>
+
+                <!-- BARRA DI RICERCA GLOBALE E BOTTONE ESPANDI -->
+                <div class="flex flex-col md:flex-row gap-4 mb-8">
+                    <div class="relative flex-grow">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xl"></i>
+                        <input type="text" id="search-db" onkeyup="renderArchiveList(this.value)" placeholder="Ricerca profonda (titoli, quiz, trappole, spiegazioni)..." class="w-full bg-slate-900 border border-slate-600 text-white placeholder-slate-500 rounded-xl py-4 pl-12 pr-4 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition text-lg shadow-inner">
+                    </div>
+                    <button onclick="toggleAllAulas()" id="btn-toggle-aulas" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-4 rounded-xl border border-slate-600 transition shadow-lg flex items-center justify-center font-bold shrink-0 active:scale-95">
+                        <i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>
+                    </button>
+                </div>
+
+                <div id="archive-container" class="space-y-6 pb-20">
+                    <!-- Popolato da JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ==========================================
+             VISTA 3: LETTORE ARCHIVIO (Reader)
+             ========================================== -->
+        <div id="view-reader" class="view-section p-4 md:p-8">
+            <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
+                <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
+                    <button onclick="navTo('archive')" class="text-slate-300 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-slate-700"><i class="fa-solid fa-arrow-left mr-2"></i>Torna all'Archivio</button>
+                    <div class="text-center">
+                        <p class="text-xs text-blue-400 font-bold uppercase tracking-widest" id="reader-aula-title">AULA</p>
+                        <h3 class="text-xl font-bold text-white" id="reader-item-title">Titolo Argomento</h3>
+                    </div>
+                    <div class="w-32"></div> <!-- Spacer -->
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-0 overflow-hidden pb-4">
+                    <!-- COLONNA MAPPA TECNICA (READER) -->
+                    <div class="glass-panel flex flex-col h-full border-t-4 border-t-blue-500 overflow-hidden">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                            <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                            <button onclick="printDocument('mappa', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                            </button>
+                        </div>
+                        <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
+                    </div>
+
+                    <!-- COLONNA MATRICE QUIZ (READER) -->
+                    <div class="glass-panel flex flex-col h-full border-t-4 border-t-emerald-500 overflow-hidden">
+                        <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                            <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
+                            <div class="flex gap-2">
+                                <button onclick="printDocument('matrice', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                                    <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Stampa PDF
+                                </button>
+                                <button onclick="exportCSV('read')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
+                                    <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                                </button>
+                            </div>
+                        </div>
+                        <div id="read-matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- Fine #app-ui -->
+
+    <!-- AREA STAMPA (Nascosta su schermo, visibile in print) -->
+    <div id="print-area">
+        <!-- Riempito via JS durante la stampa -->
     </div>
 
 <script>
     /* ==========================================================================
-       STATO DELL'APPLICAZIONE E VARIABILI GLOBALI
+       STATO E VARIABILI GLOBALI
     ========================================================================== */
-    let currentLessonObj = null; 
-    let allAulasExpanded = false;
+    // Database locale
+    let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
     
-    let currentState = {
-        activeTopic: null,
-        activeBlockIdx: 0,
-        activeKeywordObj: null,
-        analyzer: { pool: [], currentIdx: 0 }
-    };
+    // Oggetti temporanei per il rendering corrente (Generator o Reader)
+    let currentDocMeta = { gen: {}, read: {} };
+    let currentCsvData = { gen: [], read: [] };
+    
+    // Buffer del testo originale per il salvataggio
+    let rawInputBuffer = "";
+    
+    // Stato espansione archivio
+    let allAulasExpanded = false;
 
-    let currentBrainstormContext = {
-        title: "",
-        keywords: [],
-        quizzes: []
-    };
-
-    // Chiude parole interattive cliccando nel vuoto
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.interact-word') || e.target.closest('button') || e.target.closest('.tool-btn') || e.target.closest('.related-card') || e.target.closest('.brain-word')) {
-            return;
-        }
-        document.querySelectorAll('.interact-word[data-state]').forEach(el => {
-            el.setAttribute('data-state', '0');
-        });
-    });
-
+    /* ==========================================================================
+       NAVIGAZIONE VISTE
+    ========================================================================== */
     function navTo(viewId) {
-        document.querySelectorAll('.view').forEach(el => { el.classList.remove('active'); el.scrollTop = 0; });
-        document.getElementById(`view-${viewId}`).classList.add('active');
-        
-        if(viewId === 'upload') {
-            document.getElementById('file-input').value = ""; // Reset file input
-        }
-        
-        if(viewId === 'home') {
-            const searchBar = document.getElementById('search-db');
-            if (searchBar) searchBar.value = '';
-            renderAulas();
-        }
-        
-        // Gestione visibilità Toolbar LIM
-        const limToolbar = document.getElementById('lim-toolbar');
-        if(viewId === 'lezione' || viewId === 'analyzer') { 
-            limToolbar.classList.remove('hidden'); 
-        } else { 
-            limToolbar.classList.add('hidden'); 
-            setTool('mouse'); 
-            clearCanvas(); 
-        }
-    }
+        document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+        if(viewId === 'generator') document.getElementById('nav-btn-generator').classList.add('active');
+        if(viewId === 'archive' || viewId === 'reader') document.getElementById('nav-btn-archive').classList.add('active');
 
-    function unloadLesson() {
-        currentLessonObj = null;
-        document.getElementById('nav-icon').className = "fa-solid fa-folder-open text-2xl text-white";
-        document.getElementById('nav-subtitle').innerText = "Smart E-Learning System";
-        document.getElementById('nav-divider').classList.add('hidden');
-        document.getElementById('btn-chiudi-lez').classList.add('hidden');
-        navTo('upload');
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.getElementById(`view-${viewId}`).classList.add('active');
+
+        if(viewId === 'archive') {
+            const searchBar = document.getElementById('search-db');
+            if(searchBar) searchBar.value = '';
+            renderArchiveList();
+        }
     }
 
     /* ==========================================================================
-       RENDER HOME (Accordion Aule -> Lezioni) E RICERCA PROFONDA
+       LOGICA DI ELABORAZIONE TESTO IA (Parser Core)
     ========================================================================== */
-    function deepSearchLesson(lesson, query) {
+    function processAndRender(rawText, prefix) {
+        if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
+            alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
+            return false;
+        }
+
+        const parts = rawText.split('=== MATRICE QUIZ ===');
+        const mappaRaw = parts[0].replace('=== MAPPA TECNICA ===', '').trim();
+        const matriceRaw = parts[1].trim();
+
+        renderMappa(mappaRaw, prefix);
+        renderMatrice(matriceRaw, prefix);
+        return true;
+    }
+
+    function processDataFromInput() {
+        const rawText = document.getElementById('raw-input').value;
+        rawInputBuffer = rawText; // Salva per l'archiviazione
+        const success = processAndRender(rawText, 'gen');
+        if (success) {
+            document.getElementById('gen-results-area').classList.remove('hidden');
+            document.getElementById('gen-results-area').classList.add('flex');
+        }
+    }
+
+    /* ==========================================================================
+       RENDERIZZATORI (Mappa e Matrice)
+    ========================================================================== */
+    function renderMappa(text, prefix) {
+        const lines = text.split('\n');
+        let html = '';
+        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "" }; 
+        
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+
+            if (l.toUpperCase().startsWith('AULA:')) {
+                currentDocMeta[prefix].aula = l.substring(5).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().startsWith('OBIETTIVO:')) {
+                currentDocMeta[prefix].obiettivo = l.substring(10).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().startsWith('ARGOMENTO:')) {
+                currentDocMeta[prefix].argomento = l.substring(10).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
+                let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
+                html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
+            }
+            else if (l.toUpperCase().includes('FASE')) {
+                let title = l.replace(/[\*🛑\#]/g, '').trim();
+                html += `<div class="fase-title">${title}</div>`;
+            } 
+            else if (l.toUpperCase().includes('OBIETTIVO PRATICO:')) {
+                let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
+                html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
+            }
+            else if (l.toUpperCase().includes('PAGINA') && l.includes('➔')) {
+                l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
+                
+                let pageMatch = l.match(/PAGINA\s*\d+:/i);
+                let badgeText = pageMatch ? pageMatch[0].replace(':', '') : "PAGINA";
+                
+                let remaining = pageMatch ? l.substring(l.indexOf(':') + 1).trim() : l.trim();
+                
+                let upperRemaining = remaining.toUpperCase();
+                let trapIndex = upperRemaining.indexOf('TRAPPOLA');
+                
+                let mainText = remaining;
+                let trapText = "";
+
+                if(trapIndex !== -1) {
+                    mainText = remaining.substring(0, trapIndex).trim();
+                    let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
+                    trapText = "TRAPPOLA: " + afterTrap;
+                }
+
+                mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                html += `
+                    <div class="pagina-row">
+                        <div class="pagina-badge">${badgeText}</div>
+                        <div class="pagina-text">${mainText} ${trapText ? `<div class="pagina-trap">${trapText}</div>` : ''}</div>
+                    </div>
+                `;
+            }
+        });
+
+        let headerHtml = '';
+        if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
+            headerHtml = `
+                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner">
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
+                    <h2 class="text-xl font-black text-white mb-1 leading-tight">${currentDocMeta[prefix].obiettivo || ''}</h2>
+                    <h3 class="text-base text-blue-400 font-medium italic">${currentDocMeta[prefix].argomento || ''}</h3>
+                </div>
+            `;
+        }
+
+        document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
+    }
+
+    function renderMatrice(text, prefix) {
+        const lines = text.split('\n');
+        let html = '';
+        currentCsvData[prefix] = []; 
+        currentCsvData[prefix].push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
+
+        let currentMatriceVisual = ""; 
+        let currentMatriceClean = "";  
+
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+
+            let upperL = l.toUpperCase();
+            
+            let isContinuation = false;
+            if (l.match(/^[\-\*\•\>—–]/) || l.match(/^\.\.\./)) {
+                isContinuation = true; 
+            } else if (l.includes('|') || upperL.includes('(V)') || upperL.includes('(F)') || upperL.includes(' VERO ') || upperL.includes(' FALSO ')) {
+                isContinuation = true; 
+            }
+
+            if (!isContinuation) {
+                currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
+                currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
+                html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
+            } 
+            else {
+                let parts = l.split('|');
+                let rawQuizText = parts[0].trim();
+                let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione fornita.";
+
+                let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
+                let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
+                
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>—–]\s*/, '')
+                                   .replace(/\(V\)/i, '')
+                                   .replace(/\(F\)/i, '')
+                                   .replace(/VERO/i, '')
+                                   .replace(/FALSO/i, '')
+                                   .trim();
+                
+                let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
+                let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
+                
+                html += `<div class="matrice-row">
+                            <i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> 
+                            <div>
+                                <span class="block">${testoVisual} ${badgeHtml}</span>
+                                <span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span>
+                            </div>
+                         </div>`;
+                
+                let esitoClean = isVero ? "V" : "F";
+                currentCsvData[prefix].push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
+            }
+        });
+
+        document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
+    }
+
+    /* ==========================================================================
+       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
+    ========================================================================== */
+    function saveToArchive() {
+        const meta = currentDocMeta['gen'];
+        if(!meta.aula && !meta.obiettivo && !meta.argomento) {
+            alert("Impossibile salvare: Manca l'intestazione con i metadati (AULA, OBIETTIVO, ARGOMENTO) nel testo fornito dall'IA.");
+            return;
+        }
+
+        const newItem = {
+            id: 'doc_' + Date.now(),
+            aula: meta.aula || "Varie",
+            obiettivo: meta.obiettivo || "Generico",
+            argomento: meta.argomento || "Senza Argomento",
+            rawText: rawInputBuffer,
+            date: new Date().toLocaleDateString('it-IT')
+        };
+
+        // Controlla duplicati per Argomento nello stesso Obiettivo
+        const exists = archiveDB.find(doc => doc.argomento === newItem.argomento && doc.obiettivo === newItem.obiettivo);
+        if(exists) {
+            if(!confirm("Esiste già un documento con questo Argomento. Vuoi sovrascriverlo?")) return;
+            archiveDB = archiveDB.filter(doc => doc.id !== exists.id); 
+        }
+
+        archiveDB.push(newItem);
+        try {
+            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            alert("Documento salvato con successo nell'Archivio Didattico!");
+            navTo('archive');
+        } catch (e) {
+            alert("Errore di salvataggio. La memoria del browser potrebbe essere piena.");
+        }
+    }
+
+    // Ricerca Profonda: Controlla titolo, argomento, e tutto il testo RAW (inclusi quiz e spiegazioni)
+    function deepSearch(doc, query) {
         if (!query) return true;
         const q = query.toLowerCase().trim();
         
-        if (lesson.title && lesson.title.toLowerCase().includes(q)) return true;
-        if (lesson.description && lesson.description.toLowerCase().includes(q)) return true;
+        if (doc.aula.toLowerCase().includes(q)) return true;
+        if (doc.obiettivo.toLowerCase().includes(q)) return true;
+        if (doc.argomento.toLowerCase().includes(q)) return true;
+        if (doc.rawText.toLowerCase().includes(q)) return true;
         
-        if (lesson.topics) {
-            for (let topic of lesson.topics) {
-                if (topic.title && topic.title.toLowerCase().includes(q)) return true;
-                
-                if (topic.keywords) {
-                    for (let kw of topic.keywords) {
-                        if (kw.term && kw.term.toLowerCase().includes(q)) return true;
-                        if (kw.desc && kw.desc.toLowerCase().includes(q)) return true;
-                        if (kw.related) {
-                            for (let rel of kw.related) {
-                                if (rel.term && rel.term.toLowerCase().includes(q)) return true;
-                                if (rel.desc && rel.desc.toLowerCase().includes(q)) return true;
-                            }
-                        }
-                    }
-                }
-                
-                if (topic.blocks) {
-                    for (let block of topic.blocks) {
-                        if (block.title && block.title.toLowerCase().includes(q)) return true;
-                        if (block.content) {
-                            for (let c of block.content) {
-                                if (c.toLowerCase().includes(q)) return true;
-                            }
-                        }
-                        if (block.quizzes) {
-                            for (let quiz of block.quizzes) {
-                                if (quiz.t && quiz.t.toLowerCase().includes(q)) return true;
-                                if (quiz.r && quiz.r.toLowerCase().includes(q)) return true;
-                            }
-                        }
-                        if (block.notes) {
-                            if (block.notes.explain) {
-                                for (let e of block.notes.explain) if (e.toLowerCase().includes(q)) return true;
-                            }
-                            if (block.notes.focus) {
-                                for (let f of block.notes.focus) if (f.toLowerCase().includes(q)) return true;
-                            }
-                        }
-                    }
-                }
-                
-                if (topic.summary) {
-                    if (topic.summary.points) {
-                        for (let p of topic.summary.points) if (p.toLowerCase().includes(q)) return true;
-                    }
-                    if (topic.summary.exitTicket && topic.summary.exitTicket.toLowerCase().includes(q)) return true;
-                    if (topic.summary.nextLesson && topic.summary.nextLesson.toLowerCase().includes(q)) return true;
-                }
-            }
-        }
         return false;
     }
 
-    function renderAulas(searchQuery = '') {
-        const container = document.getElementById('aulas-container');
+    function renderArchiveList(searchQuery = '') {
+        const container = document.getElementById('archive-container');
         container.innerHTML = '';
-        
-        const q = searchQuery.toLowerCase().trim();
-        const isSearching = q.length > 0;
+
+        if(archiveDB.length === 0) {
+            container.innerHTML = `<div class="text-center py-20 text-slate-500 italic"><i class="fa-solid fa-folder-open text-4xl mb-4 block text-slate-600"></i>Nessun documento salvato nell'archivio.</div>`;
+            return;
+        }
+
+        const isSearching = searchQuery.trim().length > 0;
         const forceExpand = isSearching ? true : allAulasExpanded;
         let resultsFound = false;
 
-        db.aulas.forEach((aula, aIdx) => {
-            let aulaMatchesTitle = aula.title.toLowerCase().includes(q);
-            let filteredLessons = aula.lessons.filter(lesson => {
-                return aulaMatchesTitle || deepSearchLesson(lesson, q);
-            });
-
-            if (isSearching && filteredLessons.length === 0) return;
+        // Raggruppa: Aula -> Obiettivo -> Array di Documenti
+        let grouped = {};
+        
+        archiveDB.forEach(doc => {
+            if (!deepSearch(doc, searchQuery)) return;
+            
             resultsFound = true;
-
-            const aulaDiv = document.createElement('div');
-            aulaDiv.className = "mb-4 glass-panel overflow-hidden transition-all";
+            let aula = doc.aula || "Varie";
+            let ob = doc.obiettivo || "Generico";
             
-            const gridClassHidden = forceExpand ? "" : "hidden";
-            const iconClassToggle = forceExpand ? "fa-chevron-up" : "fa-chevron-down";
-            
-            // Header Accordion
-            const header = document.createElement('div');
-            header.className = "p-6 cursor-pointer flex justify-between items-center hover:bg-slate-800/50 transition-colors";
-            header.onclick = () => {
-                const grid = document.getElementById(`grid-aula-${aIdx}`);
-                const icon = document.getElementById(`icon-aula-${aIdx}`);
-                grid.classList.toggle('hidden');
-                icon.classList.toggle('fa-chevron-down');
-                icon.classList.toggle('fa-chevron-up');
-            };
-            
-            header.innerHTML = `
-                <h3 class="text-2xl font-bold text-emerald-400 uppercase tracking-widest flex items-center">
-                    <i class="fa-solid fa-school mr-4"></i>${aula.title} <span class="text-sm text-slate-500 ml-4 font-normal tracking-normal lowercase">(${filteredLessons.length} lezioni)</span>
-                </h3>
-                <i id="icon-aula-${aIdx}" class="fa-solid ${iconClassToggle} text-slate-400 text-xl transition-transform"></i>
-            `;
-            
-            // Grid Lezioni
-            const grid = document.createElement('div');
-            grid.id = `grid-aula-${aIdx}`;
-            grid.className = `grid grid-cols-1 lg:grid-cols-2 gap-4 p-6 pt-0 border-t border-slate-700/50 ${gridClassHidden}`;
-            
-            filteredLessons.forEach(lesson => {
-                let totalMin = 0;
-                let totalQuiz = 0;
-                lesson.topics.forEach(t => {
-                    if(t.blocks){
-                        t.blocks.forEach(b => {
-                            if(b.time) totalMin += parseInt(b.time.replace(/\D/g, '')) || 0;
-                            if(b.quizzes) totalQuiz += b.quizzes.length;
-                        });
-                    }
-                });
-
-                const card = document.createElement('div');
-                card.className = "bg-slate-800/50 p-6 rounded-xl hover:border-blue-500 cursor-pointer transition shadow-lg group border border-slate-700 mt-4 relative";
-                card.onclick = () => openLesson(aula.id, lesson.id);
-                
-                let matchBadge = '';
-                if (isSearching && !lesson.title.toLowerCase().includes(q) && !aulaMatchesTitle) {
-                    matchBadge = `<div class="absolute top-4 right-4 text-[10px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-2 py-1 rounded border border-emerald-500/30"><i class="fa-solid fa-magnifying-glass mr-1"></i> Trovato nel testo</div>`;
-                }
-
-                card.innerHTML = `
-                    ${matchBadge}
-                    <div class="flex items-center mb-3 pr-16">
-                        <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center mr-4 group-hover:scale-110 transition shadow-lg shrink-0">
-                            <i class="fa-solid fa-book text-xl text-white"></i>
-                        </div>
-                        <h4 class="font-bold text-white text-xl leading-tight">${lesson.title}</h4>
-                    </div>
-                    <div class="flex flex-wrap gap-3 text-sm text-slate-400 mt-4 font-medium">
-                        <span class="bg-slate-900 px-3 py-1 rounded-full border border-slate-700"><i class="fa-solid fa-list mr-1 text-blue-400"></i> ${lesson.topics.length} Argomenti</span>
-                        <span class="bg-slate-900 px-3 py-1 rounded-full border border-slate-700"><i class="fa-regular fa-clock mr-1 text-yellow-400"></i> ~${totalMin} min</span>
-                        <span class="bg-slate-900 px-3 py-1 rounded-full border border-slate-700"><i class="fa-solid fa-database mr-1 text-emerald-400"></i> ${totalQuiz} Quiz</span>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-            
-            aulaDiv.appendChild(header);
-            aulaDiv.appendChild(grid);
-            container.appendChild(aulaDiv);
+            if(!grouped[aula]) grouped[aula] = {};
+            if(!grouped[aula][ob]) grouped[aula][ob] = [];
+            grouped[aula][ob].push(doc);
         });
 
         if (isSearching && !resultsFound) {
@@ -495,10 +550,72 @@
                 <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700">
                     <i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i>
                     <h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3>
-                    <p class="text-slate-400">La ricerca non ha prodotto risultati in nessun modulo, testo o quiz.</p>
+                    <p class="text-slate-400">La ricerca non ha prodotto risultati in nessun titolo, testo o quiz del database.</p>
                 </div>
             `;
+            return;
         }
+
+        let aulaIndex = 0;
+
+        // Ordina e Stampa Aule
+        Object.keys(grouped).sort().forEach(aulaName => {
+            let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">`;
+            
+            const gridClassHidden = forceExpand ? "" : "hidden";
+            const iconClassToggle = forceExpand ? "fa-chevron-up" : "fa-chevron-down";
+            
+            aulaHtml += `
+                <div class="p-6 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
+                     onclick="document.getElementById('grid-aula-${aulaIndex}').classList.toggle('hidden'); 
+                              document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-up'); 
+                              document.getElementById('icon-aula-${aulaIndex}').classList.toggle('fa-chevron-down');">
+                    <h3 class="text-2xl font-black text-emerald-400 uppercase tracking-widest flex items-center">
+                        <i class="fa-solid fa-school mr-4"></i>${aulaName}
+                    </h3>
+                    <i id="icon-aula-${aulaIndex}" class="fa-solid ${iconClassToggle} text-slate-400 text-xl transition-transform"></i>
+                </div>
+                <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${gridClassHidden}">
+            `;
+            
+            // Ordina e Stampa Obiettivi
+            Object.keys(grouped[aulaName]).sort().forEach(obName => {
+                aulaHtml += `
+                    <div class="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden shadow-inner">
+                        <div class="bg-slate-800/80 px-4 py-3 border-b border-slate-700 font-bold text-blue-400 flex items-center">
+                            <i class="fa-solid fa-folder-open mr-2 text-sm"></i> ${obName}
+                        </div>
+                        <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                `;
+                
+                // Stampa Argomenti (Documenti singoli)
+                grouped[aulaName][obName].forEach(doc => {
+                    let matchBadge = isSearching ? `<div class="absolute top-2 right-2 text-[9px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Trovato</div>` : '';
+
+                    aulaHtml += `
+                        <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative">
+                            ${matchBadge}
+                            <div class="cursor-pointer flex-grow mb-3" onclick="openArchivedDocument('${doc.id}')">
+                                <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug pr-12">${doc.argomento}</h4>
+                                <p class="text-xs text-slate-500 mt-2"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
+                            </div>
+                            <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
+                                <button onclick="openArchivedDocument('${doc.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition">
+                                    <i class="fa-solid fa-eye mr-1"></i> Apri
+                                </button>
+                                <button onclick="deleteArchivedDocument('${doc.id}')" class="bg-slate-800 hover:bg-red-600 text-slate-400 hover:text-white w-8 h-8 rounded transition flex items-center justify-center shrink-0 border border-slate-700 hover:border-red-500">
+                                    <i class="fa-solid fa-trash text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                });
+                aulaHtml += `</div></div>`;
+            });
+            aulaHtml += `</div></div>`;
+            container.innerHTML += aulaHtml;
+            aulaIndex++;
+        });
     }
 
     function toggleAllAulas() {
@@ -512,7 +629,129 @@
         }
         
         const currentQuery = document.getElementById('search-db') ? document.getElementById('search-db').value : '';
-        renderAulas(currentQuery);
+        renderArchiveList(currentQuery);
     }
 
-    function openLesson(aulaId, lessonId) {
+    function openArchivedDocument(docId) {
+        const doc = archiveDB.find(d => d.id === docId);
+        if(!doc) return;
+
+        document.getElementById('reader-aula-title').innerText = doc.aula;
+        document.getElementById('reader-item-title').innerText = doc.argomento;
+
+        processAndRender(doc.rawText, 'read');
+        navTo('reader');
+    }
+
+    function deleteArchivedDocument(docId) {
+        if(confirm("Vuoi eliminare definitivamente questo documento dall'archivio?")) {
+            archiveDB = archiveDB.filter(d => d.id !== docId);
+            localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+            renderArchiveList(document.getElementById('search-db').value);
+        }
+    }
+
+    /* ==========================================================================
+       ESPORTA / IMPORTA DATABASE (JSON)
+    ========================================================================== */
+    function exportArchiveDB() {
+        if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
+        
+        const dataStr = JSON.stringify(archiveDB, null, 2);
+        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+        const exportFileDefaultName = `Studio_Database_Backup_${new Date().toISOString().slice(0,10)}.json`;
+        
+        let linkElement = document.createElement('a');
+        linkElement.setAttribute('href', dataUri);
+        linkElement.setAttribute('download', exportFileDefaultName);
+        linkElement.click();
+    }
+
+    function importArchiveDB(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                if (Array.isArray(importedData)) {
+                    if(confirm(`Trovati ${importedData.length} documenti nel backup. Vuoi unirli al tuo database esistente?`)) {
+                        let merged = [...archiveDB];
+                        importedData.forEach(newDoc => {
+                            if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc);
+                        });
+                        archiveDB = merged;
+                        localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
+                        renderArchiveList();
+                        alert("Database importato con successo!");
+                    }
+                } else {
+                    alert("Formato file non valido. Richiesto array JSON.");
+                }
+            } catch(err) {
+                alert("Errore durante la lettura del file: " + err.message);
+            }
+            document.getElementById('import-file').value = ""; 
+        };
+        reader.readAsText(file);
+    }
+
+    /* ==========================================================================
+       STAMPA PDF ED ESPORTAZIONE CSV (Dinamici in base alla vista attiva gen/read)
+    ========================================================================== */
+    function printDocument(type, prefix) {
+        const printArea = document.getElementById('print-area');
+        const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
+        const meta = currentDocMeta[prefix];
+        
+        let docTitle = type === 'mappa' ? 'Mappa di Regia Didattica' : 'Analisi Matriciale Quiz';
+
+        let printHeader = `
+            <div class="print-header-container">
+                <p class="print-header-aula">${meta.aula || docTitle}</p>
+                <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
+                <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + contentHtml;
+        window.print();
+    }
+
+    function exportCSV(prefix) {
+        const csvArray = currentCsvData[prefix];
+        if(!csvArray || csvArray.length <= 1) return alert("Nessun dato matrice disponibile per l'esportazione.");
+
+        let csvContent = "";
+        csvArray.forEach(row => {
+            let rowStr = row.map(item => {
+                let str = String(item).replace(/"/g, '""');
+                return `"${str}"`;
+            }).join(",");
+            csvContent += rowStr + "\r\n";
+        });
+
+        const meta = currentDocMeta[prefix];
+        const safeName = (meta.argomento || "Matrici").replace(/[^a-z0-9]/gi, '_').toLowerCase();
+
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Export_${safeName}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    // Avvio: Se non c'è nulla in DB mostra il Generatore, altrimenti l'Archivio
+    if(archiveDB.length === 0) {
+        navTo('generator');
+    } else {
+        navTo('archive');
+    }
+
+</script>
+</body>
+</html>
