@@ -521,7 +521,7 @@
                 let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
                 html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
             }
-            // PARSER MODIFICATO: Non cerca più la freccia, accetta qualsiasi riga che inizi con PAGINA
+            // PARSER MODIFICATO: Argomento MAIUSCOLO e Freccia Design
             else if (l.replace(/^\*\s*/, '').toUpperCase().startsWith('PAGINA')) {
                 l = l.replace(/^\*\s*/, '').replace(/⚠️/g, ''); 
                 
@@ -540,11 +540,23 @@
                     mainText = remaining.substring(0, trapIndex).trim();
                     let afterTrap = remaining.substring(trapIndex + 8).replace(/^[:\s]+/, '').trim();
                     trapText = "TRAPPOLA: " + afterTrap;
-                } else if (remaining.includes('➔') || remaining.includes('->')) {
-                    // Fallback se usa un separatore ma non la parola TRAPPOLA
-                    let trapSplit = remaining.split(/➔|->/);
-                    mainText = trapSplit[0].trim();
-                    if(trapSplit[1]) trapText = "TRAPPOLA: " + trapSplit[1].trim();
+                } else {
+                    // Fallback di emergenza
+                    let parts = remaining.split(/⚠️|(?=\sTRAPPOLA)/i); 
+                    if(parts.length > 1) {
+                       mainText = parts[0].trim();
+                       trapText = "TRAPPOLA: " + parts[1].replace(/⚠️/g, '').replace(/^[:\s]+/, '').trim();
+                    }
+                }
+
+                // --- NUOVA LOGICA FRECCE E MAIUSCOLE ---
+                let arrowMatch = mainText.match(/➔|->/);
+                if (arrowMatch) {
+                    let idx = mainText.indexOf(arrowMatch[0]);
+                    let arg = mainText.substring(0, idx).trim();
+                    let rule = mainText.substring(idx + arrowMatch[0].length).trim();
+                    // Il primo span rende l'Argomento MAIUSCOLO e con font spesso. L'icona è la nuova freccia.
+                    mainText = `<span class="uppercase font-black text-slate-100 tracking-wide print:text-black">${arg}</span> <i class="fa-solid fa-arrow-right-long text-blue-500 mx-2 print:text-slate-400"></i> <span class="text-slate-300 print:text-black">${rule}</span>`;
                 }
 
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
