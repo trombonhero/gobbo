@@ -112,9 +112,14 @@
             <div id="matrice-container" class="glass-panel flex flex-col h-[700px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                     <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz e Motivazioni</h2>
-                    <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
-                        <i class="fa-solid fa-file-csv mr-2 text-white"></i> Scarica CSV
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="printMatrice()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
+                            <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
+                        </button>
+                        <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow-lg">
+                            <i class="fa-solid fa-file-csv mr-2 text-white"></i> CSV
+                        </button>
+                    </div>
                 </div>
                 <div id="matrice-render" class="overflow-y-auto flex-grow pr-2"></div>
             </div>
@@ -300,6 +305,23 @@
         `;
         
         printArea.innerHTML = printHeader + mappaContent;
+        window.print();
+    }
+
+    // --- STAMPA PDF MATRICE ---
+    function printMatrice() {
+        const printArea = document.getElementById('print-area');
+        const matriceContent = document.getElementById('matrice-render').innerHTML;
+        
+        let printHeader = `
+            <div class="print-header-container">
+                <p class="print-header-aula">${docMeta.aula || 'Analisi Matriciale Quiz'}</p>
+                <h1 class="print-header-ob">${docMeta.obiettivo || 'Documento senza titolo'}</h1>
+                <h2 class="print-header-arg">${docMeta.argomento || ''}</h2>
+            </div>
+        `;
+        
+        printArea.innerHTML = printHeader + matriceContent;
         window.print();
     }
 
