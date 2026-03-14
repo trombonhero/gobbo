@@ -3,63 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driving Leader Studio - Formazione Iniziale</title>
+    <title>Driving Leader Studio - Generatore & Archivio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         
-        :root {
-            --bg-dark: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.7);
-            --accent: #3b82f6;
-            --text-main: #f8fafc;
-        }
-
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; 
+            color: #f8fafc;
             margin: 0;
+            padding: 0;
             height: 100vh;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+            overflow: hidden;
         }
 
-        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+        /* Container e Viste */
+        .app-container { max-width: 1400px; margin: 0 auto; padding: 2rem; width: 100%; display: flex; flex-direction: column; height: 100%;}
+        .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; transition: all 0.3s ease; }
+        
+        .view-section { display: none; flex-grow: 1; overflow-y: auto; flex-direction: column; padding-bottom: 4rem;}
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        #app-ui { display: flex; flex-direction: column; height: 100%; width: 100%; }
-
-        .view-section { display: none; height: 100%; width: 100%; flex-direction: column; padding: 2rem; overflow-y: auto; }
-        .view-section.active { display: flex; animation: fade-in 0.4s ease-out forwards; }
-
-        @keyframes fade-in {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .glass-panel { background: var(--panel-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), #1d4ed8); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: none; cursor: pointer; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4); }
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
-        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
-        .btn-export { background: linear-gradient(135deg, #10b981, #059669); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: none; cursor: pointer; }
-        .btn-export:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
-
-        /* Focus Mode Panels */
+        /* --- CLASSI PER FOCUS MODE (INGRANDIMENTO) --- */
         .maximized-panel {
-            position: fixed !important; top: 2rem !important; left: 2rem !important; right: 2rem !important; bottom: 2rem !important;
-            height: calc(100vh - 4rem) !important; z-index: 100 !important;
-            background-color: #0f172a !important; border: 2px solid #3b82f6 !important;
+            position: fixed !important;
+            top: 2rem !important;
+            left: 2rem !important;
+            right: 2rem !important;
+            bottom: 2rem !important;
+            height: calc(100vh - 4rem) !important;
+            z-index: 100 !important;
+            background-color: #0f172a !important; 
+            border: 2px solid #3b82f6 !important;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
         }
         #maximize-backdrop {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 90;
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+            z-index: 90;
         }
         #maximize-backdrop.active { display: block; animation: fadeIn 0.2s; }
         body.panel-maximized .view-section.active { z-index: 9999 !important; position: relative; }
@@ -67,83 +56,107 @@
         /* Stili Mappa Tecnica */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
         .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
+        
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
+        
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
         .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
         /* Stili Matrice Quiz */
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: transparent;}
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
 
-        /* Area Stampa */
-        #print-area { display: none; background: white; color: black; padding: 2cm; min-height: 100vh; }
-        @media print {
-            body { background: white !important; color: black !important; font-size: 10pt !important; height: auto !important; overflow: visible !important;}
-            #app-ui, #maximize-backdrop { display: none !important; }
-            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
-            @page { margin: 0.8cm; }
-            
-            .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
-            .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-            .print-header-ob { font-size: 16pt; margin: 0 0 2px 0; font-weight: 900; line-height: 1.1; color: #000; }
-            .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+        /* Bottoni Custom */
+        .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
+        .btn-nav:hover { background: #334155; color: white; }
+        .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3);}
+        
+        .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
+        .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
 
-            .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 8px 12px !important; margin-bottom: 12px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 9.5pt !important; line-height: 1.3 !important;}
-            .incipit-globale strong { color: #b45309 !important; font-size: 10.5pt !important; margin-bottom: 2px !important; display: block; font-style: normal; }
-            
-            .fase-title { color: black !important; border-bottom: 1.5px solid black !important; font-size: 13pt !important; margin-top: 14pt !important; padding-bottom: 2pt !important; margin-bottom: 4pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
-            .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 8pt !important; padding-left: 8px !important; border-left: 2px solid #888 !important; font-size: 9pt !important; line-height: 1.2 !important; page-break-after: avoid; }
-            
-            .pagina-row { display: flex; align-items: flex-start; margin-bottom: 6pt !important; font-size: 9.5pt !important; line-height: 1.25 !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 5px;}
-            .pagina-badge { border: 1px solid black !important; padding: 1px 4px; font-weight: bold; margin-right: 8px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 8pt !important; margin-top: 1px; }
-            .pagina-text { color: black !important; flex-grow: 1; }
-            .pagina-trap { display: block; margin-top: 2px; font-weight: bold !important; color: #b91c1c !important; padding-left: 6px; border-left: 2px solid #b91c1c; font-size: 9pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
-            
-            .matrice-title { color: black !important; font-weight: 800 !important; font-size: 10pt !important; margin-top: 10pt !important; margin-bottom: 3pt !important; line-height: 1.2 !important; border-left: 2px solid black !important; padding-left: 6px; background: transparent !important; page-break-after: avoid; }
-            .matrice-row { display: flex; align-items: flex-start; margin-bottom: 3pt !important; padding-left: 8px; font-size: 9pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; font-style: normal !important; }
-            .v-badge { color: #10b981 !important; font-weight: bold; margin-left: 4px; font-style: normal; font-size: 8pt !important;}
-            .f-badge { color: #ef4444 !important; font-weight: bold; margin-left: 4px; font-style: normal; font-size: 8pt !important;}
-            .matrice-exp { display: block; font-size: 8pt !important; color: #555 !important; margin-top: 1px; font-style: italic; line-height: 1.1 !important;}
-        }
+        /* Area Stampa nascosta su schermo */
+        #print-area { display: none; }
 
+        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* --- STILI STAMPA PDF (ELEGANTE E PROFESSIONALE) --- */
+        @media print {
+            body { background-color: white !important; color: black !important; font-size: 12pt !important; height: auto !important; overflow: visible !important;}
+            #app-ui, #maximize-backdrop { display: none !important; }
+            #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
+            
+            @page { margin: 1.5cm; }
+            
+            /* Nascondi il doppio titolo generato per lo schermo (quello blu scuro) */
+            .ui-header-box { display: none !important; }
+            
+            /* Intestazione del Documento (Elegante) */
+            .print-header-container { border-bottom: 3px solid #000; padding-bottom: 12px; margin-bottom: 25px; }
+            .print-header-aula { font-size: 11pt; color: #555; margin: 0 0 4px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1.5px; }
+            .print-header-ob { font-size: 22pt; margin: 0 0 6px 0; font-weight: 900; line-height: 1.1; color: #000; }
+            .print-header-arg { font-size: 14pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
+
+            /* Incipit Globale */
+            .incipit-globale { background: #fef9c3 !important; border-left: 5px solid #d97706 !important; padding: 15px !important; margin-bottom: 25px !important; border-radius: 6px; font-style: italic; color: #000 !important; font-size: 11pt !important; line-height: 1.4 !important;}
+            .incipit-globale strong { color: #b45309 !important; font-size: 12pt !important; margin-bottom: 6px !important; display: block; font-style: normal; text-transform: uppercase;}
+            
+            /* Titoli Fase */
+            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 16pt !important; margin-top: 25pt !important; padding-bottom: 5pt !important; margin-bottom: 10pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
+            .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 15pt !important; padding-left: 12px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; line-height: 1.3 !important; page-break-after: avoid; }
+            
+            /* Righe Mappa */
+            .pagina-row { display: flex; align-items: flex-start; margin-bottom: 15pt !important; font-size: 12pt !important; line-height: 1.4 !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 10px;}
+            .pagina-badge { border: 1px solid black !important; padding: 3px 8px; font-weight: bold; margin-right: 15px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 10pt !important; margin-top: 2px; border-radius: 4px;}
+            .pagina-text { color: black !important; flex-grow: 1; }
+            .pagina-trap { display: block; margin-top: 8px; font-weight: bold !important; color: #b91c1c !important; padding-left: 10px; border-left: 3px solid #b91c1c; font-size: 11pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
+            
+            /* Matrici */
+            .matrice-title { color: black !important; font-weight: 900 !important; font-size: 13pt !important; margin-top: 20pt !important; margin-bottom: 6pt !important; line-height: 1.3 !important; border-left: 4px solid #fbbf24 !important; padding-left: 10px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
+            .matrice-row { display: flex; align-items: flex-start; margin-bottom: 8pt !important; padding-left: 15px; font-size: 11pt !important; color: black !important; line-height: 1.3 !important; page-break-inside: avoid; font-style: normal !important; }
+            .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 8px; font-style: normal; font-size: 10pt !important;}
+            .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 8px; font-style: normal; font-size: 10pt !important;}
+            .matrice-exp { display: block; font-size: 10pt !important; color: #555 !important; margin-top: 3px; font-style: italic; line-height: 1.3 !important;}
+        }
     </style>
 </head>
-<body class="panel-maximized">
+<body>
 
     <!-- Sfondo per la modalità Maximize (Focus) -->
     <div id="maximize-backdrop"></div>
 
-    <div id="app-ui">
+    <!-- Container App Principale -->
+    <div id="app-ui" class="flex flex-col h-full relative z-10">
+        
         <!-- NAVBAR -->
-        <div class="px-8 pt-6">
-            <nav class="flex justify-between items-center pb-6 border-b border-white/10 mb-6">
-                <div class="flex items-center gap-4 cursor-pointer" onclick="navTo('archive')">
-                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
-                        <i class="fa-solid fa-layer-group text-2xl text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
-                        <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio Didattico</p>
-                    </div>
+        <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
+            <div class="flex items-center gap-5">
+                <div class="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
+                    <i class="fa-solid fa-layer-group text-2xl text-white"></i>
                 </div>
-                <div class="flex gap-4">
-                    <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-primary"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
-                    <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-secondary"><i class="fa-solid fa-server mr-2"></i> Archivio Lezioni</button>
+                <div>
+                    <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
+                    <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio</p>
                 </div>
-            </nav>
+            </div>
+            <div class="flex gap-4">
+                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
+            </div>
         </div>
 
-        <!-- VISTA: GENERATORE -->
+        <!-- ==========================================
+             VISTA 1: GENERATORE 
+             ========================================== -->
         <div id="view-generator" class="view-section active p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
                 <!-- AREA INPUT -->
@@ -152,9 +165,9 @@
                         <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA</h2>
                         <button onclick="document.getElementById('raw-input').value = ''" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-eraser mr-1"></i>Pulisci</button>
                     </div>
-                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo dell'IA (inclusi i tag AULA, OBIETTIVO, ARGOMENTO e TEMPO STIMATO)"></textarea>
+                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo (assicurati che contenga i tag AULA, OBIETTIVO, ARGOMENTO e i delimitatori === MAPPA TECNICA === e === MATRICE QUIZ ===)"></textarea>
                     <button onclick="processDataFromInput()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
-                        <i class="fa-solid fa-gears mr-2"></i> Elabora Mappe
+                        <i class="fa-solid fa-gears mr-2"></i> Genera Anteprima
                     </button>
                 </div>
 
@@ -166,6 +179,7 @@
                         </button>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
+                        <!-- COLONNA MAPPA TECNICA -->
                         <div id="gen-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
@@ -181,6 +195,7 @@
                             <div id="gen-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                         </div>
 
+                        <!-- COLONNA MATRICE QUIZ -->
                         <div id="gen-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
@@ -203,7 +218,9 @@
             </div>
         </div>
 
-        <!-- VISTA: ARCHIVIO (DATABASE) -->
+        <!-- ==========================================
+             VISTA 2: ARCHIVIO (DATABASE)
+             ========================================== -->
         <div id="view-archive" class="view-section p-4 md:p-8">
             <div class="max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
@@ -212,10 +229,10 @@
                         <p class="text-slate-400 text-sm">Le tue mappe e matrici salvate e pronte per la consultazione o esportazione.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="exportArchiveDB()" class="btn-primary bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
+                        <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
                         </button>
-                        <button onclick="document.getElementById('import-file').click()" class="btn-secondary bg-slate-700 hover:bg-slate-600 text-slate-200">
+                        <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
                             <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
                         </button>
                         <input type="file" id="import-file" accept=".json" class="hidden" onchange="importArchiveDB(event)">
@@ -236,7 +253,9 @@
             </div>
         </div>
 
-        <!-- VISTA: LETTORE ARCHIVIO (Reader) -->
+        <!-- ==========================================
+             VISTA 3: LETTORE ARCHIVIO (Reader)
+             ========================================== -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -249,6 +268,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
+                    <!-- COLONNA MAPPA TECNICA (READER) -->
                     <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
@@ -264,6 +284,7 @@
                         <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                     </div>
 
+                    <!-- COLONNA MATRICE QUIZ (READER) -->
                     <div id="read-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
@@ -287,16 +308,31 @@
 
     </div> <!-- Fine #app-ui -->
 
-    <!-- AREA STAMPA -->
-    <div id="print-area"></div>
+    <!-- AREA STAMPA (Nascosta su schermo, visibile in print) -->
+    <div id="print-area">
+        <!-- Riempito via JS durante la stampa -->
+    </div>
 
 <script>
+    /* ==========================================================================
+       STATO E VARIABILI GLOBALI
+    ========================================================================== */
+    // Database locale
     let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
+    
+    // Oggetti temporanei per il rendering corrente (Generator o Reader)
     let currentDocMeta = { gen: {}, read: {} };
     let currentCsvData = { gen: [], read: [] };
+    
+    // Buffer del testo originale per il salvataggio
     let rawInputBuffer = "";
+    
+    // Stato espansione archivio
     let allAulasExpanded = false;
 
+    /* ==========================================================================
+       NAVIGAZIONE E FOCUS MODE
+    ========================================================================== */
     function navTo(viewId) {
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
@@ -307,6 +343,7 @@
             renderArchiveList();
         }
         
+        // Assicurati che i pannelli escano dal full-screen se cambi vista
         document.querySelectorAll('.maximized-panel').forEach(p => {
             toggleMaximize(p.id);
         });
@@ -341,7 +378,9 @@
         });
     });
 
-    // --- PARSER TEXT ---
+    /* ==========================================================================
+       LOGICA DI ELABORAZIONE TESTO IA (Parser Core)
+    ========================================================================== */
     function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
             alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
@@ -359,7 +398,7 @@
 
     function processDataFromInput() {
         const rawText = document.getElementById('raw-input').value;
-        rawInputBuffer = rawText; 
+        rawInputBuffer = rawText; // Salva per l'archiviazione
         const success = processAndRender(rawText, 'gen');
         if (success) {
             document.getElementById('gen-results-area').classList.remove('hidden');
@@ -367,7 +406,9 @@
         }
     }
 
-    // --- RENDER MAPPA TECNICA ---
+    /* ==========================================================================
+       RENDERIZZATORI (Mappa e Matrice)
+    ========================================================================== */
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let html = '';
@@ -450,7 +491,6 @@
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
-    // --- RENDER MATRICE ---
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
@@ -512,7 +552,9 @@
         document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
-    // --- ARCHIVIO ---
+    /* ==========================================================================
+       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
+    ========================================================================== */
     function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
@@ -689,7 +731,9 @@
         }
     }
 
-    // --- DB IMPORT/EXPORT ---
+    /* ==========================================================================
+       ESPORTA / IMPORTA DATABASE (JSON)
+    ========================================================================== */
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
         
@@ -733,7 +777,9 @@
         reader.readAsText(file);
     }
 
-    // --- STAMPA PDF E CSV ---
+    /* ==========================================================================
+       STAMPA PDF ED ESPORTAZIONE CSV
+    ========================================================================== */
     function printDocument(type, prefix) {
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
@@ -782,11 +828,13 @@
         document.body.removeChild(link);
     }
 
+    // Avvio: Se non c'è nulla in DB mostra il Generatore, altrimenti l'Archivio
     if(archiveDB.length === 0) {
         navTo('generator');
     } else {
         navTo('archive');
     }
+
 </script>
 </body>
 </html>
