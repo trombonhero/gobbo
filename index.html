@@ -2,681 +2,237 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tablet Director - Driving Leader</title>
-    <!-- LINK RIPRISTINATI E PULITI -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Leader Studio - Export PDF & CSV</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #09090b; 
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; 
             color: #f8fafc;
             margin: 0;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            user-select: none;
+            padding: 0;
         }
 
-        .view { display: none; height: 100%; flex-direction: column; }
-        .view.active { display: flex; animation: fadeIn 0.2s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Aree Upload */
-        #drop-zone {
-            border: 3px dashed #3b82f6; border-radius: 1rem; background: #1e293b;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 30vh; margin-bottom: 1rem; cursor: pointer; transition: background 0.2s;
-        }
-        #drop-zone:active { background: #334155; }
-
-        /* Card Contenuti (Regia) */
-        .card-chiave { background: linear-gradient(145deg, #1e3a8a, #1e40af); border-left: 6px solid #60a5fa; }
-        .card-regia { background: linear-gradient(145deg, #78350f, #92400e); border-left: 6px solid #fbbf24; }
-        .card-quiz { background: linear-gradient(145deg, #7f1d1d, #991b1b); border-left: 6px solid #f87171; }
-
-        .card-box { padding: 1rem 1.25rem; border-radius: 1rem; margin-bottom: 0.75rem; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .card-header { display: flex; align-items: center; font-weight: 800; font-size: 1rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        /* Stili per l'interfaccia Web (Dark Mode) */
+        .app-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
         
-        /* Testi molto grandi e ravvicinati per lettura veloce */
-        .content-text { font-size: 1.5rem; line-height: 1.35; font-weight: 400; }
-        .content-text strong { 
-            color: #ffffff; 
-            font-weight: 800; 
-            background-color: rgba(0, 0, 0, 0.25);
-            padding: 0 4px; 
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        .fase-title { color: #38bdf8; font-weight: 800; font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem; text-transform: uppercase; }
+        .pagina-row { display: flex; align-items: baseline; margin-bottom: 0.5rem; font-size: 1.05rem; line-height: 1.4; }
+        .pagina-badge { background: #0284c7; color: white; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 0.75rem; white-space: nowrap; }
+        .pagina-text { color: #e2e8f0; }
+        .pagina-trap { color: #f87171; font-weight: 600; }
+
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; }
+        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.25rem; padding-left: 1rem; font-size: 1rem; color: #cbd5e1;}
+        .v-badge { color: #10b981; font-weight: bold; margin-left: 0.5rem; }
+        .f-badge { color: #ef4444; font-weight: bold; margin-left: 0.5rem; }
+
+        /* --- STILI SPECIFICI PER ESPORTAZIONE PDF (Stampa) --- */
+        @media print {
+            body { background-color: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            
+            #mappa-render { display: block !important; width: 100% !important; margin: 0 !important; padding: 0 !important; }
+            .glass-panel { border: none !important; padding: 0 !important; background: transparent !important; }
+            
+            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 15pt !important; page-break-after: avoid; }
+            .pagina-row { margin-bottom: 8pt !important; font-size: 11pt !important; page-break-inside: avoid; }
+            .pagina-badge { background: transparent !important; color: black !important; border: 1px solid black !important; }
+            .pagina-text { color: black !important; }
+            .pagina-trap { color: black !important; font-weight: bold !important; text-decoration: underline; }
+            
+            /* Nasconde la sezione matrici durante la stampa della mappa */
+            #matrice-container { display: none !important; }
         }
-        
-        /* Auto-formattazione Liste */
-        .bullet-row { display: flex; align-items: flex-start; margin-bottom: 0.4rem; }
-        .bullet-icon { margin-right: 0.75rem; margin-top: 0.35rem; opacity: 0.8; font-size: 0.6em; flex-shrink: 0; }
-
-        /* Bottoni Navigazione */
-        .nav-btn {
-            flex: 1; padding: 0.6rem; font-size: 1.1rem; font-weight: 800; border: none; border-radius: 0.5rem;
-            color: white; transition: transform 0.1s; display: flex; align-items: center; justify-content: center; height: 50px;
-        }
-        .nav-btn:active { transform: scale(0.95); }
-        .btn-prev { background-color: #334155; }
-        .btn-next { background-color: #2563eb; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
-
-        /* Timer interattivo */
-        #slide-timer { cursor: pointer; transition: all 0.2s; }
-        #slide-timer:active { transform: scale(0.95); }
-        .timer-running { color: #34d399 !important; border-color: #34d399 !important; }
-        .timer-warning { color: #facc15 !important; border-color: #facc15 !important; }
-        .timer-ended { color: #ef4444 !important; border-color: #ef4444 !important; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- VISTA 0: LIBRERIA (HOME CON ACCORDION) -->
-    <div id="view-library" class="view active h-full p-4">
-        <!-- Header & Ricerca -->
-        <div class="flex flex-col gap-4 mb-4 border-b border-slate-800 pb-4 shrink-0">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-extrabold text-blue-400 flex items-center"><i class="fa-solid fa-tablet-screen-button mr-3"></i>Director V8</h1>
-                </div>
-                
-                <!-- Azioni Database e Aggiunta -->
-                <div class="flex items-center gap-2">
-                    <button onclick="exportDB()" class="bg-slate-800 text-blue-400 hover:bg-slate-700 font-bold w-10 h-10 rounded-xl shadow-lg transition flex items-center justify-center active:scale-95 border border-slate-700" title="Esporta Database su File">
-                        <i class="fa-solid fa-cloud-arrow-down text-lg"></i>
-                    </button>
-                    <button onclick="document.getElementById('import-file').click()" class="bg-slate-800 text-emerald-400 hover:bg-slate-700 font-bold w-10 h-10 rounded-xl shadow-lg transition flex items-center justify-center active:scale-95 border border-slate-700" title="Importa Database da File">
-                        <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
-                    </button>
-                    <input type="file" id="import-file" accept=".json" class="hidden" onchange="importDB(event)">
-                    
-                    <button onclick="navTo('upload')" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-xl shadow-lg transition text-sm flex items-center active:scale-95 ml-2">
-                        <i class="fa-solid fa-plus mr-2"></i> Importa Appunti
-                    </button>
-                </div>
+    <div class="app-container no-print">
+        <div class="flex items-center gap-4 mb-8 border-b border-slate-800 pb-6">
+            <div class="bg-blue-600 p-4 rounded-xl shadow-lg">
+                <i class="fa-solid fa-microchip text-2xl text-white"></i>
             </div>
-            
-            <!-- Barra di Ricerca Globale -->
-            <div class="relative w-full">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
-                <input type="text" id="search-bar" placeholder="Cerca aula, capitolo o parola chiave..." 
-                       class="w-full bg-slate-800 border border-slate-600 text-white text-lg rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-blue-500"
-                       onkeyup="filterLibrary()">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white m-0 tracking-tight">Driving Leader Studio</h1>
+                <p class="text-slate-400 font-medium">Generatore Mappe e Matrici CSV</p>
             </div>
         </div>
-        
-        <!-- Elenco Aule e Obiettivi -->
-        <div id="library-container" class="overflow-y-auto pb-10 space-y-4">
-            <!-- Popolato da JS -->
-        </div>
-    </div>
 
-    <!-- VISTA 1: CARICAMENTO NUOVO MODULO -->
-    <div id="view-upload" class="view h-full p-4">
-        <div class="flex items-center mb-6 border-b border-slate-800 pb-4">
-            <button onclick="navTo('library')" class="text-slate-400 hover:text-white mr-4 text-xl bg-slate-800 w-10 h-10 rounded-lg flex items-center justify-center transition active:scale-95"><i class="fa-solid fa-arrow-left"></i></button>
-            <h1 class="text-2xl font-extrabold text-white">Importa Appunti IA</h1>
-        </div>
-        
-        <input type="file" id="file-input" accept=".txt" class="hidden">
-        <div id="drop-zone" onclick="document.getElementById('file-input').click()">
-            <i class="fa-solid fa-file-import text-5xl text-blue-500 mb-4"></i>
-            <h3 class="text-xl font-bold text-white mb-1">Tocca per caricare il file .txt</h3>
-        </div>
-
-        <div class="flex gap-3 h-32">
-            <textarea id="paste-area" class="w-full bg-slate-800 text-slate-300 p-3 rounded-xl border border-slate-600 focus:outline-none focus:border-blue-500 text-base" placeholder="...oppure INCOLLA il testo dell'IA qui e premi Salva"></textarea>
-            <button onclick="loadFromPaste()" class="bg-emerald-600 text-white font-bold rounded-xl px-4 text-lg shadow-lg active:scale-95 transition flex flex-col items-center justify-center min-w-[90px]">
-                <i class="fa-solid fa-save text-xl mb-1"></i> Salva
+        <!-- AREA INPUT -->
+        <div class="glass-panel mb-8 shadow-xl">
+            <h2 class="text-xl font-bold mb-3 flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla l'output dell'IA</h2>
+            <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-40 mb-4" placeholder="Incolla qui tutto il testo contenente === MAPPA TECNICA === e === MATRICE QUIZ ==="></textarea>
+            <button onclick="processData()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
+                <i class="fa-solid fa-gears mr-2"></i> Elabora Dati
             </button>
         </div>
-        
-        <div id="error-msg" class="mt-4 text-red-400 font-bold bg-red-900/20 px-4 py-3 rounded-xl border border-red-500/30 hidden flex items-center text-sm">
-            <i class="fa-solid fa-triangle-exclamation text-xl mr-3"></i>
-            <span>Errore generico.</span>
-        </div>
-    </div>
 
-    <!-- VISTA 2: IL GOBBO / REGIA -->
-    <div id="view-director" class="view">
-        <!-- Header Compatto -->
-        <div class="bg-slate-900 p-2 md:p-3 flex justify-between items-center border-b border-slate-800 shadow-md z-20 gap-2 shrink-0">
-            <div class="flex-1 truncate pr-2">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate" id="mod-title">AULA / OBIETTIVO</p>
-                <h2 class="text-lg md:text-xl font-bold text-white truncate" id="slide-title">Titolo Slide</h2>
-            </div>
+        <!-- AREA RISULTATI (Nascosta all'avvio) -->
+        <div id="results-area" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <!-- Timer Interattivo -->
-            <div id="slide-timer" onclick="toggleTimer()" class="flex items-center gap-2 bg-slate-800 border border-slate-600 text-slate-300 font-mono font-bold px-3 py-1.5 rounded-lg text-sm shrink-0">
-                <i class="fa-solid fa-stopwatch" id="timer-icon"></i>
-                <span id="timer-display">--:--</span>
+            <!-- COLONNA MAPPA TECNICA -->
+            <div id="mappa-container" class="glass-panel flex flex-col h-[600px]">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                    <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                    <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600">
+                        <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
+                    </button>
+                </div>
+                <div id="mappa-render" class="overflow-y-auto flex-grow pr-2">
+                    <!-- HTML Generato qui -->
+                </div>
             </div>
 
-            <div class="bg-blue-600 text-white font-mono font-bold px-3 py-1.5 rounded-lg text-sm shadow-inner shrink-0" id="slide-counter">
-                1/5
+            <!-- COLONNA MATRICE QUIZ -->
+            <div id="matrice-container" class="glass-panel flex flex-col h-[600px]">
+                <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
+                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-table-cells mr-2"></i> Matrici Quiz</h2>
+                    <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow">
+                        <i class="fa-solid fa-file-csv mr-2 text-white"></i> Scarica CSV
+                    </button>
+                </div>
+                <div id="matrice-render" class="overflow-y-auto flex-grow pr-2">
+                    <!-- HTML Generato qui -->
+                </div>
             </div>
-            <button onclick="exitDirector()" class="bg-slate-800 p-2 rounded-lg text-slate-400 active:bg-slate-700 shrink-0"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
 
-        <!-- Contenuto Scorrevole con meno padding -->
-        <div id="slide-content" class="flex-1 overflow-y-auto p-2 space-y-2 pb-20">
-            <!-- Riempito via JS -->
-        </div>
-
-        <!-- Footer Bottoni (Piccoli e fissi in basso) -->
-        <div class="absolute bottom-0 left-0 w-full p-2 bg-slate-900/95 backdrop-blur border-t border-slate-800 flex gap-2 z-20">
-            <button onclick="prevSlide()" class="nav-btn btn-prev"><i class="fa-solid fa-chevron-left mr-2"></i> Prec</button>
-            <button onclick="nextSlide()" class="nav-btn btn-next">Avanti <i class="fa-solid fa-chevron-right ml-2"></i></button>
         </div>
     </div>
 
 <script>
-    // --- GESTIONE DATABASE LOCALE ---
-    // Struttura: array di oggetti { id, aula, capitolo, argomento, slides: [...] }
-    let savedModules = JSON.parse(localStorage.getItem('tablet_director_db_v8')) || [];
+    let csvDataArray = []; // Conterrà i dati pronti per il CSV
 
-    let appData = {
-        aulaTitle: "",
-        capTitle: "",
-        argTitle: "",
-        slides: [],
-        currentIndex: 0
-    };
-
-    let timerInterval = null;
-    let timeRemaining = 0;
-    let timerRunning = false;
-
-    function navTo(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById('view-' + viewId).classList.add('active');
-        
-        if(viewId === 'library') {
-            document.getElementById('search-bar').value = '';
-            renderLibrary();
-        }
-        if(viewId === 'upload') {
-            document.getElementById('file-input').value = "";
-            document.getElementById('paste-area').value = "";
-            document.getElementById('error-msg').classList.add('hidden');
-        }
-    }
-
-    // --- ESPORTA E IMPORTA DATABASE (Cross-Device Syncing Manuale) ---
-    function exportDB() {
-        if(savedModules.length === 0) {
-            alert("Il database è vuoto. Niente da esportare!");
-            return;
-        }
-        const dataStr = JSON.stringify(savedModules, null, 2);
-        const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-        const exportFileDefaultName = `Director_DB_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        
-        let linkElement = document.createElement('a');
-        linkElement.setAttribute('href', dataUri);
-        linkElement.setAttribute('download', exportFileDefaultName);
-        linkElement.click();
-    }
-
-    function importDB(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                if (Array.isArray(importedData)) {
-                    if(confirm("L'importazione unirà i nuovi dati al tuo database esistente. Procedere?")) {
-                        // Unisce i vecchi ai nuovi evitando duplicati esatti per ID (se presenti)
-                        let merged = [...savedModules];
-                        importedData.forEach(newMod => {
-                            if(!merged.find(m => m.id === newMod.id)) {
-                                merged.push(newMod);
-                            }
-                        });
-                        savedModules = merged;
-                        localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules));
-                        renderLibrary();
-                        alert("Database importato con successo!");
-                    }
-                } else {
-                    alert("Formato file non valido. Seleziona un file JSON di backup valido.");
-                }
-            } catch(err) {
-                alert("Errore durante la lettura del file: " + err.message);
-            }
-            document.getElementById('import-file').value = ""; // reset
-        };
-        reader.readAsText(file);
-    }
-
-    // --- RICERCA E RENDERING LIBRERIA (GERARCHIA A 4 LIVELLI) ---
-    function filterLibrary() {
-        renderLibrary(document.getElementById('search-bar').value.toLowerCase());
-    }
-
-    function renderLibrary(query = '') {
-        const container = document.getElementById('library-container');
-        container.innerHTML = '';
-        
-        if (savedModules.length === 0) {
-            container.innerHTML = `<div class="text-center py-20 text-slate-500 text-lg italic"><i class="fa-solid fa-folder-open text-3xl mb-4 block"></i>Nessun modulo salvato.<br>Importa un testo o il backup.</div>`;
+    function processData() {
+        const rawText = document.getElementById('raw-input').value;
+        if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
+            alert("Attenzione: Il testo incollato non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
             return;
         }
 
-        // Filtra i moduli
-        let filtered = savedModules.filter(m => {
-            if(!query) return true;
-            let textToSearch = (m.aula + " " + m.capitolo + " " + m.argomento + " " + m.slides.map(s => s.title + " " + s.frase + " " + s.regia + " " + s.focus).join(" ")).toLowerCase();
-            return textToSearch.includes(query);
-        });
+        // Dividi le sezioni
+        const parts = rawText.split('=== MATRICE QUIZ ===');
+        const mappaRaw = parts[0].replace('=== MAPPA TECNICA ===', '').trim();
+        const matriceRaw = parts[1].trim();
 
-        if (filtered.length === 0) {
-            container.innerHTML = `<div class="text-center py-10 text-slate-500 italic">Nessun risultato trovato per la ricerca.</div>`;
-            return;
-        }
+        renderMappa(mappaRaw);
+        renderMatrice(matriceRaw);
 
-        // Raggruppa i dati: Aula -> Capitolo -> Array di Argomenti
-        let grouped = {};
-        filtered.forEach(mod => {
-            let aula = mod.aula || "Generale";
-            // Compatibilità con versioni vecchie in cui "capitolo" si chiamava "obiettivo"
-            let cap = mod.capitolo || mod.obiettivo || "Non Specificato"; 
-            
-            if(!grouped[aula]) grouped[aula] = {};
-            if(!grouped[aula][cap]) grouped[aula][cap] = [];
-            grouped[aula][cap].push(mod);
-        });
+        document.getElementById('results-area').classList.remove('hidden');
+    }
 
-        let aulaIndex = 0;
+    // --- RENDER MAPPA TECNICA ---
+    function renderMappa(text) {
+        const lines = text.split('\n');
+        let html = '';
         
-        // Stampa AULE
-        Object.keys(grouped).sort((a,b) => a.localeCompare(b)).forEach(aulaName => {
-            let isExpanded = query !== '' ? '' : 'hidden';
-            let iconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
 
-            let aulaHtml = `
-                <div class="glass-panel overflow-hidden transition-all border border-slate-700">
-                    <div class="p-4 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
-                         onclick="document.getElementById('aula-content-${aulaIndex}').classList.toggle('hidden'); 
-                                  document.getElementById('aula-icon-${aulaIndex}').classList.toggle('fa-chevron-up'); 
-                                  document.getElementById('aula-icon-${aulaIndex}').classList.toggle('fa-chevron-down');">
-                        <h2 class="text-xl font-black text-white uppercase tracking-wider flex items-center">
-                            <i class="fa-solid fa-school text-blue-500 mr-3"></i> ${aulaName}
-                        </h2>
-                        <i id="aula-icon-${aulaIndex}" class="fa-solid ${iconClass} text-slate-400 text-xl transition-transform"></i>
+            // Rileva le Fasi
+            if (l.includes('FASE')) {
+                let title = l.replace(/[\*🛑\#]/g, '').trim();
+                html += `<div class="fase-title">${title}</div>`;
+            } 
+            // Rileva le Pagine
+            else if (l.includes('PAGINA')) {
+                // Rimuove l'asterisco iniziale
+                l = l.replace(/^\*\s*/, '');
+                
+                // Cerca di dividere il numero pagina, il testo e la trappola
+                let pageMatch = l.match(/PAGINA\s*\d+:/i);
+                let badgeText = pageMatch ? pageMatch[0].replace(':', '') : "PAGINA";
+                
+                let remaining = pageMatch ? l.substring(l.indexOf(':') + 1) : l;
+                let trapSplit = remaining.split('⚠️');
+                let mainText = trapSplit[0].trim();
+                let trapText = trapSplit[1] ? "⚠️ " + trapSplit[1].trim() : "";
+
+                // Formatta il grassetto
+                mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+                html += `
+                    <div class="pagina-row">
+                        <span class="pagina-badge">${badgeText}</span>
+                        <span class="pagina-text">${mainText} <span class="pagina-trap">${trapText}</span></span>
                     </div>
-                    <div id="aula-content-${aulaIndex}" class="space-y-3 p-3 pt-0 border-t border-slate-700/50 ${isExpanded}">
-            `;
-            
-            let capIndex = 0;
-            // Stampa CAPITOLI (es. Obiettivo 16)
-            Object.keys(grouped[aulaName]).sort((a,b) => a.localeCompare(b)).forEach(capName => {
-                let capExpanded = query !== '' ? '' : 'hidden';
-                let capIconClass = query !== '' ? 'fa-chevron-up' : 'fa-chevron-down';
-
-                aulaHtml += `
-                    <div class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/40 shadow-inner">
-                        <div class="p-3 bg-slate-800/40 cursor-pointer flex justify-between items-center hover:bg-slate-800/80 transition-colors"
-                             onclick="document.getElementById('cap-content-${aulaIndex}-${capIndex}').classList.toggle('hidden'); 
-                                      document.getElementById('cap-icon-${aulaIndex}-${capIndex}').classList.toggle('fa-chevron-up'); 
-                                      document.getElementById('cap-icon-${aulaIndex}-${capIndex}').classList.toggle('fa-chevron-down');">
-                            <h3 class="text-base font-bold text-blue-300 flex items-center"><i class="fa-solid fa-folder-open mr-2 text-sm text-blue-500"></i> ${capName}</h3>
-                            <i id="cap-icon-${aulaIndex}-${capIndex}" class="fa-solid ${capIconClass} text-slate-500 transition-transform"></i>
-                        </div>
-                        <div id="cap-content-${aulaIndex}-${capIndex}" class="grid grid-cols-1 sm:grid-cols-2 gap-2 p-2 ${capExpanded}">
                 `;
-                
-                // Stampa ARGOMENTI (I file caricati)
-                grouped[aulaName][capName].forEach(mod => {
-                    let totalMins = mod.slides.reduce((acc, curr) => acc + (curr.time || 5), 0);
-                    
-                    aulaHtml += `
-                        <div class="bg-slate-800 border border-slate-600 rounded-xl p-3 flex justify-between items-center shadow-md hover:border-blue-500 transition-colors group">
-                            <div class="truncate pr-2 cursor-pointer flex-grow" onclick="startModule('${mod.id}')">
-                                <h4 class="font-bold text-white text-sm truncate group-hover:text-blue-400 transition-colors">${mod.argomento || "Argomento"}</h4>
-                                <div class="flex gap-3 mt-1">
-                                    <p class="text-slate-400 text-xs"><i class="fa-solid fa-layer-group text-blue-400 mr-1"></i> ${mod.slides.length} slide</p>
-                                    <p class="text-yellow-500 text-xs font-mono"><i class="fa-regular fa-clock mr-1"></i> ~${totalMins} min tot.</p>
-                                </div>
-                            </div>
-                            <button onclick="deleteModule('${mod.id}')" class="bg-slate-900 p-2 rounded-lg text-red-500 hover:bg-red-600 hover:text-white border border-slate-700 hover:border-red-500 transition shrink-0 active:scale-95">
-                                <i class="fa-solid fa-trash text-sm"></i>
-                            </button>
-                        </div>
-                    `;
-                });
-                aulaHtml += `</div></div>`;
-                capIndex++;
-            });
-            aulaHtml += `</div></div>`;
-            container.innerHTML += aulaHtml;
-            aulaIndex++;
+            }
         });
+
+        document.getElementById('mappa-render').innerHTML = html;
     }
 
-    // --- AZIONI SUI MODULI ---
-    function startModule(id) {
-        const mod = savedModules.find(m => m.id === id);
-        if(mod) {
-            appData.aulaTitle = mod.aula;
-            appData.capTitle = mod.capitolo || mod.obiettivo;
-            appData.argTitle = mod.argomento;
-            appData.slides = mod.slides;
-            appData.currentIndex = 0;
-            renderSlide();
-            navTo('director');
-        }
+    // --- RENDER MATRICE E PREPARAZIONE CSV ---
+    function renderMatrice(text) {
+        const lines = text.split('\n');
+        let html = '';
+        csvDataArray = []; // Resetta i dati CSV
+        csvDataArray.push(["Matrice Base", "Continuazione", "Esito (V/F)"]); // Intestazioni CSV
+
+        let currentMatrice = "";
+
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+
+            // Se la riga NON inizia con un trattino, è considerata una Matrice Base
+            if (!l.startsWith('-')) {
+                currentMatrice = l.replace(/[\[\]\*\#]/g, '').trim();
+                html += `<div class="matrice-title"><i class="fa-solid fa-puzzle-piece mr-2"></i>${currentMatrice}</div>`;
+            } 
+            // Se inizia con un trattino, è una continuazione
+            else {
+                let isVero = l.toUpperCase().includes('(V)');
+                let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
+                let testo = l.replace(/^-/, '').replace(/\([VF]\)/i, '').trim();
+                
+                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-right-long text-slate-600 mr-2 mt-1 text-sm"></i> ${testo} ${badgeHtml}</div>`;
+                
+                // Aggiungi all'array per il CSV (pulito dalle formattazioni)
+                let esitoClean = isVero ? "V" : "F";
+                csvDataArray.push([currentMatrice, testo, esitoClean]);
+            }
+        });
+
+        document.getElementById('matrice-render').innerHTML = html;
     }
 
-    function deleteModule(id) {
-        if(confirm("Vuoi davvero eliminare questo argomento?")) {
-            savedModules = savedModules.filter(m => m.id !== id);
-            try { localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules)); } catch(e) {}
-            filterLibrary();
-        }
-    }
-
-    function exitDirector() {
-        stopTimer();
-        navTo('library');
-    }
-
-    // --- LETTURA E PARSING DATI ---
-    document.getElementById('file-input').addEventListener('change', function(e) {
-        if(e.target.files.length === 0) return;
-        const reader = new FileReader();
-        reader.onload = function(evt) { processContent(evt.target.result); };
-        reader.readAsText(e.target.files[0]);
-    });
-
-    function loadFromPaste() {
-        const txt = document.getElementById('paste-area').value;
-        if(txt.trim().length > 10) processContent(txt);
-        else showError("Incolla del testo valido!");
-    }
-    
-    function showError(msg) {
-        const errorEl = document.getElementById('error-msg');
-        errorEl.querySelector('span').innerText = msg;
-        errorEl.classList.remove('hidden');
-    }
-
-    function formatContentLine(line, section) {
-        let clean = line.trim();
-        if (!clean) return ""; 
-        clean = clean.replace(/^[\-\•\*\>]\s*/, '');
-        
-        let iconColor = "text-blue-300";
-        let iconType = "fa-check"; 
-        
-        if (section === 'regia') { iconColor = "text-yellow-500"; iconType = "fa-arrow-right"; } 
-        else if (section === 'focus') { iconColor = "text-red-400"; iconType = "fa-triangle-exclamation"; }
-
-        return `<div class="bullet-row"><i class="fa-solid ${iconType} bullet-icon ${iconColor}"></i><span>${clean}</span></div>`;
-    }
-
-    // PARSER V8 ANTIPROIETTILE (Legge AULA, CAPITOLO, ARGOMENTO)
-    function processContent(txt) {
-        let parsedData = {
-            id: 'mod_' + Date.now(),
-            aula: "Aula Non Definita",
-            capitolo: "Capitolo Non Definito",
-            argomento: "Argomento Non Definito",
-            slides: []
-        };
-        
-        let lines = txt.split('\n');
-        let currentSlide = null;
-
-        let checkContent = txt.replace(/\*/g, '');
-        if (!/SLIDE/i.test(checkContent)) {
-            showError("Errore Struttura: Il file non contiene il tag 'SLIDE:'. Assicurati di aver incollato la lezione generata dal Master Prompt.");
+    // --- ESPORTAZIONE CSV ---
+    function exportCSV() {
+        if(csvDataArray.length <= 1) {
+            alert("Nessun dato matrice disponibile per l'esportazione.");
             return;
         }
 
-        for (let i = 0; i < lines.length; i++) {
-            let line = lines[i].trim();
-            if (!line || line.startsWith('```')) continue;
-            
-            let cleanLine = line.replace(/^\*+/, '').replace(/\*+$/, '').trim();
-            let uLine = cleanLine.toUpperCase();
+        // Costruisci stringa CSV gestendo le virgole interne nei testi
+        let csvContent = "";
+        csvDataArray.forEach(row => {
+            let rowStr = row.map(item => {
+                // Se il testo contiene virgole o virgolette, deve essere racchiuso in virgolette
+                let str = String(item).replace(/"/g, '""');
+                return `"${str}"`;
+            }).join(",");
+            csvContent += rowStr + "\r\n";
+        });
 
-            if (uLine.includes('[INIZIO') || uLine.includes('[FINE')) continue;
-
-            if (tagCheckLineIncludes(uLine, 'AULA:')) {
-                parsedData.aula = extractValue(line, 'AULA:');
-            }
-            else if (tagCheckLineIncludes(uLine, 'CAPITOLO:')) {
-                parsedData.capitolo = extractValue(line, 'CAPITOLO:');
-            }
-            else if (tagCheckLineIncludes(uLine, 'OBIETTIVO:')) { // Retrocompatibilità
-                parsedData.capitolo = extractValue(line, 'OBIETTIVO:');
-            }
-            else if (tagCheckLineIncludes(uLine, 'ARGOMENTO:')) {
-                parsedData.argomento = extractValue(line, 'ARGOMENTO:');
-            }
-            else if (uLine.match(/^[-]*\s*SLIDE/)) {
-                let slideTitle = extractValue(line, 'SLIDE:');
-                if(!slideTitle) slideTitle = line.replace(/^[-]*\s*SLIDE\s*[0-9]*/i, '').replace(/^[-]+/, '').trim();
-                
-                // PULIZIA DEL TITOLO DA "PAGINA X" o "PAG. X"
-                slideTitle = slideTitle.replace(/PAG(INA|\.)?\s*\d+\s*(DI\s*\d+)?/gi, '').replace(/^[-:\s]+/, '').trim();
-
-                currentSlide = {
-                    title: slideTitle || ("Slide " + (parsedData.slides.length + 1)),
-                    time: 5,
-                    frase: "", regia: "", focus: "", currentSection: null
-                };
-                parsedData.slides.push(currentSlide);
-            }
-            else if (currentSlide) {
-                if (tagCheckLineIncludes(uLine, 'TEMPO:')) {
-                    let tStr = extractValue(line, 'TEMPO:');
-                    currentSlide.time = parseInt(tStr.replace(/[^0-9]/g, '')) || 5;
-                }
-                else if (tagCheckLineIncludes(uLine, 'FRASE CHIAVE')) {
-                    currentSlide.currentSection = 'frase';
-                    let content = extractValue(line, 'CHIAVE:');
-                    if(!content) content = line.replace(/.*FRASE CHIAVE/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
-                    if(content) currentSlide.frase += formatContentLine(content, 'frase');
-                }
-                else if (tagCheckLineIncludes(uLine, 'REGIA')) {
-                    currentSlide.currentSection = 'regia';
-                    let content = extractValue(line, 'REGIA:');
-                    if(!content) content = line.replace(/.*REGIA/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
-                    if(content) currentSlide.regia += formatContentLine(content, 'regia');
-                }
-                else if (tagCheckLineIncludes(uLine, 'FOCUS QUIZ') || tagCheckLineIncludes(uLine, 'FOCUS:')) {
-                    currentSlide.currentSection = 'focus';
-                    let content = extractValue(line, 'FOCUS QUIZ:');
-                    if(!content) content = extractValue(line, 'FOCUS:');
-                    if(!content) content = line.replace(/.*FOCUS(?: QUIZ)?/i, '').replace(/^[^a-zA-Z0-9]+/, '').trim();
-                    if(content) currentSlide.focus += formatContentLine(content, 'focus');
-                }
-                else if (currentSlide.currentSection) {
-                    currentSlide[currentSlide.currentSection] += formatContentLine(line, currentSlide.currentSection);
-                }
-            }
-        }
-
-        // Fix fall-back argomento se assente
-        if (!parsedData.argomento || parsedData.argomento === "Argomento Non Definito") {
-            parsedData.argomento = parsedData.slides[0]?.title || "Lezione Generale";
-        }
-
-        if(parsedData.slides.length > 0) {
-            savedModules.push(parsedData);
-            try { localStorage.setItem('tablet_director_db_v8', JSON.stringify(savedModules)); } catch(e) { alert("Attenzione: Memoria del browser piena."); }
-            navTo('library');
-        } else {
-            showError("Non sono riuscito a estrapolare le slide dal testo fornito.");
-        }
+        // Crea il file scaricabile
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' }); // \ufeff per supporto UTF-8 in Excel
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `Matrici_Quiz_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
-
-    function tagCheckLineIncludes(uLine, tag) { return uLine.replace(/[\*\#\-]/g, '').includes(tag.replace(/[\*\#\-]/g, '')); }
-    
-    function extractValue(line, tag) {
-        let uLine = line.toUpperCase();
-        let idx = uLine.indexOf(tag);
-        if (idx !== -1) {
-            return line.substring(idx + tag.length).replace(/^[\*\#\-:\s]+/, '').trim();
-        }
-        return "";
-    }
-
-    function formatBold(text) {
-        if(!text) return "";
-        return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    }
-
-    // --- GESTIONE TIMER ---
-    function toggleTimer() {
-        if (timerRunning) stopTimer();
-        else startTimer();
-    }
-
-    function startTimer() {
-        if (timeRemaining <= 0) return;
-        timerRunning = true;
-        const timerEl = document.getElementById('slide-timer');
-        const iconEl = document.getElementById('timer-icon');
-        
-        timerEl.classList.add('timer-running');
-        iconEl.classList.remove('fa-stopwatch');
-        iconEl.classList.add('fa-hourglass-half', 'fa-spin');
-
-        if(timerInterval) clearInterval(timerInterval);
-        
-        timerInterval = setInterval(() => {
-            timeRemaining--;
-            updateTimerDisplay();
-            
-            if (timeRemaining <= 60) {
-                timerEl.classList.remove('timer-running');
-                timerEl.classList.add('timer-warning');
-            }
-            if (timeRemaining <= 0) {
-                stopTimer();
-                timerEl.classList.remove('timer-warning');
-                timerEl.classList.add('timer-ended');
-                iconEl.classList.remove('fa-spin');
-            }
-        }, 1000);
-    }
-
-    function stopTimer() {
-        timerRunning = false;
-        clearInterval(timerInterval);
-        const timerEl = document.getElementById('slide-timer');
-        const iconEl = document.getElementById('timer-icon');
-        
-        timerEl.classList.remove('timer-running', 'timer-warning');
-        iconEl.classList.add('fa-stopwatch');
-        iconEl.classList.remove('fa-hourglass-half', 'fa-spin');
-    }
-
-    function resetTimer(minutes) {
-        stopTimer();
-        timeRemaining = (minutes || 5) * 60;
-        document.getElementById('slide-timer').classList.remove('timer-ended');
-        updateTimerDisplay();
-    }
-
-    function updateTimerDisplay() {
-        let m = Math.floor(Math.abs(timeRemaining) / 60);
-        let s = Math.abs(timeRemaining) % 60;
-        document.getElementById('timer-display').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-    }
-
-    // --- REGIA (SLIDE RENDERER) ---
-    function renderSlide() {
-        const slide = appData.slides[appData.currentIndex];
-        document.getElementById('mod-title').innerText = `${appData.capTitle} / ${appData.argTitle}`;
-        document.getElementById('slide-title').innerText = slide.title;
-        document.getElementById('slide-counter').innerText = `${appData.currentIndex + 1}/${appData.slides.length}`;
-        
-        resetTimer(slide.time);
-
-        const contentDiv = document.getElementById('slide-content');
-        contentDiv.innerHTML = '';
-        contentDiv.scrollTop = 0;
-
-        if(slide.frase && slide.frase.trim() !== '') {
-            contentDiv.innerHTML += `
-                <div class="card-box card-chiave">
-                    <div class="card-header text-blue-300"><i class="fa-solid fa-key mr-2"></i> Chiave</div>
-                    <div class="content-text text-blue-50">${formatBold(slide.frase)}</div>
-                </div>
-            `;
-        }
-
-        if(slide.regia && slide.regia.trim() !== '') {
-            contentDiv.innerHTML += `
-                <div class="card-box card-regia">
-                    <div class="card-header text-yellow-400"><i class="fa-solid fa-clapperboard mr-2"></i> Regia</div>
-                    <div class="content-text text-orange-50">${formatBold(slide.regia)}</div>
-                </div>
-            `;
-        }
-
-        if(slide.focus && slide.focus.trim() !== '') {
-            contentDiv.innerHTML += `
-                <div class="card-box card-quiz">
-                    <div class="card-header text-red-300"><i class="fa-solid fa-crosshairs mr-2"></i> Trabocchetti</div>
-                    <div class="content-text text-red-50">${formatBold(slide.focus)}</div>
-                </div>
-            `;
-        }
-    }
-
-    function nextSlide() {
-        if (appData.currentIndex < appData.slides.length - 1) {
-            appData.currentIndex++;
-            renderSlide();
-        }
-    }
-
-    function prevSlide() {
-        if (appData.currentIndex > 0) {
-            appData.currentIndex--;
-            renderSlide();
-        }
-    }
-
-    // --- GESTIONE SWIPE PER TABLET ---
-    let touchstartX = 0;
-    let touchendX = 0;
-    
-    document.getElementById('view-director').addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-    });
-
-    document.getElementById('view-director').addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        const threshold = 70;
-        if (touchendX < touchstartX - threshold) nextSlide();
-        if (touchendX > touchstartX + threshold) prevSlide();
-    }
-
-    // Inizializza
-    navTo('library');
 </script>
 </body>
 </html>
