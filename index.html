@@ -7,65 +7,30 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; 
-            color: #f8fafc;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Container e Viste */
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         .app-container { max-width: 1400px; margin: 0 auto; padding: 2rem; width: 100%; display: flex; flex-direction: column; height: 100%;}
         .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; transition: all 0.3s ease; }
-        
         .view-section { display: none; flex-grow: 1; overflow-y: auto; flex-direction: column; padding-bottom: 4rem;}
         .view-section.active { display: flex; animation: fadeIn 0.3s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- CLASSI PER FOCUS MODE (INGRANDIMENTO) --- */
-        .maximized-panel {
-            position: fixed !important;
-            top: 2rem !important;
-            left: 2rem !important;
-            right: 2rem !important;
-            bottom: 2rem !important;
-            height: calc(100vh - 4rem) !important;
-            z-index: 100 !important;
-            background-color: #0f172a !important; 
-            border: 2px solid #3b82f6 !important;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
-        }
-        #maximize-backdrop {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
-            z-index: 90;
-        }
+        /* Focus Mode */
+        .maximized-panel { position: fixed !important; top: 2rem !important; left: 2rem !important; right: 2rem !important; bottom: 2rem !important; height: calc(100vh - 4rem) !important; z-index: 100 !important; background-color: #0f172a !important; border: 2px solid #3b82f6 !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important; }
+        #maximize-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 90; }
         #maximize-backdrop.active { display: block; animation: fadeIn 0.2s; }
         body.panel-maximized .view-section.active { z-index: 9999 !important; position: relative; }
 
-        /* Stili Mappa Tecnica */
+        /* Stili Mappa e Matrici */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
         .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
-        
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
-        
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
         .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
-
-        /* Stili Matrice Quiz */
         .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
@@ -76,66 +41,73 @@
         .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
         .btn-nav:hover { background: #334155; color: white; }
         .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3);}
-        
         .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
         .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
+        .btn-dispensa { background: linear-gradient(135deg, #d97706, #b45309); color: white; border: none; }
+        .btn-dispensa:hover { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 4px 15px rgba(245,158,11,0.4); transform: translateY(-2px);}
 
-        /* Area Stampa nascosta su schermo */
+        /* Stampa e PDF */
         #print-area { display: none; }
-
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        /* --- STILI STAMPA PDF (COMPATTI ED ELEGANTI) --- */
+        /* STILI DI STAMPA GLOBALI */
         @media print {
             body { background-color: white !important; color: black !important; font-size: 10.5pt !important; height: auto !important; overflow: visible !important;}
             #app-ui, #maximize-backdrop { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
-            
-            /* Margini ridotti a 1cm per sfruttare il foglio A4 */
             @page { margin: 1cm; }
-            
-            /* Nascondi il doppio titolo generato per lo schermo */
             .ui-header-box { display: none !important; }
             
-            /* Intestazione del Documento */
+            /* Stampa Mappa/Matrice */
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 15px; }
             .print-header-aula { font-size: 9pt; color: #555; margin: 0 0 2px 0; text-transform: uppercase; font-weight: 800; letter-spacing: 1px; }
             .print-header-ob { font-size: 18pt; margin: 0 0 4px 0; font-weight: 900; line-height: 1.1; color: #000; }
             .print-header-arg { font-size: 12pt; color: #444; margin: 0; font-style: italic; font-weight: normal; }
 
-            /* Incipit Globale (Più compatto ma leggibile) */
             .incipit-globale { background: #fef9c3 !important; border-left: 4px solid #d97706 !important; padding: 10px 15px !important; margin-bottom: 15px !important; border-radius: 4px; font-style: italic; color: #000 !important; font-size: 10pt !important; line-height: 1.3 !important;}
             .incipit-globale strong { color: #b45309 !important; font-size: 11pt !important; margin-bottom: 4px !important; display: block; font-style: normal; text-transform: uppercase;}
             
-            /* Titoli Fase */
             .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 14pt !important; margin-top: 18pt !important; padding-bottom: 3pt !important; margin-bottom: 8pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
             .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 10pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 10pt !important; line-height: 1.2 !important; page-break-after: avoid; }
-            
-            /* Righe Mappa */
             .pagina-row { display: flex; align-items: flex-start; margin-bottom: 10pt !important; font-size: 10.5pt !important; line-height: 1.3 !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 6px;}
             .pagina-badge { border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 12px; white-space: nowrap; color: black !important; background: transparent !important; font-size: 9pt !important; margin-top: 2px; border-radius: 3px;}
             .pagina-text { color: black !important; flex-grow: 1; }
             .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c; font-size: 10pt !important; background: transparent !important; padding-top: 0; padding-bottom: 0;}
             
-            /* Matrici */
             .matrice-title { color: black !important; font-weight: 900 !important; font-size: 11pt !important; margin-top: 15pt !important; margin-bottom: 4pt !important; line-height: 1.2 !important; border-left: 3px solid #fbbf24 !important; padding-left: 8px; background: transparent !important; page-break-after: avoid; text-transform: uppercase; }
             .matrice-row { display: flex; align-items: flex-start; margin-bottom: 5pt !important; padding-left: 12px; font-size: 10pt !important; color: black !important; line-height: 1.2 !important; page-break-inside: avoid; font-style: normal !important; }
             .v-badge { color: #10b981 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .f-badge { color: #ef4444 !important; font-weight: 900; margin-left: 6px; font-style: normal; font-size: 9pt !important;}
             .matrice-exp { display: block; font-size: 9pt !important; color: #555 !important; margin-top: 2px; font-style: italic; line-height: 1.2 !important;}
+
+            /* Stampa DISPENSA ALLIEVI (Speciale) */
+            .dispensa-page { font-family: 'Georgia', serif; }
+            .d-header { text-align: center; border-bottom: 4px solid #1e3a8a; padding-bottom: 10px; margin-bottom: 20px; }
+            .d-logo-placeholder { font-size: 10pt; color: #888; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+            .d-title { font-size: 24pt; font-weight: 900; color: #000; margin: 0; text-transform: uppercase; }
+            .d-subtitle { font-size: 12pt; color: #444; margin-top: 5px; font-style: italic; }
+            
+            .d-section { margin-bottom: 20px; padding: 15px; border-radius: 8px; page-break-inside: avoid; }
+            .d-section-title { font-size: 14pt; font-weight: 900; color: #1e3a8a; border-bottom: 2px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; display: flex; align-items: center; }
+            
+            .d-sacro { background-color: #f8fafc; border: 1px solid #e2e8f0; }
+            .d-sacro ul { margin: 0; padding-left: 20px; }
+            .d-sacro li { margin-bottom: 8px; font-size: 11pt; line-height: 1.4; color: #1e293b; }
+            
+            .d-pratica { background-color: #f0fdf4; border: 1px solid #bbf7d0; font-size: 11.5pt; line-height: 1.5; color: #064e3b; font-style: italic; }
+            
+            .d-quiz { background-color: #fff1f2; border: 1px solid #fecaca; }
+            .d-quiz-item { margin-bottom: 8px; font-size: 11pt; line-height: 1.4; }
+            .d-quiz-item strong { color: #991b1b; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Sfondo per la modalità Maximize (Focus) -->
     <div id="maximize-backdrop"></div>
 
-    <!-- Container App Principale -->
     <div id="app-ui" class="flex flex-col h-full relative z-10">
         
         <!-- NAVBAR -->
@@ -146,41 +118,41 @@
                 </div>
                 <div>
                     <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
-                    <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio</p>
+                    <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio Didattico</p>
                 </div>
             </div>
             <div class="flex gap-4">
                 <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
-                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
+                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Lezioni</button>
             </div>
         </div>
 
-        <!-- ==========================================
-             VISTA 1: GENERATORE 
-             ========================================== -->
+        <!-- VISTA 1: GENERATORE -->
         <div id="view-generator" class="view-section active p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
                 <!-- AREA INPUT -->
                 <div class="glass-panel mb-6 shadow-xl shrink-0">
                     <div class="flex justify-between items-center mb-3">
-                        <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA</h2>
+                        <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA (Mappa, Matrice e Dispensa)</h2>
                         <button onclick="document.getElementById('raw-input').value = ''" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-eraser mr-1"></i>Pulisci</button>
                     </div>
-                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo (assicurati che contenga i tag AULA, OBIETTIVO, ARGOMENTO e i delimitatori === MAPPA TECNICA === e === MATRICE QUIZ ===)"></textarea>
+                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo dell'IA (inclusi i tag AULA, OBIETTIVO, ARGOMENTO e le sezioni Mappa, Matrice e Dispensa)"></textarea>
                     <button onclick="processDataFromInput()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
-                        <i class="fa-solid fa-gears mr-2"></i> Genera Anteprima
+                        <i class="fa-solid fa-gears mr-2"></i> Elabora Dati
                     </button>
                 </div>
 
                 <!-- AREA RISULTATI GENERATORE -->
                 <div id="gen-results-area" class="hidden flex-col gap-4 flex-grow min-h-0">
-                    <div class="flex justify-end shrink-0">
+                    <div class="flex justify-between items-center shrink-0">
+                        <div id="gen-dispensa-btn-container">
+                            <!-- Bottone Dispensa iniettato qui se presente -->
+                        </div>
                         <button onclick="saveToArchive()" class="bg-amber-500 hover:bg-amber-400 text-slate-900 font-black py-3 px-8 rounded-xl transition shadow-lg shadow-amber-500/20 text-lg flex items-center transform hover:scale-105">
                             <i class="fa-solid fa-download mr-2"></i> SALVA NELL'ARCHIVIO
                         </button>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
-                        <!-- COLONNA MAPPA TECNICA -->
                         <div id="gen-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
@@ -196,7 +168,6 @@
                             <div id="gen-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                         </div>
 
-                        <!-- COLONNA MATRICE QUIZ -->
                         <div id="gen-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
@@ -219,15 +190,13 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             VISTA 2: ARCHIVIO (DATABASE)
-             ========================================== -->
+        <!-- VISTA 2: ARCHIVIO (DATABASE) -->
         <div id="view-archive" class="view-section p-4 md:p-8">
             <div class="max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
                     <div>
                         <h2 class="text-3xl font-black text-white mb-1"><i class="fa-solid fa-server text-blue-500 mr-3"></i>Database Strumenti</h2>
-                        <p class="text-slate-400 text-sm">Le tue mappe e matrici salvate e pronte per la consultazione o esportazione.</p>
+                        <p class="text-slate-400 text-sm">Le tue mappe, matrici e dispense salvate.</p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
@@ -254,9 +223,7 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             VISTA 3: LETTORE ARCHIVIO (Reader & Editor)
-             ========================================== -->
+        <!-- VISTA 3: LETTORE ARCHIVIO (Reader & Editor) -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -267,14 +234,15 @@
                         <h3 class="text-xl font-bold text-white truncate" id="reader-item-title">Titolo Argomento</h3>
                     </div>
 
-                    <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
-                        <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
-                    </button>
+                    <div class="flex gap-3">
+                        <div id="read-dispensa-btn-container"></div>
+                        <button onclick="toggleEditMode()" id="btn-toggle-edit" class="text-yellow-400 hover:text-white bg-slate-900 px-4 py-2 rounded-lg transition border border-yellow-500/30 hover:border-yellow-400 flex items-center shadow-lg shrink-0">
+                            <i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento
+                        </button>
+                    </div>
                 </div>
 
-                <!-- CONTENITORE VISTA LETTURA (GRID) -->
                 <div id="read-view-content" class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
-                    <!-- COLONNA MAPPA TECNICA (READER) -->
                     <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
@@ -290,7 +258,6 @@
                         <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                     </div>
 
-                    <!-- COLONNA MATRICE QUIZ (READER) -->
                     <div id="read-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
@@ -310,16 +277,16 @@
                     </div>
                 </div>
 
-                <!-- CONTENITORE VISTA MODIFICA (TEXTAREA) - Nascosto di default -->
+                <!-- EDITOR TESTO RAW -->
                 <div id="read-edit-content" class="hidden flex-col flex-grow min-h-[500px] pb-4 glass-panel border-t-4 border-t-yellow-500">
                     <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4">
                         <div>
                             <h2 class="text-xl font-bold text-yellow-400"><i class="fa-solid fa-pen-nib mr-2"></i> Editor Sorgente Documento</h2>
-                            <p class="text-xs text-slate-400 mt-1">Modifica il testo sottostante per correggere la lezione. Fai attenzione a non cancellare i delimitatori principali.</p>
+                            <p class="text-xs text-slate-400 mt-1">Modifica il testo sottostante per correggere la lezione. Mantenere intatti i tag strutturali (===).</p>
                         </div>
                         <div class="flex gap-3">
                             <button onclick="toggleEditMode()" class="bg-slate-700 hover:bg-slate-600 text-white px-6 py-2 rounded-lg font-bold text-sm transition border border-slate-600">Annulla</button>
-                            <button onclick="saveEditedDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center"><i class="fa-solid fa-save mr-2"></i> Salva Modifiche e Aggiorna</button>
+                            <button onclick="saveEditedDocument()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-bold text-sm transition shadow-lg flex items-center"><i class="fa-solid fa-save mr-2"></i> Salva Modifiche</button>
                         </div>
                     </div>
                     <textarea id="read-edit-textarea" class="w-full flex-grow bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-xl focus:outline-none focus:border-yellow-500 font-mono text-sm resize-none"></textarea>
@@ -330,27 +297,22 @@
 
     </div> <!-- Fine #app-ui -->
 
-    <!-- AREA STAMPA (Nascosta su schermo, visibile in print) -->
-    <div id="print-area">
-        <!-- Riempito via JS durante la stampa -->
-    </div>
+    <!-- AREA STAMPA -->
+    <div id="print-area"></div>
 
 <script>
     /* ==========================================================================
        STATO E VARIABILI GLOBALI
     ========================================================================== */
-    // Database locale
     let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
     
-    // Oggetti temporanei per il rendering corrente (Generator o Reader)
+    // Oggetti temporanei per il rendering corrente
     let currentDocMeta = { gen: {}, read: {} };
     let currentCsvData = { gen: [], read: [] };
+    let currentDispensaHtml = { gen: "", read: "" }; // Nuovo: salva l'HTML della dispensa per la stampa
     
-    // Buffer del testo originale per il salvataggio/modifica
     let rawInputBuffer = "";
     let currentReaderDocId = null;
-    
-    // Stato espansione archivio
     let allAulasExpanded = false;
 
     /* ==========================================================================
@@ -366,7 +328,6 @@
             renderArchiveList();
         }
         
-        // Assicurati che i pannelli escano dal full-screen se cambi vista
         document.querySelectorAll('.maximized-panel').forEach(p => {
             toggleMaximize(p.id);
         });
@@ -402,20 +363,51 @@
     });
 
     /* ==========================================================================
-       LOGICA DI ELABORAZIONE TESTO IA E RENDERIZZATORI
+       LOGICA DI ELABORAZIONE TESTO IA (Parser Core con 3 Sezioni)
     ========================================================================== */
     function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
-            alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===). Assicurati che siano presenti.");
+            alert("Attenzione: Il testo non contiene i delimitatori minimi necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
             return false;
         }
 
-        const parts = rawText.split('=== MATRICE QUIZ ===');
-        const mappaRaw = parts[0].replace('=== MAPPA TECNICA ===', '').trim();
-        const matriceRaw = parts[1].trim();
+        // Estrazione sicura delle tre sezioni
+        let mappaRaw = "";
+        let matriceRaw = "";
+        let dispensaRaw = "";
+
+        try {
+            mappaRaw = rawText.split('=== MAPPA TECNICA ===')[1].split('=== MATRICE QUIZ ===')[0].trim();
+            let remainder = rawText.split('=== MATRICE QUIZ ===')[1];
+            
+            if (remainder.includes('=== DISPENSA ALLIEVI ===')) {
+                matriceRaw = remainder.split('=== DISPENSA ALLIEVI ===')[0].trim();
+                dispensaRaw = remainder.split('=== DISPENSA ALLIEVI ===')[1].trim();
+            } else {
+                matriceRaw = remainder.trim();
+            }
+        } catch(e) {
+            console.error("Errore di split", e);
+            return false;
+        }
 
         renderMappa(mappaRaw, prefix);
         renderMatrice(matriceRaw, prefix);
+        
+        // Gestione Bottone Dispensa
+        const btnContainer = document.getElementById(`${prefix}-dispensa-btn-container`);
+        if(dispensaRaw) {
+            currentDispensaHtml[prefix] = parseDispensa(dispensaRaw);
+            btnContainer.innerHTML = `
+                <button onclick="printDispensa('${prefix}')" class="btn-dispensa font-bold px-6 py-3 rounded-xl transition flex items-center shadow-lg active:scale-95">
+                    <i class="fa-solid fa-file-invoice mr-2"></i> Stampa Dispensa Allievi
+                </button>
+            `;
+        } else {
+            currentDispensaHtml[prefix] = "";
+            btnContainer.innerHTML = ""; // Nasconde il bottone se non c'è la dispensa
+        }
+
         return true;
     }
 
@@ -429,6 +421,77 @@
         }
     }
 
+    // --- PARSER DISPENSA ALLIEVI ---
+    function parseDispensa(text) {
+        const lines = text.split('\n');
+        let html = '<div class="dispensa-page">';
+        html += '<div class="d-header"><div class="d-logo-placeholder">[ LOGO AUTOSCUOLA ]</div>';
+        
+        let inSacro = false;
+        let inPratica = false;
+        let inQuiz = false;
+
+        lines.forEach(line => {
+            let l = line.trim();
+            if(!l) return;
+            let uL = l.toUpperCase();
+
+            if (uL.startsWith('TITOLO:')) {
+                let titleText = l.substring(7).trim();
+                let mainTitle = titleText; let subTitle = "";
+                if(titleText.includes('-')) {
+                    mainTitle = titleText.split('-')[0].trim();
+                    subTitle = titleText.split('-')[1].trim();
+                }
+                html += `<h1 class="d-title">${mainTitle}</h1>`;
+                if(subTitle) html += `<p class="d-subtitle">${subTitle}</p>`;
+                html += '</div>'; // Chiude header
+            }
+            else if (uL.includes('IL TESTO SACRO:')) {
+                inSacro = true; inPratica = false; inQuiz = false;
+                html += `<div class="d-section d-sacro">
+                            <div class="d-section-title"><i class="fa-solid fa-scale-balanced" style="margin-right:10px;"></i> La Norma (Sintesi)</div><ul>`;
+            }
+            else if (uL.includes('LA TRADUZIONE IN STRADA:')) {
+                if(inSacro) html += `</ul></div>`;
+                inSacro = false; inPratica = true; inQuiz = false;
+                html += `<div class="d-section d-pratica">
+                            <div class="d-section-title" style="color:#064e3b; border-color:#86efac;"><i class="fa-solid fa-road" style="margin-right:10px;"></i> Applicazione Pratica</div><p>`;
+            }
+            else if (uL.includes('IL CAMPO MINATO') || uL.includes('I QUIZ):')) {
+                if(inSacro) html += `</ul></div>`;
+                if(inPratica) html += `</p></div>`;
+                inSacro = false; inPratica = false; inQuiz = true;
+                html += `<div class="d-section d-quiz">
+                            <div class="d-section-title" style="color:#991b1b; border-color:#fca5a5;"><i class="fa-solid fa-bomb" style="margin-right:10px;"></i> Il Campo Minato (I Quiz)</div>`;
+            }
+            else {
+                // Contenuti
+                let formattedLine = l.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                if (inSacro && l.startsWith('-')) {
+                    html += `<li>${formattedLine.substring(1).trim()}</li>`;
+                } else if (inPratica) {
+                    html += `${formattedLine}<br>`;
+                } else if (inQuiz && l.startsWith('-')) {
+                    // Evidenzia visivamente VERO e FALSO nei quiz
+                    let qLine = formattedLine.substring(1).trim();
+                    qLine = qLine.replace(/FALSO/g, '<span style="color:#dc2626; font-weight:900; background:#fee2e2; padding:1px 4px; border-radius:3px;">FALSO</span>');
+                    qLine = qLine.replace(/VERO/g, '<span style="color:#16a34a; font-weight:900; background:#dcfce3; padding:1px 4px; border-radius:3px;">VERO</span>');
+                    html += `<div class="d-quiz-item"><i class="fa-solid fa-caret-right" style="color:#f87171; margin-right:5px;"></i> ${qLine}</div>`;
+                }
+            }
+        });
+
+        if(inSacro) html += `</ul></div>`;
+        if(inPratica) html += `</p></div>`;
+        if(inQuiz) html += `</div>`;
+        
+        html += '</div>'; // Chiude dispensa-page
+        return html;
+    }
+
+    // --- RENDER MAPPA TECNICA ---
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let html = '';
@@ -511,6 +574,7 @@
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
+    // --- RENDER MATRICE ---
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
@@ -572,9 +636,7 @@
         document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
-    /* ==========================================================================
-       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
-    ========================================================================== */
+    // --- ARCHIVIO ---
     function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
@@ -635,7 +697,6 @@
         
         archiveDB.forEach(doc => {
             if (!deepSearch(doc, searchQuery)) return;
-            
             resultsFound = true;
             let aula = doc.aula || "Varie";
             let ob = doc.obiettivo || "Generico";
@@ -650,7 +711,7 @@
                 <div class="text-center py-16 bg-slate-800/30 rounded-2xl border border-slate-700">
                     <i class="fa-solid fa-magnifying-glass text-5xl text-slate-500 mb-4"></i>
                     <h3 class="text-2xl font-bold text-white mb-2">Nessun risultato trovato</h3>
-                    <p class="text-slate-400">La ricerca non ha prodotto risultati in nessun titolo, testo o quiz del database.</p>
+                    <p class="text-slate-400">La ricerca non ha prodotto risultati.</p>
                 </div>
             `;
             return;
@@ -688,15 +749,17 @@
                 grouped[aulaName][obName].forEach(doc => {
                     let matchBadge = isSearching ? `<div class="absolute top-2 right-2 text-[9px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Trovato</div>` : '';
                     let timeBadge = doc.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${doc.tempo}</span>` : '';
+                    let dispBadge = doc.rawText.includes('=== DISPENSA ALLIEVI ===') ? `<span class="bg-amber-900/40 text-amber-500 px-2 py-0.5 rounded text-[10px] font-bold ml-2 border border-amber-500/40"><i class="fa-solid fa-file-invoice"></i> Dispensa</span>` : '';
 
                     aulaHtml += `
                         <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative">
                             ${matchBadge}
                             <div class="cursor-pointer flex-grow mb-3" onclick="openArchivedDocument('${doc.id}')">
                                 <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug pr-12">${doc.argomento}</h4>
-                                <div class="flex items-center mt-2">
+                                <div class="flex items-center mt-2 flex-wrap gap-y-1">
                                     <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
                                     ${timeBadge}
+                                    ${dispBadge}
                                 </div>
                             </div>
                             <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
@@ -721,18 +784,12 @@
     function toggleAllAulas() {
         allAulasExpanded = !allAulasExpanded;
         const btn = document.getElementById('btn-toggle-aulas');
-        
-        if (allAulasExpanded) {
-            btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
-        } else {
-            btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>';
-        }
-        
-        const currentQuery = document.getElementById('search-db') ? document.getElementById('search-db').value : '';
-        renderArchiveList(currentQuery);
+        if (allAulasExpanded) btn.innerHTML = '<i class="fa-solid fa-compress mr-2"></i> <span>Chiudi Tutte</span>';
+        else btn.innerHTML = '<i class="fa-solid fa-expand mr-2"></i> <span>Espandi Tutte</span>';
+        renderArchiveList(document.getElementById('search-db') ? document.getElementById('search-db').value : '');
     }
 
-    // --- FUNZIONI DI MODIFICA (EDITOR INTEGRATO) ---
+    // --- EDITOR INTEGRATO ---
     function openArchivedDocument(docId) {
         const doc = archiveDB.find(d => d.id === docId);
         if(!doc) return;
@@ -741,7 +798,6 @@
         document.getElementById('reader-aula-title').innerText = doc.aula;
         document.getElementById('reader-item-title').innerText = doc.argomento;
 
-        // Reset vista lettura
         document.getElementById('read-view-content').classList.remove('hidden');
         document.getElementById('read-view-content').classList.add('grid');
         document.getElementById('read-edit-content').classList.add('hidden');
@@ -759,7 +815,6 @@
         const textarea = document.getElementById('read-edit-textarea');
 
         if(editContent.classList.contains('hidden')) {
-            // Entra in Modalità Modifica
             const doc = archiveDB.find(d => d.id === currentReaderDocId);
             if(doc) {
                 textarea.value = doc.rawText;
@@ -768,14 +823,15 @@
                 editContent.classList.remove('hidden');
                 editContent.classList.add('flex');
                 btnToggle.innerHTML = '<i class="fa-solid fa-eye mr-2"></i> Torna alla Vista';
+                document.getElementById('read-dispensa-btn-container').style.display = 'none'; // Nasconde stampa
             }
         } else {
-            // Esci dalla Modalità Modifica (Annulla)
             viewContent.classList.remove('hidden');
             viewContent.classList.add('grid');
             editContent.classList.add('hidden');
             editContent.classList.remove('flex');
             btnToggle.innerHTML = '<i class="fa-solid fa-pen-to-square mr-2"></i> Modifica Documento';
+            document.getElementById('read-dispensa-btn-container').style.display = 'block';
         }
     }
 
@@ -784,34 +840,27 @@
         const docIndex = archiveDB.findIndex(d => d.id === currentReaderDocId);
         
         if(docIndex !== -1) {
-            // Basic validation
             if (!newText.includes('=== MAPPA TECNICA ===') || !newText.includes('=== MATRICE QUIZ ===')) {
-                alert("Attenzione: Il testo deve mantenere i delimitatori obbligatori '=== MAPPA TECNICA ===' e '=== MATRICE QUIZ ===' per funzionare.");
+                alert("Attenzione: Il testo deve mantenere i delimitatori obbligatori '=== MAPPA TECNICA ===' e '=== MATRICE QUIZ ==='.");
                 return;
             }
 
-            // Prova a renderizzare per capire se ci sono errori nel parser e aggiornare i metadati
             const success = processAndRender(newText, 'read');
             
             if(success) {
-                // Aggiorna Raw Text
                 archiveDB[docIndex].rawText = newText;
-                
-                // Aggiorna Metadati nel DB (se l'utente ha cambiato i titoli AULA: OBIETTIVO: ecc)
                 const meta = currentDocMeta['read'];
                 if(meta.aula) archiveDB[docIndex].aula = meta.aula;
                 if(meta.obiettivo) archiveDB[docIndex].obiettivo = meta.obiettivo;
                 if(meta.argomento) archiveDB[docIndex].argomento = meta.argomento;
                 if(meta.tempo !== undefined) archiveDB[docIndex].tempo = meta.tempo; 
 
-                // Aggiorna intestazione Viewer
                 document.getElementById('reader-aula-title').innerText = archiveDB[docIndex].aula;
                 document.getElementById('reader-item-title').innerText = archiveDB[docIndex].argomento;
 
-                // Salva
                 try {
                     localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
-                    toggleEditMode(); // Chiude l'editor
+                    toggleEditMode();
                     alert("Modifiche salvate con successo!");
                 } catch(e) {
                     alert("Errore di salvataggio nella memoria del browser.");
@@ -828,16 +877,12 @@
         }
     }
 
-    /* ==========================================================================
-       ESPORTA / IMPORTA DATABASE (JSON)
-    ========================================================================== */
+    // --- DB IMPORT/EXPORT ---
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
-        
         const dataStr = JSON.stringify(archiveDB, null, 2);
         const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
         const exportFileDefaultName = `Studio_Database_Backup_${new Date().toISOString().slice(0,10)}.json`;
-        
         let linkElement = document.createElement('a');
         linkElement.setAttribute('href', dataUri);
         linkElement.setAttribute('download', exportFileDefaultName);
@@ -847,36 +892,27 @@
     function importArchiveDB(event) {
         const file = event.target.files[0];
         if (!file) return;
-        
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const importedData = JSON.parse(e.target.result);
                 if (Array.isArray(importedData)) {
-                    if(confirm(`Trovati ${importedData.length} documenti nel backup. Vuoi unirli al tuo database esistente?`)) {
+                    if(confirm(`Trovati ${importedData.length} documenti nel backup. Unirli al database esistente?`)) {
                         let merged = [...archiveDB];
-                        importedData.forEach(newDoc => {
-                            if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc);
-                        });
+                        importedData.forEach(newDoc => { if(!merged.find(d => d.id === newDoc.id)) merged.push(newDoc); });
                         archiveDB = merged;
                         localStorage.setItem('driving_leader_studio_db', JSON.stringify(archiveDB));
                         renderArchiveList();
                         alert("Database importato con successo!");
                     }
-                } else {
-                    alert("Formato file non valido. Richiesto array JSON.");
-                }
-            } catch(err) {
-                alert("Errore durante la lettura del file: " + err.message);
-            }
+                } else alert("Formato file non valido.");
+            } catch(err) { alert("Errore lettura file: " + err.message); }
             document.getElementById('import-file').value = ""; 
         };
         reader.readAsText(file);
     }
 
-    /* ==========================================================================
-       STAMPA PDF ED ESPORTAZIONE CSV
-    ========================================================================== */
+    // --- STAMPA PDF ---
     function printDocument(type, prefix) {
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
@@ -890,12 +926,21 @@
                 <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
                 <div style="display:flex; justify-content: space-between; align-items: baseline;">
                     <h2 class="print-header-arg">${meta.argomento || ''}</h2>
-                    ${meta.tempo ? `<span style="font-size: 10.5pt; font-weight: bold; color: #555;">DURATA: ${meta.tempo}</span>` : ''}
+                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
                 </div>
             </div>
         `;
         
         printArea.innerHTML = printHeader + contentHtml;
+        window.print();
+    }
+
+    function printDispensa(prefix) {
+        const printArea = document.getElementById('print-area');
+        const htmlContent = currentDispensaHtml[prefix];
+        if(!htmlContent) return alert("Errore: Dispensa non trovata in memoria.");
+        
+        printArea.innerHTML = htmlContent;
         window.print();
     }
 
@@ -925,12 +970,7 @@
         document.body.removeChild(link);
     }
 
-    // Avvio: Se non c'è nulla in DB mostra il Generatore, altrimenti l'Archivio
-    if(archiveDB.length === 0) {
-        navTo('generator');
-    } else {
-        navTo('archive');
-    }
+    if(archiveDB.length === 0) navTo('generator'); else navTo('archive');
 
 </script>
 </body>
