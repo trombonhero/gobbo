@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
         
         body {
             font-family: 'Inter', sans-serif;
@@ -21,17 +21,25 @@
         .app-container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; }
         
-        .fase-title { color: #38bdf8; font-weight: 800; font-size: 1.2rem; margin-top: 1.5rem; margin-bottom: 0.5rem; border-bottom: 1px solid #334155; padding-bottom: 0.5rem; text-transform: uppercase; }
-        .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1rem; font-size: 1.05rem; line-height: 1.4; }
+        /* Stili per gli Incipit (Nuovi) */
+        .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
+        .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
+        
+        .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
+        
+        .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
+        
+        .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
         .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
-        .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.25rem; }
+        .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
-        /* Restyling per le Matrici a Radice Lunga */
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px;}
-        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.35rem; padding-left: 1rem; font-size: 1.05rem; color: #cbd5e1; font-style: italic;}
-        .v-badge { color: #10b981; font-weight: bold; margin-left: 0.5rem; font-style: normal; }
-        .f-badge { color: #ef4444; font-weight: bold; margin-left: 0.5rem; font-style: normal; }
+        /* Restyling per le Matrici a Radice Lunga e Spiegazioni */
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
+        .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
+        .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
+        .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
+        .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
 
         /* Area Stampa nascosta su schermo */
         #print-area { display: none; }
@@ -40,13 +48,18 @@
         @media print {
             body { background-color: white !important; color: black !important; }
             #app-ui { display: none !important; }
-            #print-area { display: block !important; padding: 1cm; font-family: sans-serif; }
+            #print-area { display: block !important; padding: 1cm; font-family: 'Segoe UI', sans-serif; }
             
-            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 16pt !important; margin-top: 20pt !important; padding-bottom: 5pt !important; page-break-after: avoid; font-weight: bold; text-transform: uppercase; }
-            .pagina-row { display: flex; align-items: flex-start; margin-bottom: 15pt !important; font-size: 12pt !important; page-break-inside: avoid; }
+            .incipit-globale { background: #fef9c3 !important; border-left: 5px solid #d97706 !important; padding: 15px !important; margin-bottom: 20px !important; border-radius: 5px; font-style: italic; color: #000 !important; }
+            .incipit-globale strong { color: #b45309 !important; font-size: 14pt !important; margin-bottom: 8px !important; display: block; font-style: normal; }
+            
+            .fase-title { color: black !important; border-bottom: 2px solid black !important; font-size: 16pt !important; margin-top: 25pt !important; padding-bottom: 5pt !important; page-break-after: avoid; font-weight: 900 !important; text-transform: uppercase; }
+            .incipit-fase { color: #444 !important; font-style: italic; margin-bottom: 15pt !important; padding-left: 10px !important; border-left: 3px solid #888 !important; font-size: 11pt !important; page-break-after: avoid; }
+            
+            .pagina-row { display: flex; align-items: flex-start; margin-bottom: 15pt !important; font-size: 12pt !important; page-break-inside: avoid; border-bottom: 1px solid #eee; padding-bottom: 10px;}
             .pagina-badge { border: 1px solid black !important; padding: 2px 6px; font-weight: bold; margin-right: 15px; white-space: nowrap; color: black !important; background: transparent !important; }
             .pagina-text { color: black !important; line-height: 1.4; }
-            .pagina-trap { display: block; margin-top: 4px; font-weight: bold !important; color: black !important; }
+            .pagina-trap { display: block; margin-top: 6px; font-weight: bold !important; color: #b91c1c !important; padding-left: 8px; border-left: 3px solid #b91c1c;}
             
             @page { margin: 1cm; }
         }
@@ -62,16 +75,16 @@
             </div>
             <div>
                 <h1 class="text-3xl font-extrabold text-white m-0 tracking-tight">Driving Leader Studio</h1>
-                <p class="text-slate-400 font-medium">Generatore Mappe e Matrici CSV (Radici Profonde)</p>
+                <p class="text-slate-400 font-medium">Generatore Mappe Didattiche & Matrici CSV</p>
             </div>
         </div>
 
         <!-- AREA INPUT -->
         <div class="glass-panel mb-8 shadow-xl">
             <h2 class="text-xl font-bold mb-3 flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla l'output dell'IA</h2>
-            <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-40 mb-4" placeholder="Incolla qui tutto il testo contenente === MAPPA TECNICA === e === MATRICE QUIZ ==="></textarea>
+            <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-40 mb-4" placeholder="Incolla qui tutto il testo. Assicurati che contenga === MAPPA TECNICA === e === MATRICE QUIZ ==="></textarea>
             <button onclick="processData()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
-                <i class="fa-solid fa-gears mr-2"></i> Elabora Dati
+                <i class="fa-solid fa-gears mr-2"></i> Elabora Mappa e Matrici
             </button>
         </div>
 
@@ -79,9 +92,9 @@
         <div id="results-area" class="hidden grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             <!-- COLONNA MAPPA TECNICA -->
-            <div id="mappa-container" class="glass-panel flex flex-col h-[600px]">
+            <div id="mappa-container" class="glass-panel flex flex-col h-[700px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
-                    <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
+                    <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica e Incipit</h2>
                     <button onclick="printMap()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600">
                         <i class="fa-solid fa-file-pdf mr-2 text-red-400"></i> Crea PDF
                     </button>
@@ -92,9 +105,9 @@
             </div>
 
             <!-- COLONNA MATRICE QUIZ -->
-            <div id="matrice-container" class="glass-panel flex flex-col h-[600px]">
+            <div id="matrice-container" class="glass-panel flex flex-col h-[700px]">
                 <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
-                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz</h2>
+                    <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Radici Quiz e Motivazioni</h2>
                     <button onclick="exportCSV()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded font-bold text-sm transition shadow">
                         <i class="fa-solid fa-file-csv mr-2 text-white"></i> Scarica CSV
                     </button>
@@ -133,7 +146,7 @@
         document.getElementById('results-area').classList.remove('hidden');
     }
 
-    // --- RENDER MAPPA TECNICA ---
+    // --- RENDER MAPPA TECNICA (Con Incipit) ---
     function renderMappa(text) {
         const lines = text.split('\n');
         let html = '';
@@ -142,13 +155,23 @@
             let l = line.trim();
             if(!l) return;
 
+            // Rileva l'Incipit Globale
+            if (l.includes('IL SENSO PRATICO:')) {
+                let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
+                html += `<div class="incipit-globale"><i class="fa-solid fa-lightbulb mr-2"></i><strong>Il Senso Pratico</strong>${pText}</div>`;
+            }
             // Rileva le Fasi
-            if (l.includes('FASE')) {
+            else if (l.includes('FASE')) {
                 let title = l.replace(/[\*🛑\#]/g, '').trim();
                 html += `<div class="fase-title">${title}</div>`;
             } 
-            // Rileva le Pagine
-            else if (l.includes('PAGINA')) {
+            // Rileva l'Incipit della singola Fase
+            else if (l.includes('OBIETTIVO PRATICO:')) {
+                let pText = l.replace(/.*OBIETTIVO PRATICO:/i, '').trim();
+                html += `<div class="incipit-fase"><i class="fa-solid fa-bullseye mr-2"></i>${pText}</div>`;
+            }
+            // Rileva le Pagine/Slide
+            else if (l.includes('PAGINA') && l.includes('➔')) {
                 l = l.replace(/^\*\s*/, '');
                 
                 let pageMatch = l.match(/PAGINA\s*\d+:/i);
@@ -157,7 +180,12 @@
                 let remaining = pageMatch ? l.substring(l.indexOf(':') + 1) : l;
                 let trapSplit = remaining.split('⚠️');
                 let mainText = trapSplit[0].trim();
-                let trapText = trapSplit[1] ? "⚠️ " + trapSplit[1].trim() : "";
+                
+                // Formatta in modo che VERO o FALSO risaltino nettamente
+                let trapText = "";
+                if(trapSplit[1]) {
+                    trapText = "⚠️ " + trapSplit[1].trim();
+                }
 
                 mainText = mainText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
                 trapText = trapText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -174,55 +202,60 @@
         document.getElementById('mappa-render').innerHTML = html;
     }
 
-    // --- RENDER MATRICE (RADICI PROFONDE) E PREPARAZIONE CSV ---
+    // --- RENDER MATRICE (Con Motivazioni) ---
     function renderMatrice(text) {
         const lines = text.split('\n');
         let html = '';
-        csvDataArray = []; // Resetta i dati CSV
-        csvDataArray.push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)"]); // Intestazioni CSV
+        csvDataArray = []; 
+        csvDataArray.push(["Radice Base", "Continuazione", "Frase Unita Completa", "Esito (V/F)", "Motivazione Tecnica"]);
 
-        let currentMatriceVisual = ""; // Per l'HTML
-        let currentMatriceClean = "";  // Per il CSV
+        let currentMatriceVisual = ""; 
+        let currentMatriceClean = "";  
 
         lines.forEach(line => {
             let l = line.trim();
             if(!l) return;
 
-            // Rileva se è una continuazione (inizia con trattino, pallino, asterisco o puntini)
             let isContinuation = l.match(/^[\-\*\•\>]/) || l.match(/^\.\.\./);
 
             if (!isContinuation) {
-                // Mantiene i puntini visivamente per l'HTML
                 currentMatriceVisual = l.replace(/[\[\]\*\#]/g, '').trim();
-                
-                // Rimuove i puntini finali per il CSV
                 currentMatriceClean = currentMatriceVisual.replace(/\.\.\.$/, '').trim();
-                
                 html += `<div class="matrice-title">${currentMatriceVisual}</div>`;
             } 
             else {
-                let isVero = l.toUpperCase().includes('(V)') || l.toUpperCase().includes('VERO');
+                // Separa la frase del quiz dalla motivazione usando la barra verticale "|"
+                let parts = l.split('|');
+                let rawQuizText = parts[0].trim();
+                let expText = parts[1] ? parts[1].trim() : "Nessuna spiegazione";
+
+                let isVero = rawQuizText.toUpperCase().includes('(V)') || rawQuizText.toUpperCase().includes('VERO');
                 let badgeHtml = isVero ? '<span class="v-badge">(V)</span>' : '<span class="f-badge">(F)</span>';
                 
-                // Pulisce l'inizio dai vari simboli elenco e dai tag V/F
-                let testoVisual = l.replace(/^[\-\*\•\>]\s*/, '')
+                // Pulisce il testo da simboli e badge
+                let testoVisual = rawQuizText.replace(/^[\-\*\•\>]\s*/, '')
                                    .replace(/\(V\)/i, '')
                                    .replace(/\(F\)/i, '')
                                    .replace(/VERO/i, '')
                                    .replace(/FALSO/i, '')
                                    .trim();
                 
-                // Rimuove i puntini iniziali per il CSV
                 let testoClean = testoVisual.replace(/^\.\.\./, '').trim();
-                
-                // Genera la frase completa
                 let fraseCompleta = (currentMatriceClean + " " + testoClean).replace(/\s+/g, ' ');
                 
-                html += `<div class="matrice-row"><i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-2 mt-1 text-sm"></i> ${testoVisual} ${badgeHtml}</div>`;
+                // HTML: Mostra la frase, il V/F, e sotto la spiegazione in grigio/corsivo
+                html += `<div class="matrice-row">
+                            <i class="fa-solid fa-arrow-turn-up fa-rotate-90 text-slate-600 mr-3 mt-1 text-sm shrink-0"></i> 
+                            <div>
+                                <span class="block">${testoVisual} ${badgeHtml}</span>
+                                <span class="matrice-exp"><i class="fa-solid fa-caret-right mr-1"></i>${expText}</span>
+                            </div>
+                         </div>`;
                 
                 let esitoClean = isVero ? "V" : "F";
                 
-                csvDataArray.push([currentMatriceClean, testoClean, fraseCompleta, esitoClean]);
+                // Aggiorna CSV con la colonna in più
+                csvDataArray.push([currentMatriceClean, testoClean, fraseCompleta, esitoClean, expText]);
             }
         });
 
@@ -234,9 +267,8 @@
         const printArea = document.getElementById('print-area');
         const mappaContent = document.getElementById('mappa-render').innerHTML;
         
-        // Inserisce il contenuto nel div dedicato alla stampa con un'intestazione
         printArea.innerHTML = `
-            <h1 style="font-size: 24pt; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 20px;">Mappa di Regia Tecnica</h1>
+            <h1 style="font-size: 26pt; border-bottom: 4px solid #000; padding-bottom: 10px; margin-bottom: 20px; font-weight: 900;">Mappa di Regia Didattica</h1>
             ${mappaContent}
         `;
         
@@ -246,7 +278,7 @@
     // --- ESPORTAZIONE CSV ---
     function exportCSV() {
         if(csvDataArray.length <= 1) {
-            alert("Nessun dato matrice disponibile per l'esportazione. Assicurati che l'IA abbia formattato i quiz correttamente.");
+            alert("Nessun dato matrice disponibile per l'esportazione.");
             return;
         }
 
@@ -263,7 +295,7 @@
         const url = URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.setAttribute("href", url);
-        link.setAttribute("download", `Analisi_Matrici_${new Date().toISOString().slice(0,10)}.csv`);
+        link.setAttribute("download", `Matrici_e_Spiegazioni_${new Date().toISOString().slice(0,10)}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
