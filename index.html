@@ -3,103 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Driving Leader Studio - Generatore & Archivio</title>
+    <title>Driving Leader Studio - Formazione Iniziale</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; 
-            color: #f8fafc;
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+        :root {
+            --bg-dark: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.7);
+            --accent: #3b82f6;
+            --text-main: #f8fafc;
         }
 
-        /* Container e Viste */
-        .app-container { max-width: 1400px; margin: 0 auto; padding: 2rem; width: 100%; display: flex; flex-direction: column; height: 100%;}
-        .glass-panel { background: #1e293b; border: 1px solid #334155; border-radius: 1rem; padding: 1.5rem; transition: all 0.3s ease; }
-        
-        .view-section { display: none; flex-grow: 1; overflow-y: auto; flex-direction: column; padding-bottom: 4rem;}
-        .view-section.active { display: flex; animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%);
+        }
 
-        /* --- CLASSI PER FOCUS MODE (INGRANDIMENTO) --- */
+        h1, h2, h3, h4 { font-family: 'Space Grotesk', sans-serif; }
+
+        #app-ui { display: flex; flex-direction: column; height: 100%; width: 100%; }
+
+        .view-section { display: none; height: 100%; width: 100%; flex-direction: column; padding: 2rem; overflow-y: auto; }
+        .view-section.active { display: flex; animation: fade-in 0.4s ease-out forwards; }
+
+        @keyframes fade-in {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .glass-panel { background: var(--panel-bg); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.5rem; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), #1d4ed8); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.4); }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        .btn-export { background: linear-gradient(135deg, #10b981, #059669); color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: 0.75rem; transition: all 0.2s; border: none; cursor: pointer; }
+        .btn-export:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4); }
+
+        /* Focus Mode Panels */
         .maximized-panel {
-            position: fixed !important;
-            top: 2rem !important;
-            left: 2rem !important;
-            right: 2rem !important;
-            bottom: 2rem !important;
-            height: calc(100vh - 4rem) !important;
-            z-index: 100 !important;
-            background-color: #0f172a !important; /* Sfondo coprente */
-            border: 2px solid #3b82f6 !important;
+            position: fixed !important; top: 2rem !important; left: 2rem !important; right: 2rem !important; bottom: 2rem !important;
+            height: calc(100vh - 4rem) !important; z-index: 100 !important;
+            background-color: #0f172a !important; border: 2px solid #3b82f6 !important;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
         }
         #maximize-backdrop {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(4px);
-            z-index: 90;
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 90;
         }
         #maximize-backdrop.active { display: block; animation: fadeIn 0.2s; }
-
-        /* Risolve il blocco dell'interfaccia portando il contesto z-index in primo piano */
-        body.panel-maximized .view-section.active {
-            z-index: 9999 !important;
-            position: relative;
-        }
+        body.panel-maximized .view-section.active { z-index: 9999 !important; position: relative; }
 
         /* Stili Mappa Tecnica */
         .incipit-globale { background: rgba(251, 191, 36, 0.1); border-left: 4px solid #fbbf24; padding: 1.25rem; margin-bottom: 2rem; border-radius: 0.5rem; color: #fde68a; font-style: italic; line-height: 1.6; font-size: 1.05rem;}
         .incipit-globale strong { color: #fbbf24; font-size: 1.15rem; font-weight: 900; text-transform: uppercase; font-style: normal; display: block; margin-bottom: 0.5rem;}
-        
         .fase-title { color: #38bdf8; font-weight: 900; font-size: 1.3rem; margin-top: 1.5rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;}
         .incipit-fase { color: #94a3b8; font-style: italic; margin-bottom: 1.5rem; padding-left: 1rem; border-left: 2px solid #475569; font-size: 0.95rem; line-height: 1.4; }
-        
         .pagina-row { display: flex; align-items: flex-start; margin-bottom: 1.2rem; font-size: 1.05rem; line-height: 1.4; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.8rem;}
         .pagina-badge { background: #0284c7; color: white; padding: 0.2rem 0.5rem; border-radius: 0.25rem; font-weight: bold; font-size: 0.85rem; margin-right: 1rem; white-space: nowrap; margin-top: 2px;}
         .pagina-text { color: #e2e8f0; flex-grow: 1; }
         .pagina-trap { color: #f87171; font-weight: 600; display: block; margin-top: 0.4rem; background: rgba(239,68,68,0.1); padding: 0.4rem 0.6rem; border-radius: 0.25rem; border-left: 3px solid #ef4444;}
 
         /* Stili Matrice Quiz */
-        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: rgba(251,191,36,0.05); padding: 8px 10px;}
+        .matrice-title { color: #fbbf24; font-weight: 800; font-size: 1.05rem; margin-top: 1.5rem; margin-bottom: 0.5rem; line-height: 1.4; border-left: 3px solid #fbbf24; padding-left: 10px; background: transparent;}
         .matrice-row { display: flex; align-items: flex-start; margin-bottom: 0.75rem; padding-left: 1rem; font-size: 1.05rem; color: #f8fafc; }
         .v-badge { color: #10b981; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .f-badge { color: #ef4444; font-weight: 900; margin-left: 0.5rem; font-style: normal; }
         .matrice-exp { display: block; font-size: 0.9rem; color: #94a3b8; margin-top: 0.2rem; font-style: italic; }
 
-        /* Bottoni Custom */
-        .btn-nav { background: transparent; border: 1px solid #334155; color: #cbd5e1; padding: 0.6rem 1.2rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s; cursor: pointer; display: flex; align-items: center;}
-        .btn-nav:hover { background: #334155; color: white; }
-        .btn-nav.active { background: #2563eb; border-color: #3b82f6; color: white; box-shadow: 0 4px 12px rgba(37,99,235,0.3);}
-        
-        .btn-action { background: #10b981; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: bold; transition: all 0.2s; cursor: pointer; border: none; display: inline-flex; align-items: center;}
-        .btn-action:hover { background: #059669; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(16,185,129,0.3); }
-
-        /* Area Stampa nascosta su schermo */
-        #print-area { display: none; }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-
-        /* --- STILI STAMPA PDF (Ottimizzati) --- */
+        /* Area Stampa */
+        #print-area { display: none; background: white; color: black; padding: 2cm; min-height: 100vh; }
         @media print {
-            body { background-color: white !important; color: black !important; font-size: 10pt !important; height: auto !important; overflow: visible !important;}
+            body { background: white !important; color: black !important; font-size: 10pt !important; height: auto !important; overflow: visible !important;}
             #app-ui, #maximize-backdrop { display: none !important; }
             #print-area { display: block !important; padding: 0 !important; font-family: 'Segoe UI', Arial, sans-serif; }
-            
             @page { margin: 0.8cm; }
             
             .print-header-container { border-bottom: 2px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
@@ -124,36 +111,39 @@
             .f-badge { color: #ef4444 !important; font-weight: bold; margin-left: 4px; font-style: normal; font-size: 8pt !important;}
             .matrice-exp { display: block; font-size: 8pt !important; color: #555 !important; margin-top: 1px; font-style: italic; line-height: 1.1 !important;}
         }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px;}
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
     </style>
 </head>
-<body>
+<body class="panel-maximized">
 
     <!-- Sfondo per la modalità Maximize (Focus) -->
     <div id="maximize-backdrop"></div>
 
-    <!-- Container App Principale -->
-    <div id="app-ui" class="flex flex-col h-full relative z-10">
-        
+    <div id="app-ui">
         <!-- NAVBAR -->
-        <div class="bg-slate-900 border-b border-slate-800 px-8 py-5 flex justify-between items-center shrink-0 shadow-lg z-20">
-            <div class="flex items-center gap-5">
-                <div class="bg-blue-600 p-3 rounded-xl shadow-lg shadow-blue-500/20">
-                    <i class="fa-solid fa-layer-group text-2xl text-white"></i>
+        <div class="px-8 pt-6">
+            <nav class="flex justify-between items-center pb-6 border-b border-white/10 mb-6">
+                <div class="flex items-center gap-4 cursor-pointer" onclick="navTo('archive')">
+                    <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/50">
+                        <i class="fa-solid fa-layer-group text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
+                        <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio Didattico</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-3xl font-black text-white m-0 tracking-tight">Driving Leader <span class="text-blue-400">Studio</span></h1>
-                    <p class="text-slate-400 font-medium text-xs tracking-widest uppercase mt-1">Generatore & Archivio</p>
+                <div class="flex gap-4">
+                    <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-primary"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
+                    <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-secondary"><i class="fa-solid fa-server mr-2"></i> Archivio Lezioni</button>
                 </div>
-            </div>
-            <div class="flex gap-4">
-                <button onclick="navTo('generator')" id="nav-btn-generator" class="btn-nav active"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Generatore Mappe</button>
-                <button onclick="navTo('archive')" id="nav-btn-archive" class="btn-nav"><i class="fa-solid fa-server mr-2"></i> Archivio Didattico</button>
-            </div>
+            </nav>
         </div>
 
-        <!-- ==========================================
-             VISTA 1: GENERATORE 
-             ========================================== -->
+        <!-- VISTA: GENERATORE -->
         <div id="view-generator" class="view-section active p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full flex flex-col h-full">
                 <!-- AREA INPUT -->
@@ -162,9 +152,9 @@
                         <h2 class="text-xl font-bold flex items-center text-slate-200"><i class="fa-solid fa-paste mr-2 text-blue-400"></i> Incolla Output IA</h2>
                         <button onclick="document.getElementById('raw-input').value = ''" class="text-xs text-slate-500 hover:text-slate-300"><i class="fa-solid fa-eraser mr-1"></i>Pulisci</button>
                     </div>
-                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo (assicurati che contenga i tag AULA, OBIETTIVO, ARGOMENTO e i delimitatori === MAPPA TECNICA === e === MATRICE QUIZ ===)"></textarea>
+                    <textarea id="raw-input" class="w-full bg-slate-900 border border-slate-700 text-slate-300 p-4 rounded-lg focus:outline-none focus:border-blue-500 font-mono text-sm h-32 mb-4" placeholder="Incolla qui tutto il testo dell'IA (inclusi i tag AULA, OBIETTIVO, ARGOMENTO e TEMPO STIMATO)"></textarea>
                     <button onclick="processDataFromInput()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition w-full shadow-lg text-lg">
-                        <i class="fa-solid fa-gears mr-2"></i> Genera Anteprima
+                        <i class="fa-solid fa-gears mr-2"></i> Elabora Mappe
                     </button>
                 </div>
 
@@ -176,12 +166,11 @@
                         </button>
                     </div>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
-                        <!-- COLONNA MAPPA TECNICA -->
-                        <div id="gen-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-22rem)] min-h-[500px] border-t-4 border-t-blue-500">
+                        <div id="gen-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
                                 <div class="flex gap-2">
-                                    <button onclick="toggleMaximize('gen-mappa-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci a tutto schermo">
+                                    <button onclick="toggleMaximize('gen-mappa-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci">
                                         <i class="fa-solid fa-expand"></i>
                                     </button>
                                     <button onclick="printDocument('mappa', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
@@ -192,12 +181,11 @@
                             <div id="gen-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                         </div>
 
-                        <!-- COLONNA MATRICE QUIZ -->
-                        <div id="gen-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-22rem)] min-h-[500px] border-t-4 border-t-emerald-500">
+                        <div id="gen-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-24rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                                 <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
                                 <div class="flex gap-2">
-                                    <button onclick="toggleMaximize('gen-matrice-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci a tutto schermo">
+                                    <button onclick="toggleMaximize('gen-matrice-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci">
                                         <i class="fa-solid fa-expand"></i>
                                     </button>
                                     <button onclick="printDocument('matrice', 'gen')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
@@ -215,9 +203,7 @@
             </div>
         </div>
 
-        <!-- ==========================================
-             VISTA 2: ARCHIVIO (DATABASE)
-             ========================================== -->
+        <!-- VISTA: ARCHIVIO (DATABASE) -->
         <div id="view-archive" class="view-section p-4 md:p-8">
             <div class="max-w-5xl mx-auto w-full">
                 <div class="flex justify-between items-center mb-8 bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-inner">
@@ -226,17 +212,16 @@
                         <p class="text-slate-400 text-sm">Le tue mappe e matrici salvate e pronte per la consultazione o esportazione.</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="exportArchiveDB()" class="btn-action bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
+                        <button onclick="exportArchiveDB()" class="btn-primary bg-purple-600 hover:bg-purple-500 shadow-purple-600/30">
                             <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Esporta DB
                         </button>
-                        <button onclick="document.getElementById('import-file').click()" class="btn-action bg-slate-700 hover:bg-slate-600 text-slate-200">
+                        <button onclick="document.getElementById('import-file').click()" class="btn-secondary bg-slate-700 hover:bg-slate-600 text-slate-200">
                             <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Importa DB
                         </button>
                         <input type="file" id="import-file" accept=".json" class="hidden" onchange="importArchiveDB(event)">
                     </div>
                 </div>
 
-                <!-- BARRA DI RICERCA GLOBALE E BOTTONE ESPANDI -->
                 <div class="flex flex-col md:flex-row gap-4 mb-8">
                     <div class="relative flex-grow">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-xl"></i>
@@ -247,15 +232,11 @@
                     </button>
                 </div>
 
-                <div id="archive-container" class="space-y-6 pb-20">
-                    <!-- Popolato da JS -->
-                </div>
+                <div id="archive-container" class="space-y-6 pb-20"></div>
             </div>
         </div>
 
-        <!-- ==========================================
-             VISTA 3: LETTORE ARCHIVIO (Reader)
-             ========================================== -->
+        <!-- VISTA: LETTORE ARCHIVIO (Reader) -->
         <div id="view-reader" class="view-section p-4 md:p-8">
             <div class="max-w-[1400px] mx-auto w-full h-full flex flex-col">
                 <div class="flex justify-between items-center mb-6 shrink-0 bg-slate-800/80 p-4 rounded-xl border border-slate-700 shadow-md">
@@ -268,12 +249,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-grow min-h-[500px] pb-4">
-                    <!-- COLONNA MAPPA TECNICA (READER) -->
-                    <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500">
+                    <div id="read-mappa-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-blue-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-blue-400"><i class="fa-solid fa-map mr-2"></i> Mappa Tecnica</h2>
                             <div class="flex gap-2">
-                                <button onclick="toggleMaximize('read-mappa-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci a tutto schermo">
+                                <button onclick="toggleMaximize('read-mappa-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci">
                                     <i class="fa-solid fa-expand"></i>
                                 </button>
                                 <button onclick="printDocument('mappa', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
@@ -284,12 +264,11 @@
                         <div id="read-mappa-render" class="overflow-y-auto flex-grow pr-2"></div>
                     </div>
 
-                    <!-- COLONNA MATRICE QUIZ (READER) -->
-                    <div id="read-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-emerald-500">
+                    <div id="read-matrice-panel" class="glass-panel flex flex-col h-[calc(100vh-14rem)] min-h-[500px] border-t-4 border-t-emerald-500 relative">
                         <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-4 shrink-0">
                             <h2 class="text-xl font-bold text-emerald-400"><i class="fa-solid fa-code-branch mr-2"></i> Matrici Quiz</h2>
                             <div class="flex gap-2">
-                                <button onclick="toggleMaximize('read-matrice-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci a tutto schermo">
+                                <button onclick="toggleMaximize('read-matrice-panel')" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-2 rounded transition border border-slate-600" title="Ingrandisci">
                                     <i class="fa-solid fa-expand"></i>
                                 </button>
                                 <button onclick="printDocument('matrice', 'read')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-bold text-sm transition border border-slate-600 shadow-lg">
@@ -308,36 +287,17 @@
 
     </div> <!-- Fine #app-ui -->
 
-    <!-- AREA STAMPA (Nascosta su schermo, visibile in print) -->
-    <div id="print-area">
-        <!-- Riempito via JS durante la stampa -->
-    </div>
+    <!-- AREA STAMPA -->
+    <div id="print-area"></div>
 
 <script>
-    /* ==========================================================================
-       STATO E VARIABILI GLOBALI
-    ========================================================================== */
-    // Database locale
     let archiveDB = JSON.parse(localStorage.getItem('driving_leader_studio_db')) || [];
-    
-    // Oggetti temporanei per il rendering corrente (Generator o Reader)
     let currentDocMeta = { gen: {}, read: {} };
     let currentCsvData = { gen: [], read: [] };
-    
-    // Buffer del testo originale per il salvataggio
     let rawInputBuffer = "";
-    
-    // Stato espansione archivio
     let allAulasExpanded = false;
 
-    /* ==========================================================================
-       NAVIGAZIONE VISTE
-    ========================================================================== */
     function navTo(viewId) {
-        document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
-        if(viewId === 'generator') document.getElementById('nav-btn-generator').classList.add('active');
-        if(viewId === 'archive' || viewId === 'reader') document.getElementById('nav-btn-archive').classList.add('active');
-
         document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
         document.getElementById(`view-${viewId}`).classList.add('active');
 
@@ -347,15 +307,11 @@
             renderArchiveList();
         }
         
-        // Chiudi eventuali pannelli ingranditi quando si cambia vista
         document.querySelectorAll('.maximized-panel').forEach(p => {
             toggleMaximize(p.id);
         });
     }
 
-    /* ==========================================================================
-       FUNZIONE FOCUS (INGRANDISCI PANNELLO)
-    ========================================================================== */
     function toggleMaximize(panelId) {
         const panel = document.getElementById(panelId);
         const backdrop = document.getElementById('maximize-backdrop');
@@ -367,11 +323,8 @@
             if(icon) { icon.classList.remove('fa-compress'); icon.classList.add('fa-expand'); }
             
             document.body.classList.remove('panel-maximized');
-            // Ripristina il backdrop alla root
             document.body.appendChild(backdrop);
         } else {
-            // Sposta il backdrop ESATTAMENTE prima del pannello per condividere lo stacking context
-            // e sbloccare l'interfaccia oscurata!
             panel.parentElement.insertBefore(backdrop, panel);
             
             panel.classList.add('maximized-panel');
@@ -382,16 +335,13 @@
         }
     }
 
-    // Cliccando sullo sfondo nero (backdrop), chiude il pannello ingrandito
     document.getElementById('maximize-backdrop').addEventListener('click', () => {
         document.querySelectorAll('.maximized-panel').forEach(panel => {
             toggleMaximize(panel.id);
         });
     });
 
-    /* ==========================================================================
-       LOGICA DI ELABORAZIONE TESTO IA (Parser Core)
-    ========================================================================== */
+    // --- PARSER TEXT ---
     function processAndRender(rawText, prefix) {
         if (!rawText.includes('=== MAPPA TECNICA ===') || !rawText.includes('=== MATRICE QUIZ ===')) {
             alert("Attenzione: Il testo non contiene i delimitatori necessari (=== MAPPA TECNICA === e === MATRICE QUIZ ===).");
@@ -409,7 +359,7 @@
 
     function processDataFromInput() {
         const rawText = document.getElementById('raw-input').value;
-        rawInputBuffer = rawText; // Salva per l'archiviazione
+        rawInputBuffer = rawText; 
         const success = processAndRender(rawText, 'gen');
         if (success) {
             document.getElementById('gen-results-area').classList.remove('hidden');
@@ -417,13 +367,11 @@
         }
     }
 
-    /* ==========================================================================
-       RENDERIZZATORI (Mappa e Matrice)
-    ========================================================================== */
+    // --- RENDER MAPPA TECNICA ---
     function renderMappa(text, prefix) {
         const lines = text.split('\n');
         let html = '';
-        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "" }; 
+        currentDocMeta[prefix] = { aula: "", obiettivo: "", argomento: "", tempo: "" }; 
         
         lines.forEach(line => {
             let l = line.trim();
@@ -437,6 +385,9 @@
             }
             else if (l.toUpperCase().startsWith('ARGOMENTO:')) {
                 currentDocMeta[prefix].argomento = l.substring(10).replace(/[\*\_]/g, '').trim();
+            }
+            else if (l.toUpperCase().startsWith('TEMPO STIMATO:')) {
+                currentDocMeta[prefix].tempo = l.substring(14).replace(/[\*\_]/g, '').trim();
             }
             else if (l.toUpperCase().includes('IL SENSO PRATICO:')) {
                 let pText = l.replace(/.*IL SENSO PRATICO:/i, '').trim();
@@ -485,10 +436,13 @@
         let headerHtml = '';
         if(currentDocMeta[prefix].aula || currentDocMeta[prefix].obiettivo || currentDocMeta[prefix].argomento) {
             headerHtml = `
-                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner">
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
-                    <h2 class="text-xl font-black text-white mb-1 leading-tight">${currentDocMeta[prefix].obiettivo || ''}</h2>
-                    <h3 class="text-base text-blue-400 font-medium italic">${currentDocMeta[prefix].argomento || ''}</h3>
+                <div class="ui-header-box mb-6 p-4 bg-slate-900/60 rounded-xl border border-slate-700 shadow-inner flex justify-between items-start gap-4">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1"><i class="fa-solid fa-school mr-1"></i> ${currentDocMeta[prefix].aula || 'Mappa di Regia'}</p>
+                        <h2 class="text-xl font-black text-white mb-1 leading-tight">${currentDocMeta[prefix].obiettivo || ''}</h2>
+                        <h3 class="text-base text-blue-400 font-medium italic">${currentDocMeta[prefix].argomento || ''}</h3>
+                    </div>
+                    ${currentDocMeta[prefix].tempo ? `<div class="bg-slate-800 text-yellow-400 font-mono font-bold px-3 py-1.5 rounded-lg text-sm border border-slate-700 shadow-md shrink-0 flex items-center"><i class="fa-regular fa-clock mr-2"></i> ${currentDocMeta[prefix].tempo}</div>` : ''}
                 </div>
             `;
         }
@@ -496,6 +450,7 @@
         document.getElementById(`${prefix}-mappa-render`).innerHTML = headerHtml + html;
     }
 
+    // --- RENDER MATRICE ---
     function renderMatrice(text, prefix) {
         const lines = text.split('\n');
         let html = '';
@@ -557,9 +512,7 @@
         document.getElementById(`${prefix}-matrice-render`).innerHTML = html;
     }
 
-    /* ==========================================================================
-       LOGICA ARCHIVIO (Salvataggio, Lettura, Ricerca Profonda)
-    ========================================================================== */
+    // --- ARCHIVIO ---
     function saveToArchive() {
         const meta = currentDocMeta['gen'];
         if(!meta.aula && !meta.obiettivo && !meta.argomento) {
@@ -572,11 +525,11 @@
             aula: meta.aula || "Varie",
             obiettivo: meta.obiettivo || "Generico",
             argomento: meta.argomento || "Senza Argomento",
+            tempo: meta.tempo || "",
             rawText: rawInputBuffer,
             date: new Date().toLocaleDateString('it-IT')
         };
 
-        // Controlla duplicati per Argomento nello stesso Obiettivo
         const exists = archiveDB.find(doc => doc.argomento === newItem.argomento && doc.obiettivo === newItem.obiettivo);
         if(exists) {
             if(!confirm("Esiste già un documento con questo Argomento. Vuoi sovrascriverlo?")) return;
@@ -593,16 +546,13 @@
         }
     }
 
-    // Ricerca Profonda: Controlla titolo, argomento, e tutto il testo RAW (inclusi quiz e spiegazioni)
     function deepSearch(doc, query) {
         if (!query) return true;
         const q = query.toLowerCase().trim();
-        
         if (doc.aula.toLowerCase().includes(q)) return true;
         if (doc.obiettivo.toLowerCase().includes(q)) return true;
         if (doc.argomento.toLowerCase().includes(q)) return true;
         if (doc.rawText.toLowerCase().includes(q)) return true;
-        
         return false;
     }
 
@@ -619,7 +569,6 @@
         const forceExpand = isSearching ? true : allAulasExpanded;
         let resultsFound = false;
 
-        // Raggruppa: Aula -> Obiettivo -> Array di Documenti
         let grouped = {};
         
         archiveDB.forEach(doc => {
@@ -647,10 +596,8 @@
 
         let aulaIndex = 0;
 
-        // Ordina e Stampa Aule
         Object.keys(grouped).sort().forEach(aulaName => {
             let aulaHtml = `<div class="mb-6 glass-panel overflow-hidden transition-all p-0 border border-slate-700">`;
-            
             const gridClassHidden = forceExpand ? "" : "hidden";
             const iconClassToggle = forceExpand ? "fa-chevron-up" : "fa-chevron-down";
             
@@ -667,7 +614,6 @@
                 <div id="grid-aula-${aulaIndex}" class="space-y-4 p-6 pt-0 border-t border-slate-700/50 ${gridClassHidden}">
             `;
             
-            // Ordina e Stampa Obiettivi
             Object.keys(grouped[aulaName]).sort().forEach(obName => {
                 aulaHtml += `
                     <div class="bg-slate-800/40 rounded-xl border border-slate-700 overflow-hidden shadow-inner">
@@ -677,16 +623,19 @@
                         <div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 `;
                 
-                // Stampa Argomenti (Documenti singoli)
                 grouped[aulaName][obName].forEach(doc => {
                     let matchBadge = isSearching ? `<div class="absolute top-2 right-2 text-[9px] uppercase tracking-widest text-emerald-400 font-bold bg-emerald-900/30 px-1.5 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-check mr-1"></i> Trovato</div>` : '';
+                    let timeBadge = doc.tempo ? `<span class="bg-slate-800 text-yellow-400 px-2 py-0.5 rounded text-[10px] font-mono ml-2 border border-slate-600"><i class="fa-regular fa-clock"></i> ${doc.tempo}</span>` : '';
 
                     aulaHtml += `
                         <div class="bg-slate-900 border border-slate-600 rounded-lg p-4 flex flex-col justify-between shadow hover:border-blue-500 transition group relative">
                             ${matchBadge}
                             <div class="cursor-pointer flex-grow mb-3" onclick="openArchivedDocument('${doc.id}')">
                                 <h4 class="font-bold text-white text-base group-hover:text-blue-400 transition leading-snug pr-12">${doc.argomento}</h4>
-                                <p class="text-xs text-slate-500 mt-2"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
+                                <div class="flex items-center mt-2">
+                                    <p class="text-xs text-slate-500"><i class="fa-regular fa-calendar mr-1"></i> ${doc.date}</p>
+                                    ${timeBadge}
+                                </div>
                             </div>
                             <div class="flex gap-2 mt-auto border-t border-slate-800 pt-3">
                                 <button onclick="openArchivedDocument('${doc.id}')" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold py-2 rounded transition">
@@ -740,9 +689,7 @@
         }
     }
 
-    /* ==========================================================================
-       ESPORTA / IMPORTA DATABASE (JSON)
-    ========================================================================== */
+    // --- DB IMPORT/EXPORT ---
     function exportArchiveDB() {
         if(archiveDB.length === 0) return alert("Il database è vuoto. Niente da esportare!");
         
@@ -786,9 +733,7 @@
         reader.readAsText(file);
     }
 
-    /* ==========================================================================
-       STAMPA PDF ED ESPORTAZIONE CSV (Dinamici in base alla vista attiva gen/read)
-    ========================================================================== */
+    // --- STAMPA PDF E CSV ---
     function printDocument(type, prefix) {
         const printArea = document.getElementById('print-area');
         const contentHtml = document.getElementById(`${prefix}-${type}-render`).innerHTML;
@@ -800,7 +745,10 @@
             <div class="print-header-container">
                 <p class="print-header-aula">${meta.aula || docTitle}</p>
                 <h1 class="print-header-ob">${meta.obiettivo || 'Documento senza titolo'}</h1>
-                <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                <div style="display:flex; justify-content: space-between; align-items: baseline;">
+                    <h2 class="print-header-arg">${meta.argomento || ''}</h2>
+                    ${meta.tempo ? `<span style="font-size: 11pt; font-weight: bold; color: #555;"><i class="fa-regular fa-clock"></i> ${meta.tempo}</span>` : ''}
+                </div>
             </div>
         `;
         
@@ -834,13 +782,11 @@
         document.body.removeChild(link);
     }
 
-    // Avvio: Se non c'è nulla in DB mostra il Generatore, altrimenti l'Archivio
     if(archiveDB.length === 0) {
         navTo('generator');
     } else {
         navTo('archive');
     }
-
 </script>
 </body>
 </html>
